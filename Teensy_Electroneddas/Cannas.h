@@ -23,6 +23,14 @@
 #define MAX_CUNTZ 16
 #define MAX_MOD 7
 
+
+#define GATEMODE_NO 0
+#define GATEMODE_CRAIS 1
+#define GATEMODE_SUL 2
+#define GATEMODE_ONOFF 3
+
+#define GATEMODEMAX 4
+
 class Biquad
 {
   public:
@@ -358,7 +366,7 @@ class Cuntzertu {
     ///////
     volatile float sulidu=0;
     volatile bool suling=false;
-    volatile bool oldsuling=false;
+    volatile uint8_t  sulcount=0;
     
     float avgSulidu=0;
     

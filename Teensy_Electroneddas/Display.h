@@ -39,7 +39,7 @@ class Display {
     const String cuntzertus[16]  = {"Fior","P.O.","Med ","MedP","Fiu ","Spin","SpiP","MedF","Samp", "Mori","P&M ","Fdda","    ","    ","    ","Pers"};
     const String modal[7] ={" I ","II ","III","IV "," V ","VI ","VII"};
    // const String filtrus[3] ={"Pranu ","Cufias","Presen"};
-    const String gate[4]={"No","Cr","Su","S1"};
+    const String gate[4]={"No","Cr","Su","AS"};
     const String sulP[6]={"P0","P1","P2","P3","P4","P5"};
     const String sulS[3]={"SA","SM","SB"};
 

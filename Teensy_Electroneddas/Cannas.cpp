@@ -1127,7 +1127,7 @@ void Cuntzertu::timerRoutine() {
         lOut->gain(vol);
         rOut->gain(vol);  
       }
-    if ((gate>=30)&&(gateMode==1)) {
+    if ((gate>=30)&&(gateMode==GATEMODE_CRAIS)) {
         gate=100;
         lOut->gain(0);
         rOut->gain(0);  
@@ -1135,61 +1135,61 @@ void Cuntzertu::timerRoutine() {
       } 
     }
   //Sulidu
-  if (tmrCount%10==0) {
-    //avgSulidu=(avgSulidu*9+sulidu)/10; //Media 10 a 1
-    avgSulidu=(avgSulidu*2+sulidu)/3; //Media 3 a 1
-    
-    if (((avgSulidu>slim)&&suling)||(avgSulidu>slim+5)) {
-            lOut->gain(vol);
-            rOut->gain(vol);
-            
-            float sul=(avgSulidu-szero)/ssens;
-            //float sul=(sulidu-szero)/ssens;
-            
-            
+  if (tmrCount%10==0) {  
+    avgSulidu=(avgSulidu*2+sulidu)/3; //Media 3 a 1  
+
+    if (((avgSulidu>slim)&&suling)||(avgSulidu>slim+5)) {             
+            if (suling==false) sulcount++;
             suling=true;
-            float asul=abs(sul);
-            /*
-             * float sef=0.7;
-                float sev=0.5;
-                float seff=0.5;
+            if (gateMode!=GATEMODE_ONOFF) {
                 
-                float sff=1;
-                float sfv=1;
-                float sfff=1;
-             */
-           if (sulFuntz) {
-              int avg=(int)avgSulidu;
-              sulv=funtzioni[0][avg]+1;
-              sulf=funtzioni[1][avg];
-              sulff=funtzioni[2][avg]+1;
-           } else {
-              sulf=(sul*(1-sef)/(sef+1-2*sef*asul))*sff;
-              sulv=(sul*(1-sev)/(sev+1-2*sev*asul)+1)*sfv;
-              sulff=(sul*(1-seff)/(seff+1-2*seff*asul)+1)*sfff;
-           }
-           
-          }
-        else {
-          if (gateMode==2) {
-            //lOut->gain(0);
-            //rOut->gain(0);
-            sulv=0.01;
-          } else {
-            sulv=1;
-          }
+                lOut->gain(vol);
+                rOut->gain(vol);
+                
+                float sul=(avgSulidu-szero)/ssens;
+                float asul=abs(sul);
+               
+              if (sulFuntz) {
+                  int avg=(int)avgSulidu;
+                  sulv=funtzioni[0][avg]+1;
+                  sulf=funtzioni[1][avg];
+                  sulff=funtzioni[2][avg]+1;
+              } else {
+                  sulf=(sul*(1-sef)/(sef+1-2*sef*asul))*sff;
+                  sulv=(sul*(1-sev)/(sev+1-2*sev*asul)+1)*sfv;
+                  sulff=(sul*(1-seff)/(seff+1-2*seff*asul)+1)*sfff;
+              }
+              
+            }
+        } else {
           suling=false;
-          sulf=0;
-          
+          sulf=0;         
           sulff=1;
         }
+        
+        if (gateMode==GATEMODE_ONOFF) {
+          if (sulcount%2) {
+            sulv=1;
+          } else {
+            sulv=0.001;
+          }
+        } else if ((gateMode==GATEMODE_SUL)&&(!suling)) {
+            //lOut->gain(0);
+            //rOut->gain(0);
+            sulv=0.001;
+          } else if (gateMode==GATEMODE_NO){
+            sulv=1;
+          } 
+        
+          
+        
       }
-  
   tmrCount++;
 }
 
 void Cuntzertu::setGateMode(uint8_t mode){
-  gateMode=mode%3; 
+  gateMode=mode%GATEMODEMAX; 
+  sulcount=0;
 }
 
 uint8_t Cuntzertu::getGateMode(){
