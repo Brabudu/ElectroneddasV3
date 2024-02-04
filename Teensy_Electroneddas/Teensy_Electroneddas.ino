@@ -1,12 +1,11 @@
 /*
-Libraries: 
+Required libraries: 
+
 ArduinoJSON 
   https://arduinojson.org/
 
 GyverOLED
   https://github.com/GyverLibs/GyverOLED
-
-2SPI_Slave ??
 
 
 */
@@ -32,8 +31,8 @@ GyverOLED
 #include "Communicator.h"
 
 #include "IntervalTimerEx.h"
+#include "2SPISlave_T4/2SPISlave_T4.h"
 
-#include "2SPISlave_T4.h"
 #include <Entropy.h>
 
 #include "sdios.h"

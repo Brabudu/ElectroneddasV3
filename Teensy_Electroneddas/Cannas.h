@@ -1,4 +1,3 @@
-//31/12/2021 Diagramma delle classi e nuove strutture con json incorporato
 #pragma once
 
 #include <Audio.h>
