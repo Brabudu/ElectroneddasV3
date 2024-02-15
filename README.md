@@ -2,7 +2,7 @@
 
 <img src='/elettro.png' width='200px' />
 
-[Sito](https://altervista.electroneddas.org)
+[Il sito pubblico](https://electroneddas.altervista.org)
 
 Il terzo modello delle Electroneddas è opensource!
 
