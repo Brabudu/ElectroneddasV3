@@ -6,6 +6,8 @@
 
 Il terzo modello delle Electroneddas è opensource!
 
+<img src='/Foto/top.jpeg' />
+
 
 ## Teensy_Electroneddas:
   Contiene il codice da caricare sul Teensy 4.1 (modalità 396mhz Usb audio+serial+midi)
@@ -19,6 +21,9 @@ Il terzo modello delle Electroneddas è opensource!
   Contiene i file kicad con lo schema e il pcb del sintetizzatore e del controller
 
 ## 3D_Electroneddas:
+
+<img src='/Foto/3d_parts.jpg' />
+
   Contiene i file per le parti da stampare in 3d
 
 ## Microchip_Electroneddas:
