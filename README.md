@@ -15,6 +15,9 @@ Il terzo modello delle Electroneddas è opensource!
   La compilazione richiede le librerie ArduinoJson e GiverOled
   
 ## Java_Electroneddas:
+
+<img src='/Foto/java.jpg' />
+
   Contiene il codice java per generare il jar dell'applicazione di controllo
 
 ## Electronic_Electroneddas:
