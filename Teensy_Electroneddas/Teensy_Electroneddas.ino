@@ -55,8 +55,10 @@ const char json[] = "{\"nome\":\"PO\",\"descr\":\"Sol\",\"vol\":0.5,\"cuntz\":1,
 
 ////// HARDWARE //////////////////////
 
-#define CS_CON  2
-#define OFF_CON  38
+#define CS_CON  2     //SPI CS
+#define OFF_CON  38   //Todo
+
+#define V_CONTR  10   //SPI Vcc
 
 
 SPISlave_T4 <&SPI1, SPI_8_BITS> mySPI; 
@@ -138,6 +140,9 @@ void setup() {
 
   pinMode(OFF_CON, OUTPUT);
   digitalWrite(OFF_CON, HIGH);
+
+  pinMode(V_CONTR, OUTPUT);
+  
   
   pinMode(LED_BUILTIN, OUTPUT);
   
@@ -157,6 +162,7 @@ void setup() {
   //Serial5.begin(9600);
   //Serial5.addMemoryForRead(addbuffer,64);  // Per comunicare con la app
 
+  digitalWrite(V_CONTR, HIGH);
   delay(100);
   digitalWrite(CS_CON,HIGH);
   
@@ -189,12 +195,15 @@ void setup() {
   monitorTimer.begin(monitoring, 200000);
   monitorTimer.priority(255);
   
-  
+  digitalWrite(V_CONTR, HIGH);
+
   delay(500);
   digitalWrite(CS_CON,LOW);
   
   if (digitalRead(PIN_PULS_OK)==false) d->test();
   else d->initMenu();
+
+  
 
 }
 
@@ -627,6 +636,7 @@ void restore() {
 }
 
 void resetController() {
+  
   delay(100);
   digitalWrite(CS_CON,HIGH);
   delay(100);

@@ -572,7 +572,7 @@ void Cuntzertu::readJSONPrefs(Stream* s) {
     
 }
 void Cuntzertu::writeJSONPrefs(Stream* s) {
-  DynamicJsonDocument jo(1000);
+  DynamicJsonDocument jo(1500);
   jo["vol"] = vol;
   
   //jo["ssens"]=ssens;
