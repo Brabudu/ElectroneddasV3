@@ -4,6 +4,8 @@
 
 [Il sito pubblico](https://electroneddas.altervista.org)
 
+<img src='/Foto/electroneddas.jpeg' />
+
 Il terzo modello delle Electroneddas è opensource!
 
 <img src='/Foto/top.jpeg' />

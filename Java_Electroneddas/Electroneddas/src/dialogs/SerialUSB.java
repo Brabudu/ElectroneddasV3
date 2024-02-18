@@ -43,6 +43,8 @@ public class SerialUSB extends JDialog implements ActionListener {
 
 	static SerialPort comPort;
 	String serName="";
+	
+	static int attempts=0;
 
 	public static boolean sending=true;
 	public static boolean connected=false;
@@ -187,13 +189,16 @@ public class SerialUSB extends JDialog implements ActionListener {
 
 		if (num==-1) {
 			System.err.println("No Teensy");
-			connected=false;			
+			connected=false;
+			attempts++;
+			if (attempts>4) System.exit(0);
 			timer();
 			return;
 		}	
 		comPort=comPorts[num];
 		comPort.openPort();
 		connected=true;
+		attempts=0;
 		
 		//seriale.on();
 		loading.setVisible(false);

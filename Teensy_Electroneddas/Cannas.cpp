@@ -6,7 +6,7 @@
 
 #include "Cannas.h"
 #include "ElFileSystem.h"
-#include "sol256_norm.wav.h"
+#include "samples.h"
 
 #include <GyverOLED.h>
 #include <Entropy.h>
@@ -337,17 +337,20 @@ void Canna::setSonu(uint8_t sonu) {
 
   switch (sonu) {
     case 0:
-      synth->begin(.5, Cuntzertu::getBaseFreq(), WAVEFORM_BANDLIMIT_PULSE);
+      waveAmplitude=.5;
+      synth->begin(0, Cuntzertu::getBaseFreq(), WAVEFORM_BANDLIMIT_PULSE);
       break;
     case 1:
     case 2:
     case 3:
-      synth->begin(.5, Cuntzertu::getBaseFreq(), WAVEFORM_TEST2);
+      waveAmplitude=.5;
+      synth->begin(0, Cuntzertu::getBaseFreq(), WAVEFORM_TEST2);
       synth->pulseFact(3-sonu);
       break;
     default:
+      waveAmplitude=.6;
       synth->arbitraryWaveform(waves[sonu - 4], 650.0);
-      synth->begin(.6, Cuntzertu::getBaseFreq(), WAVEFORM_ARBITRARY);
+      synth->begin(0, Cuntzertu::getBaseFreq(), WAVEFORM_ARBITRARY);
   }
 }
 uint8_t Canna::getSonu() {
@@ -362,7 +365,7 @@ uint8_t Canna::getPort() {
 }
 
 void Canna::sync() {
-
+  
   //// Synth
   setSonu(sonu);
   
@@ -399,12 +402,15 @@ void Canna::setBiquads(AudioFilterBiquad* stat, AudioFilterBiquad* din) {
 }
 
 void Canna::playCrai(uint8_t crai) {
-  Canna::playCrai(crai,false);
+  Canna::playCrai(crai,0);
 }
 
-void Canna::playCrai(uint8_t crai, bool oberta) {
+void Canna::playCrai(uint8_t crai, uint8_t hexcrai) {
   
-  
+  bool oberta=obertura(hexcrai);
+
+  lastHCrai=hexcrai;
+
   //duty
   dutyDest = crais[crai].getDuty()*pow(2,(float)timbru/20);
   if (dutyDest>0.5) dutyDest=0.5;
@@ -439,6 +445,24 @@ void Canna::playCrai(uint8_t crai, bool oberta) {
 
 uint8_t Canna::getCraiAct() {
   return craiAct;
+}
+uint8_t Canna::getHCraiAct() {
+  return lastHCrai;
+}
+bool Canna::obertura(uint8_t b) {
+  b = ~b & 0xf;
+  if ((b&8)&&(b&4)) return true;
+  if ((b&4)&&(b&2)) return true;
+  if ((b&2)&&(b&1)) return true;
+  return false;
+}
+
+void Canna::mute(bool mute) {
+  if (mute) {
+    synth->amplitude(0);
+  } else {
+    synth->amplitude(waveAmplitude);
+  }
 }
 /*
 float Canna::frequenza(uint8_t nota) {
@@ -1100,10 +1124,9 @@ void Cuntzertu::setReverbs(AudioEffectFreeverb* lRev, AudioEffectFreeverb* rRev)
   this->rRev = rRev;
 }
 
-void Cuntzertu::beginTimer(IntervalTimerEx* timer) {
-  this->timer = timer;
-  timer->begin([this] { timerRoutine(); }, 700);
-  timer->priority(255);
+void Cuntzertu::beginTimer() {
+  timer.begin([this] { timerRoutine(); }, 700);
+  timer.priority(255);
 }
 
 void Cuntzertu::timerRoutine() {
@@ -1119,23 +1142,17 @@ void Cuntzertu::timerRoutine() {
   
     if ((rnd * rnd) > 1) avgRnd=avgRnd* fact + (1 - fact) * rnd / 2;
   }
-  //Gate
-  if (tmrCount%100==0) {
-    if ((mancs.getCraiAct()==4)&&(mancd.getCraiAct()==4)) gate++;
-    else {
-        gate=0;
-        lOut->gain(vol);
-        rOut->gain(vol);  
-      }
-    if ((gate>=30)&&(gateMode==GATEMODE_CRAIS)) {
-        gate=100;
-        lOut->gain(0);
-        rOut->gain(0);  
-        //Serial.println("#gate");
-      } 
-    }
+
+  
   //Sulidu
   if (tmrCount%10==0) {  
+
+    if (mancs.getHCraiAct()==0) gateMs++;
+    else gateMs=0;
+
+    if (mancd.getHCraiAct()==0) gateMd++;
+    else gateMd=0;
+
     avgSulidu=(avgSulidu*2+sulidu)/3; //Media 3 a 1  
 
     if (((avgSulidu>slim)&&suling)||(avgSulidu>slim+5)) {             
@@ -1143,8 +1160,7 @@ void Cuntzertu::timerRoutine() {
             suling=true;
             if (gateMode!=GATEMODE_ONOFF) {
                 
-                lOut->gain(vol);
-                rOut->gain(vol);
+                mute(false);
                 
                 float sul=(avgSulidu-szero)/ssens;
                 float asul=abs(sul);
@@ -1166,30 +1182,58 @@ void Cuntzertu::timerRoutine() {
           sulf=0;         
           sulff=1;
         }
-        
-        if (gateMode==GATEMODE_ONOFF) {
-          if (sulcount%2) {
-            sulv=1;
-          } else {
-            sulv=0.001;
-          }
-        } else if ((gateMode==GATEMODE_SUL)&&(!suling)) {
-            //lOut->gain(0);
-            //rOut->gain(0);
-            sulv=0.001;
-          } else if (gateMode==GATEMODE_NO){
-            sulv=1;
-          } 
-        
-          
-        
+
+        switch (gateMode) {
+          case GATEMODE_CRAIS:
+            if ((gateMs>120)&&(gateMd>120)) {            
+              gateMs=121;
+              gateMd=121;
+              mute(true);
+            }
+            if ((gateMs==0)||(gateMd==0)) {   
+              sulv=1; 
+              mute(false);
+            }
+          break;
+          case GATEMODE_ONOFF:
+            if (sulcount%2) {
+              mute(false);
+              sulv=1;
+            } else {
+              mute(true);
+            }
+          break;
+        case GATEMODE_SUL:
+          if (!suling) mute(true);
+        break;
+        case GATEMODE_CS:
+           if (gateMs>120) {            
+              gateMs=121;
+              mancs.mute(true);
+              tumbu.mute(true);
+            }
+            if (gateMd>120) {            
+              gateMd=121;
+              mancd.mute(true);
+            }
+            if (!suling) mute(true);
+        break;
+        case GATEMODE_NO:
+        default:
+            sulv=1; 
+            mute(false);            
+        break;       
       }
+  }
   tmrCount++;
 }
 
 void Cuntzertu::setGateMode(uint8_t mode){
   gateMode=mode%GATEMODEMAX; 
   sulcount=0;
+  gateMs=0;
+  gateMd=0;
+
 }
 
 uint8_t Cuntzertu::getGateMode(){
@@ -1198,6 +1242,7 @@ uint8_t Cuntzertu::getGateMode(){
 
 void Cuntzertu::sync() {
 
+  muteOut (true);
   // Volumi
 
   lMix->gain(tumbuMixChan, volT * (1 - bilT) / 2);
@@ -1221,6 +1266,8 @@ void Cuntzertu::sync() {
   tumbu.sync();
   mancs.sync();
   mancd.sync(); 
+
+  muteOut(false);
 }
 
 void Cuntzertu::setSul(float sul) {
@@ -1228,9 +1275,19 @@ void Cuntzertu::setSul(float sul) {
   this->sulidu=sul;
 }
 
-void Cuntzertu::mute() {  
-  lOut->gain(0);
-  rOut->gain(0);
+void Cuntzertu::mute(bool mute) {  
+  tumbu.mute(mute);
+  mancs.mute(mute);
+  mancd.mute(mute);
+}
+void Cuntzertu::muteOut(bool mute) { 
+  if (mute) {
+    this->lOut->gain(0);
+    this->rOut->gain(0);
+  } else {
+    setVol(getVol());
+  }
+
 }
 
 void Cuntzertu::syncFreq() {

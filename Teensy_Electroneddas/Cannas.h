@@ -2,7 +2,6 @@
 
 #include <Audio.h>
 #include <ArduinoJson.h>
-#include "IntervalTimerEx.h"
 #include "synth_waveform2.h"
 
 #define cannas_h
@@ -27,8 +26,10 @@
 #define GATEMODE_CRAIS 1
 #define GATEMODE_SUL 2
 #define GATEMODE_ONOFF 3
+#define GATEMODE_CS 4
 
-#define GATEMODEMAX 4
+#define GATEMODEMAX 5
+
 
 class Biquad
 {
@@ -127,10 +128,14 @@ class Canna {
 
     void sync();
 
+    void mute(bool mute);
+   
+
     void playCrai(uint8_t crai);
-    void playCrai(uint8_t crai, bool oberta);
+    void playCrai(uint8_t crai, uint8_t hexcrai);
     
     uint8_t getCraiAct();
+    uint8_t getHCraiAct();
 
     void setCrais(byte* crais);
     
@@ -160,14 +165,18 @@ class Canna {
     AudioMixer4* mixer;
 
   private:
+  bool obertura(uint8_t crais);
 
   //MIDI
+  float waveAmplitude;
    uint8_t channel=0;
    uint8_t velocity=127;
    uint8_t transposition=24;
    uint8_t mode=0;
    
     uint8_t ncrais;
+
+    uint8_t lastHCrai=0;
 
     uint8_t port_count=0;
     
@@ -273,7 +282,7 @@ class Cuntzertu {
     void setReverbs(AudioEffectFreeverb* lRev, AudioEffectFreeverb* rRev);
     
     void setCannaMixers(AudioMixer4* lMix, AudioMixer4* rMix);
-    void beginTimer(IntervalTimerEx* timer);
+    void beginTimer();
 
     void setGateMode(uint8_t mode);
     uint8_t getGateMode();
@@ -286,7 +295,8 @@ class Cuntzertu {
     void syncBT2(Stream*);
     
     void setSul(float sul);
-    void mute();
+    void mute(bool mute);
+     void muteOut(bool mute);
 
     static float getBaseFreq();
     static float calcFrequenza(uint8_t nota);
@@ -345,7 +355,7 @@ class Cuntzertu {
 
     static float acordadura[];
    
-    IntervalTimer* timer;
+    IntervalTimer timer;
 
     AudioAmplifier* lOut;
     AudioAmplifier* rOut;
@@ -393,7 +403,8 @@ class Cuntzertu {
    
     bool  sulFuntz=false;
      
-    uint8_t gate=100;
+    uint8_t gateMs=0;
+    uint8_t gateMd=0;
     uint8_t gateMode=0;
 
     const String filtrus[3]={"0 0 N","3900 1 L","6000 10 h"};

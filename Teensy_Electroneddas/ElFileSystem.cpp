@@ -210,7 +210,7 @@ bool ElFileSystem::cuntzFromFile(Cuntzertu* c, String file, bool load, char prea
   
   myFile.seek(0);
   if (load) {
-    c->mute();
+  //    c->mute(true);
     c->deserialize(&myFile);   
     c->sync();
     com->msgWarning("*"+file,true);

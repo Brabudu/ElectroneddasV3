@@ -30,7 +30,6 @@ GyverOLED
 
 #include "Communicator.h"
 
-#include "IntervalTimerEx.h"
 #include "2SPISlave_T4/2SPISlave_T4.h"
 
 #include <Entropy.h>
@@ -79,7 +78,7 @@ volatile long inact_timer = 0; //
 float old_sul=0;
 int sul_count=0;
 
-byte oldcrai[2];
+//byte oldcrai[2];
 
 ////// gestione console //////
 char ser_buffer[2000];
@@ -114,10 +113,6 @@ byte act_file=0; // Caricamento cuntzertu
 
 // Timer monitor (clip)
 IntervalTimer monitorTimer;
-
-// Timer e gestione portamento ///
-IntervalTimerEx timer;
-//
 
 uint8_t cuntz_num=0;
 #define MAX_CUNTZ_NUM 200
@@ -154,6 +149,7 @@ void setup() {
   Entropy.Initialize();
 
   Serial.begin(115200);   //USB
+  
 
   com=new Communicator(&Serial);
 
@@ -177,9 +173,9 @@ void setup() {
    
   mySPI.onReceive(receiving);
   mySPI.begin();
-  
+
   c=new Cuntzertu();
-  
+
   d=new Display();
 
   efs=new ElFileSystem();
@@ -293,9 +289,13 @@ void sona(byte b) {
 
       uint8_t canna = 0;
       uint8_t nota = 0;
-      if ((b&0xf0)==0x70) {
+
+      uint8_t hi_nibb=b&0xf0;
+      uint8_t lo_nibb=b&0x0f;
+
+      if (hi_nibb==0x70) { //Comando da controller
         int dir=0;
-        if ((b&0xf)==0) return;
+        if (lo_nibb==0) return;
         if (b&0x1) dir=1;
         if (b&0x8) dir=-1;
 
@@ -309,8 +309,7 @@ void sona(byte b) {
       
       } else {
         nota = byteToCrai(b, &canna);
-        bool oberta=obertura(b);
-        
+               
         if (mon_mode&CRAIS)  {
           String can;
          
@@ -320,18 +319,18 @@ void sona(byte b) {
             String msg=can+":";
             char myHex[2] = "";
    
-            if (mon_mode&ESA) ltoa(b&0xF,myHex,16);
+            if (mon_mode&ESA) ltoa(lo_nibb,myHex,16);
             else ltoa(nota,myHex,16);
             msg+=String(myHex);
             com->msgWarning(msg,true);
               
         }
-        oldcrai[canna-1]=b&0xf;
+       
         if (canna == 1) {
-          c->mancs.playCrai(nota,oberta);
+          c->mancs.playCrai(nota,lo_nibb);
         }
         if (canna == 2) {
-          c->mancd.playCrai(nota,oberta);
+          c->mancd.playCrai(nota,lo_nibb);
         }
         if (canna == 3) {           //Sys msg
           if (b==3) {
@@ -384,13 +383,7 @@ uint8_t byteToCrai(uint8_t b, uint8_t* msg) {
   return (0);
 }
 
-bool obertura(uint8_t b) {
-  b = ~b & 0xf;
-  if ((b&8)&&(b&4)) return true;
-  if ((b&4)&&(b&2)) return true;
-  if ((b&2)&&(b&1)) return true;
-  return false;
-}
+
 
 void receiving() {
 
@@ -582,14 +575,14 @@ void initCuntz() {
   c->tumbu.playCrai(0);
   c->mancs.playCrai(0);
   c->mancd.playCrai(0);
-
-  c->beginTimer(&timer);
-
+  
+  c->beginTimer();
+  
   playNoda();
-
+  
   efs->execute(0);
   
-  c->mute();
+  c->mute(true);
 }
 void setCannas() {
   c->setBiquads(&bqOutL, &bqOutR);
@@ -613,6 +606,7 @@ void setCannas() {
 void playNoda() {
   int t=c->getGateMode();
   c->setGateMode(0);
+  c->mute(false);
   delay(500);
   c->mancs.playCrai(4);
   c->mancd.playCrai(2);

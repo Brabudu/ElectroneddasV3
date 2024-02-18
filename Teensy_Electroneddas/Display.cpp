@@ -24,7 +24,7 @@ const uint8_t menu[5][10][5] PROGMEM = {
 
 
 #define POS_MENU        10
-#define PAGES           4
+#define PAGES           3
 #define MAX_CUNTZ_NUM 200
 
 
@@ -284,7 +284,7 @@ bool Display::go(bool ok,int dir,bool longPress) {
               displayPage();           
             break;
             case 5: //gate
-              c->setGateMode((byte)(c->getGateMode()+dir)%4);                          
+              c->setGateMode((byte)(c->getGateMode()+dir)%GATEMODEMAX);                          
               displayPage();          
             break;
             case 6: //zero 
