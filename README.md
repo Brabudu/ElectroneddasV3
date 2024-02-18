@@ -4,11 +4,11 @@
 
 [Il sito pubblico](https://electroneddas.altervista.org)
 
-<img src='/Foto/electroneddas.jpeg' />
+<img src='/Foto/electroneddas.jpg' />
 
 Il terzo modello delle Electroneddas è opensource!
 
-<img src='/Foto/top.jpeg' />
+<img src='/Foto/top.jpg' />
 
 
 ## Teensy_Electroneddas:
