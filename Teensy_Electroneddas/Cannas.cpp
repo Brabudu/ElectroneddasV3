@@ -971,6 +971,7 @@ void Cuntzertu::setFini(float fini) {
   if (fini>1.06) fini=1.06;
   this->fini = fini;
   syncFreq();
+  
   tumbu.playCrai(tumbu.getCraiAct());
   mancs.playCrai(mancs.getCraiAct());
   mancd.playCrai(mancd.getCraiAct());
@@ -1136,7 +1137,7 @@ void Cuntzertu::timerRoutine() {
   mancd.update(avgRnd,sulv,sulf,sulff);
 
   //Random
-  if (tmrCount%10==0) {
+  if (tmrCount%30==0) {
     float rnd = Entropy.rnorm(0, 2);
     const float fact = 0.95;
   
@@ -1291,7 +1292,7 @@ void Cuntzertu::muteOut(bool mute) {
 }
 
 void Cuntzertu::syncFreq() {
-  freq = 55.0f;
+  freq = 55.0f*this->getFini();
   freq=calcFrequenza(puntu + 3);
 }
 float Cuntzertu::calcFrequenza(uint8_t nota) {
