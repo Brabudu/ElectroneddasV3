@@ -44,6 +44,7 @@ public class JSulPanel extends JPanel implements ActionListener {
 		gate.addItem("Crais");
 		gate.addItem("Sulidu");
 		gate.addItem("Allui e Studa");
+		gate.addItem("Crais & sulidu");
 		gate.addActionListener(this);
 		add(gate);
 	}
