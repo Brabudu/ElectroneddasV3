@@ -39,6 +39,8 @@ extern Cuntzertu *c;
 extern uint8_t cuntz_num;
 
 extern void resetController();
+extern float getCharge();
+
 extern String command;
 
 extern uint8_t last_error_mem;
@@ -49,6 +51,10 @@ extern uint8_t last_error_mem;
 
     int enc_count;
     int enc_puls_count=0;
+
+
+
+
     
 Encoder myEnc(PIN_ENC1,PIN_ENC2);
 IntervalTimer encoderTimer;
@@ -501,9 +507,8 @@ void Display::drawKnob(uint8_t x, uint8_t y, float minv, float maxv, float value
 }
 void Display::drawBattery(uint8_t x, uint8_t y) {
     oled.rect(x, y, x+13,y+6, OLED_STROKE);
-    int v=analogRead(A8);
-    float volt=v/155.152; //(v=x/1024*3,3*2);
-    float charge=volt-3.5; //max=0,7
+   
+   float charge=getCharge()-3.5;
   
     //Serial.println(charge);
     if (charge>0.7) oled.rect(x+2, y+2, x+11,y+4, OLED_FILL);

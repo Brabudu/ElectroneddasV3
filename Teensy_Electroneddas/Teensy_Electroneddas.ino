@@ -87,7 +87,9 @@ int ser_b_index = 0;
 String command="";
 
 //////
-
+//Battery
+  #define BATT  A8   //Todo
+    float charge=4.2;
 ////// gestione Bluetooth //////
 char cstring1[64];
 byte addbuffer[64];
@@ -359,8 +361,12 @@ void monitoring() {
   }
 
   //Batteria
-  d->refreshBattery();
+  int v=analogRead(BATT);
+  float volt=v/155.152; //(v=x/1024*3,3*2);
+  charge=(charge+volt)/2; //max=0,7
 
+  d->refreshBattery();
+  
   inact_timer++;
 
   if (inact_timer>2000) {
@@ -368,6 +374,9 @@ void monitoring() {
     //delay(5000);
   }
   
+}
+float getCharge() {
+  return charge;
 }
 uint8_t byteToCrai(uint8_t b, uint8_t* msg) {
 
