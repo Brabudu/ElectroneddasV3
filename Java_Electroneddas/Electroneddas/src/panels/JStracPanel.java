@@ -78,7 +78,7 @@ public class JStracPanel extends JPanel implements ActionListener {
 		public JStracPanel(Stracasciu s) {
 		//strac=s;
 		this.setLayout(new BorderLayout());
-		JPanel cuntzs=new JPanel(new GridLayout(8,2));
+		JPanel cuntzs=new JPanel(new GridLayout(10,2));
 		cuntzs.setBackground(Color.yellow);
 		title=new JLabel(s.getName());
 		add(title,BorderLayout.NORTH);
@@ -121,21 +121,21 @@ public class JStracPanel extends JPanel implements ActionListener {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			bi.setText("Piga de su strac‡sciu");
-			bo.setText("Poni in su strac‡sciu");
-			bdi.setText("Piga su strac‡sciu de su discu");
-			bdo.setText("Poni su strac‡sciu in su discu");
+			bi.setText("Piga de su strac√†sciu");
+			bo.setText("Poni in su strac√†sciu");
+			bdi.setText("Piga su strac√†sciu de su discu");
+			bdo.setText("Poni su strac√†sciu in su discu");
 		} 
 
-		bi.setToolTipText("Piga su strac‡sciu de is electroneddas");
+		bi.setToolTipText("Piga su strac√†sciu de is electroneddas");
 		bi.setActionCommand("Import");
-		bo.setToolTipText("Poni in su strac‡sciu de is electroneddas");
+		bo.setToolTipText("Poni in su strac√†sciu de is electroneddas");
 		bo.setActionCommand("Export");
-		bdi.setToolTipText("Piga su strac‡sciu de su discu");
+		bdi.setToolTipText("Piga su strac√†sciu de su discu");
 		bdi.setActionCommand("Load");
-		bdo.setToolTipText("Poni su strac‡sciu in su discu");
+		bdo.setToolTipText("Poni su strac√†sciu in su discu");
 		bdo.setActionCommand("Save");
-		bnew.setToolTipText("Cuncorda unu strac‡sciu nou");
+		bnew.setToolTipText("Cuncorda unu strac√†sciu nou");
 		bnew.setActionCommand("New");
 		bi.addActionListener(this);
 		bo.addActionListener(this);
@@ -389,7 +389,7 @@ public class JStracPanel extends JPanel implements ActionListener {
 	}
 
 	private byte scioberaStrac() {
-		String inputValue = JOptionPane.showInputDialog("Sciobera su strac‡sciu",0); 
+		String inputValue = JOptionPane.showInputDialog("Sciobera su strac√†sciu",0); 
 		if (inputValue!=null ) {
 			int num=-1;
 			try {
@@ -397,7 +397,7 @@ public class JStracPanel extends JPanel implements ActionListener {
 			} catch (NumberFormatException en) {}
 
 			if ((num<0)||(num>100)) {
-				JOptionPane.showMessageDialog(null, "Errori", "Poni unu n˘meru intra de 0 e 100", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Errori", "Poni unu n√πmeru intra de 0 e 100", JOptionPane.ERROR_MESSAGE);
 				return (-1);
 			} 
 			return (byte) num;
@@ -408,7 +408,7 @@ public class JStracPanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		switch (e.getActionCommand()) {	
 		case "New": {
-			int dialogResult = JOptionPane.showConfirmDialog (null, "Siguru ca bolis sboidai su strac‡sciu?","Atentzioni",JOptionPane.OK_CANCEL_OPTION);
+			int dialogResult = JOptionPane.showConfirmDialog (null, "Siguru ca bolis sboidai su stracÔøΩsciu?","Atentzioni",JOptionPane.OK_CANCEL_OPTION);
 			if(dialogResult == JOptionPane.YES_OPTION){
 				Electroneddas.s=new Stracasciu("Nou");
 				refresh(Electroneddas.s);
@@ -419,7 +419,7 @@ public class JStracPanel extends JPanel implements ActionListener {
 		case "Import": {
 			byte num=scioberaStrac();
 			if (num!=-1) {
-				int dialogResult = JOptionPane.showConfirmDialog (null, "Siguru ca bolis carrigai su strac‡sciu de su strumentu?","Atentzioni",JOptionPane.OK_CANCEL_OPTION);
+				int dialogResult = JOptionPane.showConfirmDialog (null, "Siguru ca bolis carrigai su strac√†sciu de su strumentu?","Atentzioni",JOptionPane.OK_CANCEL_OPTION);
 				if(dialogResult == JOptionPane.YES_OPTION){
 					Electroneddas.s=new Stracasciu("El"+num);
 					Electroneddas.strac_num=(byte) num;
@@ -432,10 +432,10 @@ public class JStracPanel extends JPanel implements ActionListener {
 		case "Export": {
 			byte num=scioberaStrac();
 			if (num!=-1) {
-				int dialogResult = JOptionPane.showConfirmDialog (null, "Siguru ca bolis carrigai su strac‡sciu in su strumentu?\nIn custa manera as a cancellai su chi nc'est aintru de su strumentu","Atentzioni",JOptionPane.OK_CANCEL_OPTION,JOptionPane.WARNING_MESSAGE);
+				int dialogResult = JOptionPane.showConfirmDialog (null, "Siguru ca bolis carrigai su strac√†sciu in su strumentu?\nIn custa manera as a cancellai su chi nc'est aintru de su strumentu","Atentzioni",JOptionPane.OK_CANCEL_OPTION,JOptionPane.WARNING_MESSAGE);
 				if(dialogResult == JOptionPane.YES_OPTION){
 					
-					for (int i=0;i<16;i++)
+					for (int i=0;i<Stracasciu.SIZE;i++)
 					{
 						if (!Electroneddas.s.getCuntzertu(i).isVoid()) {
 							Electroneddas.serialPort.printCmd("E n "+(num*20+i)+".JSO");				
@@ -460,7 +460,7 @@ public class JStracPanel extends JPanel implements ActionListener {
 
 			int rv=0;
 
-			sfc.setDialogTitle("C‡rriga su strac‡sciu");
+			sfc.setDialogTitle("C√†rriga su strac√†sciu");
 			sfc.setDialogType(JFileChooser.OPEN_DIALOG);
 
 			rv = sfc.showOpenDialog(this);
@@ -471,7 +471,7 @@ public class JStracPanel extends JPanel implements ActionListener {
 					String filename=sfc.getSelectedFile().getAbsolutePath();
 					Electroneddas.s=(Stracasciu)Electroneddas.loadData(filename,Electroneddas.s);
 					refresh(Electroneddas.s);
-					String dir=filename.substring(0, filename.lastIndexOf('\\'));
+					String dir=getDir(filename);
 					Electroneddas.prefs.stracDir=dir;	
 				}	
 			}
@@ -481,7 +481,7 @@ public class JStracPanel extends JPanel implements ActionListener {
 		case "Save": {
 			int rv=0;
 
-			sfc.setDialogTitle("Sarva su strac‡sciu");
+			sfc.setDialogTitle("Sarva su strac√†sciu");
 			sfc.setDialogType(JFileChooser.OPEN_DIALOG);
 
 			rv = sfc.showOpenDialog(this);
@@ -490,7 +490,8 @@ public class JStracPanel extends JPanel implements ActionListener {
 				String filename=sfc.getSelectedFile().getAbsolutePath();
 				if (!filename.endsWith(".str")) filename+=".str";
 				Electroneddas.saveData(filename,Electroneddas.s);
-				String dir=filename.substring(0, filename.lastIndexOf('\\'));
+				
+				String dir=getDir(filename);
 				Electroneddas.prefs.stracDir=dir;	
 			}	
 		}
@@ -498,5 +499,10 @@ public class JStracPanel extends JPanel implements ActionListener {
 
 
 		}
+	}
+	String getDir(String filename) {
+		int pos=filename.lastIndexOf(0x2F);	//slash
+		if (pos==-1) pos=filename.lastIndexOf(0x5C);	//backslash
+		return filename.substring(0, pos); 
 	}
 }

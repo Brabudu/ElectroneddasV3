@@ -17,7 +17,7 @@ import main.Cuntzertu;
 import main.Electroneddas;
 
 public class JRevPanel extends JPanel implements AdjustmentListener{
-	JCKnob vol=new JCKnob(15,0,30,Color.YELLOW,"Vol","Volùmini",0);
+	JCKnob vol=new JCKnob(15,0,30,Color.YELLOW,"Vol","VolÃ¹mini",0);
 	
 	 JCKnob damp=new JCKnob(50,0,100,Color.GREEN,"Damp","Assorbimentu",1);
 	 JCKnob room=new JCKnob(30,0,50,Color.MAGENTA,"Room","Aposentu",2);

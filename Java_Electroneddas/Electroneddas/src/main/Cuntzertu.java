@@ -103,7 +103,7 @@ public class Cuntzertu {
 	    public float volMd;
 	    public float bilMd;
 	    
-	    public float revVol=0;
+	   public float revVol=0;
 	    public float revDamp=1;
 	    public float revRoom=0;
 	    

@@ -58,6 +58,7 @@ public class JSulPanel extends JPanel implements ActionListener {
 		
 		
 	}
+	
 	void setSul(int sens, int zero) {
 		SerialUSB.printCmd("z "+" "+sens+" "+zero);
 		Electroneddas.c.ssens=(byte)sens;

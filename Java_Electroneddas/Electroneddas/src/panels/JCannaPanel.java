@@ -37,7 +37,7 @@ public class JCannaPanel extends JPanel implements AdjustmentListener, ActionLis
 
 	final static String [] crais_label= {"Arrefinu","4a crai","3a crai","2a crai","1a crai"};
 	
-	JCKnob volArm=new JCKnob(10,0,100,Color.ORANGE,"Vol BQS","Vol˘mini de su filtru Biquad st‡ticu",2);
+	JCKnob volArm=new JCKnob(10,0,100,Color.ORANGE,"Vol BQS","Vol√πmini de su filtru Biquad st√†ticu",2);
 	JCKnob strobbu=new JCKnob(1,0,5,Color.YELLOW,"Strobbu","Strobbu de su puntu",3);
 	JCKnob port=new JCKnob(1,0,5,Color.orange,"Portamentu","Portamentu",4);
 	
@@ -76,11 +76,11 @@ public class JCannaPanel extends JPanel implements AdjustmentListener, ActionLis
 			//Filtri
 			JPanel jPFilters=new JPanel();
 		
-			sbq=new JBQPanel("Filtru st‡ticu",0,canna.getSBQ());
+			sbq=new JBQPanel("Filtru st√†ticu",0,canna.getSBQ());
 			sbq.setProprietario(this);			
 			jPFilters.add(sbq);
 			
-			dbq=new JBQPanel("Filtru din‡micu",1,canna.getDBQ());
+			dbq=new JBQPanel("Filtru din√†micu",1,canna.getDBQ());
 			dbq.setProprietario(this);
 			jPFilters.add(dbq);
 			
@@ -269,7 +269,7 @@ public class JCannaPanel extends JPanel implements AdjustmentListener, ActionLis
 		        }
 				break;
 			case "Load":
-			fc.setDialogTitle("C‡rriga sa "+this.cname);
+			fc.setDialogTitle("CÔøΩrriga sa "+this.cname);
 			fc.setDialogType(JFileChooser.OPEN_DIALOG);
 					
 			rv = fc.showOpenDialog(this);

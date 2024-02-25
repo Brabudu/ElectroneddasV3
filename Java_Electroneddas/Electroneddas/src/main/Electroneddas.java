@@ -75,7 +75,7 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 	 * 
 	 */
 	
-	private static final String version="2.3";
+	private static final String version="2.3.2";
 	
 	private static final long serialVersionUID = 1L;
 	public static SerialUSB serialPort;
@@ -111,7 +111,7 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 	public Electroneddas() {
 		super("Electroneddas "+version);
 
-		setSize(1200, 550);
+		setSize(1200, 600);
 		setResizable(false);
 
 		Container thePane = getContentPane();
@@ -206,7 +206,7 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 
 
 			JButton bl=new JButton(t);
-			bl.setToolTipText("C�rriga de su discu");
+			bl.setToolTipText("Càrriga de su discu");
 			bl.setActionCommand("Load");
 			bl.addActionListener(this);
 
@@ -228,7 +228,7 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 
 
 			JButton sc=new JButton(t);
-			sc.setToolTipText("Sc�mbia su sonu de is cannas");
+			sc.setToolTipText("Scàmbia su sonu de is cannas");
 			sc.setActionCommand("Scambia");
 			sc.addActionListener(this);
 
@@ -255,7 +255,7 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 		cannasPanel.addTab("Cuntzertu S", setup);
 		
 		stracasciu=new JStracPanel(s);
-		cannasPanel.addTab("Strac�sciu", stracasciu);
+		cannasPanel.addTab("Stracàsciu", stracasciu);
 
 		if (prefs.modeAdvanced) cannasPanel.addTab("Mancosa", mancosa);
 		if (prefs.modeAdvanced) cannasPanel.addTab("Mancosedda", mancosedda);
@@ -597,7 +597,7 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 					
 					if (files[i].endsWith(".JSO")) {
 						int n=Integer.parseInt(files[i].substring(0,files[i].indexOf('.')));
-						if ((n>=strac_num*20)&&(n<strac_num*20+16)) {
+						if ((n>=strac_num*20)&&(n<strac_num*20+20)) {
 							int nn=n-strac_num*20;
 							actCuntzertu=nn+1;
 							SerialUSB.printCmd("E r "+n);

@@ -2,7 +2,7 @@ package main;
 
 public class Stracasciu {
 	private String name;
-	public static final byte SIZE=16;
+	public static final byte SIZE=20;
 	//int actual=0;
 	
 	
