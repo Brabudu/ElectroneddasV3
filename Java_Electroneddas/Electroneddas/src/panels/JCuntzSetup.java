@@ -394,7 +394,7 @@ public class JCuntzSetup extends JPanel implements FocusListener, ActionListener
 			}
 			
 			byte n=(byte) (Integer.parseInt(craiT.getText()));
-			if ((n<0)||(n>32)) craiT.setText("0");
+			if ((n<-12)||(n>32)) craiT.setText("0");
 			else c.tumbu.getCrai(0).puntu=n;
 			
 			piano.setCannas(t,ms,md);

@@ -420,6 +420,7 @@ void Canna::playCrai(uint8_t crai, uint8_t hexcrai) {
   
   //freq
   freqDest = Cuntzertu::calcFrequenza(crais[crai].getPuntu())* crais[crai].getFini();  
+
   freqF =freqAct / freqDest;
   
   //vol
@@ -1296,8 +1297,13 @@ void Cuntzertu::syncFreq() {
   freq=calcFrequenza(puntu + 3);
 }
 float Cuntzertu::calcFrequenza(uint8_t nota) {
-   
-   return freq*(pow(2,nota/12))*acordadura[nota%12];  
+   float f=freq;
+   while (nota>=244) { //Tumbu neg
+    nota+=12;
+    f=f/2;
+   }
+
+   return f*(pow(2,nota/12))*acordadura[nota%12];  
 
 }
 float Cuntzertu::getBaseFreq() {
