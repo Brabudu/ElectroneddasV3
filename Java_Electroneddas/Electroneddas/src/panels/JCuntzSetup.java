@@ -83,7 +83,7 @@ public class JCuntzSetup extends JPanel implements FocusListener, ActionListener
 		
 		JVolPanel jvol;
 		
-		JCKnob fini=new JCKnob(0,-31,31,Color.yellow,"Puntu fini","S'acordadura fini de su cuntzertu",10);
+		JCKnob fini=new JCKnob(0,-31,31,Color.yellow,"Fini","S'acordadura fini de su cuntzertu",10);
 		JLabel freqL= new JLabel("220");
 		float freq=220;
 		
@@ -111,7 +111,13 @@ public class JCuntzSetup extends JPanel implements FocusListener, ActionListener
 			this.setLayout(new GridLayout(3,0));
 			JPanel cx=new JPanel();
 			//cx.setBackground(Color.black);
-			cx.setSize(piano.getSize());
+			//cx.setSize(piano.getSize());
+			JPanel jpfini=new JPanel();
+			jpfini.setLayout(new BoxLayout(jpfini,BoxLayout.PAGE_AXIS));			
+			jpfini.add(fini);
+			jpfini.add(freqL);
+			jpfini.setPreferredSize(new Dimension(200,100));
+			cx.add(jpfini);
 			cx.add(piano);
 			this.add(cx);
 			
@@ -293,6 +299,7 @@ public class JCuntzSetup extends JPanel implements FocusListener, ActionListener
 			JPanel jpb=new JPanel(new GridLayout(0,2));
 			
 			JPanel middle=new JPanel();
+			
 			middle.add(jp1);
 			middle.add(panMs);
 			middle.add(panMd);
@@ -307,7 +314,7 @@ public class JCuntzSetup extends JPanel implements FocusListener, ActionListener
 			JPanel infop=new JPanel();	
 			infop.setLayout(new BoxLayout(infop,BoxLayout.Y_AXIS));
 			infop.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-			infop.add(new JLabel("N�mini"));
+			infop.add(new JLabel("Nòmini"));
 			infop.add(nome);
 			infop.add(new JLabel("Descritzioni"));
 			infop.add(descr);
@@ -317,15 +324,12 @@ public class JCuntzSetup extends JPanel implements FocusListener, ActionListener
 			
 			fini.getKnob().addAdjustmentListener(this);
 			
-			JPanel jpfini=new JPanel();
-			jpfini.setLayout(new BoxLayout(jpfini,BoxLayout.PAGE_AXIS));			
-			jpfini.add(fini);
-			jpfini.add(freqL);
+			
 			
 			JPanel volfini=new JPanel();
 			
 			volfini.add(jvol);
-			volfini.add(jpfini);
+			//volfini.add(jpfini);
 			
 			jpb.add(volfini);
 			

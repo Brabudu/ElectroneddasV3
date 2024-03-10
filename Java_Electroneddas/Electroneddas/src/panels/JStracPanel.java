@@ -123,15 +123,15 @@ public class JStracPanel extends JPanel implements ActionListener {
 			e.printStackTrace();
 			bi.setText("Piga de su stracàsciu");
 			bo.setText("Poni in su stracàsciu");
-			bdi.setText("Piga su stracàsciu de su discu");
+			bdi.setText("Piga unu stracàsciu de su discu");
 			bdo.setText("Poni su stracàsciu in su discu");
 		} 
 
-		bi.setToolTipText("Piga su stracàsciu de is electroneddas");
+		bi.setToolTipText("Piga unu stracàsciu de is electroneddas");
 		bi.setActionCommand("Import");
-		bo.setToolTipText("Poni in su stracàsciu de is electroneddas");
+		bo.setToolTipText("Poni in unu stracàsciu de is electroneddas");
 		bo.setActionCommand("Export");
-		bdi.setToolTipText("Piga su stracàsciu de su discu");
+		bdi.setToolTipText("Piga unu stracàsciu de su discu");
 		bdi.setActionCommand("Load");
 		bdo.setToolTipText("Poni su stracàsciu in su discu");
 		bdo.setActionCommand("Save");
@@ -217,16 +217,18 @@ public class JStracPanel extends JPanel implements ActionListener {
 			babbu=b;
 			
 			this.setBorder(BorderFactory.createBevelBorder(0));
-			nome.setPreferredSize(new Dimension(150,16));
+			;
+			nome.setPreferredSize(new Dimension(260,16));
 			nome.setForeground(Color.white);
+			
 			//nome.setEditable(false);
 			//desc.setEditable(false);
 			//desc.setBorder(BorderFactory.createBevelBorder(0));
-			desc.setPreferredSize(new Dimension(330,16));
+			desc.setPreferredSize(new Dimension(360,16));
 			puntu.setBorder(BorderFactory.createBevelBorder(0));
-			puntu.setPreferredSize(new Dimension(40,16));
+			puntu.setPreferredSize(new Dimension(60,16));
 			cuntz.setBorder(BorderFactory.createBevelBorder(0));
-			cuntz.setPreferredSize(new Dimension(30,16));
+			cuntz.setPreferredSize(new Dimension(60,16));
 			jb1a.addActionListener(this);
 			jb1a.setActionCommand("Pia"+num);
 			jb1a.setToolTipText("Piga su cuntzertu");

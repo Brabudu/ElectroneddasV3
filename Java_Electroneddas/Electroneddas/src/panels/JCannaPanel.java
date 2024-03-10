@@ -119,7 +119,7 @@ public class JCannaPanel extends JPanel implements AdjustmentListener, ActionLis
 			sonu.addItem( "C1");
 			sonu.addItem( "C2");
 			
-			sonu.setPreferredSize(new Dimension(40,16));
+			sonu.setPreferredSize(new Dimension(80,16));
 			
 			sonu.setActionCommand("Sonu");
 			sonu.addActionListener(this);

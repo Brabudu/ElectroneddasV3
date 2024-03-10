@@ -111,7 +111,7 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 	public Electroneddas() {
 		super("Electroneddas "+version);
 
-		setSize(1200, 600);
+		setSize(1300, 600);
 		setResizable(false);
 
 		Container thePane = getContentPane();
@@ -210,7 +210,7 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 			bl.setActionCommand("Load");
 			bl.addActionListener(this);
 
-			url = ImageIO.read(Electroneddas.class.getResourceAsStream("/img/pc_in.png"));
+			/*url = ImageIO.read(Electroneddas.class.getResourceAsStream("/img/pc_in.png"));
 
 			t = new ImageIcon(new ImageIcon(url).getImage()
 					.getScaledInstance(64, 40, Image.SCALE_SMOOTH)); // Set the desired size here
@@ -220,7 +220,7 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 			be.setToolTipText("Sincroniza");
 			be.setActionCommand("Sync");
 			be.addActionListener(this);
-			
+			*/
 			url = ImageIO.read(Electroneddas.class.getResourceAsStream("/img/scambiu.png"));
 
 			t = new ImageIcon(new ImageIcon(url).getImage()
@@ -235,7 +235,7 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 			//ctools.add(bi);
 			ctools.add(bs);
 			ctools.add(bl);
-			ctools.add(be);
+			//ctools.add(be);
 			ctools.add(sc);
 					
 			
@@ -248,11 +248,11 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 
 		theSubPane.add(cuntzsub);
 		
-		cannasPanel.addTab("Cuntzertu",  theSubPane);
+		cannasPanel.addTab("Cuntzertu", theSubPane);
 
 		s.setCuntzertu(0, c);
 		
-		cannasPanel.addTab("Cuntzertu S", setup);
+		cannasPanel.addTab("Cuntzertu 2", setup);
 		
 		stracasciu=new JStracPanel(s);
 		cannasPanel.addTab("Stracàsciu", stracasciu);

@@ -1296,7 +1296,9 @@ void Cuntzertu::syncFreq() {
   freq=calcFrequenza(puntu + 3);
 }
 float Cuntzertu::calcFrequenza(uint8_t nota) {
+   
    return freq*(pow(2,nota/12))*acordadura[nota%12];  
+
 }
 float Cuntzertu::getBaseFreq() {
   return freq;
