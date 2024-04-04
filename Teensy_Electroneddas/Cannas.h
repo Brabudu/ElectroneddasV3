@@ -123,6 +123,7 @@ class Canna {
     void setBaseFreq(float freq);
 
     void setMIDI(uint8_t channel, uint8_t velocity, uint8_t transposition, uint8_t mode);
+    void setMIDI(uint8_t transposition);
 
     void update(float modulation,float modvol, float modf, float modfilt);
 
@@ -130,7 +131,6 @@ class Canna {
 
     void mute(bool mute);
    
-
     void playCrai(uint8_t crai);
     void playCrai(uint8_t crai, uint8_t hexcrai);
     
@@ -296,7 +296,7 @@ class Cuntzertu {
     
     void setSul(float sul);
     void mute(bool mute);
-     void muteOut(bool mute);
+    void muteOut(bool mute);
 
     static float getBaseFreq();
     static float calcFrequenza(uint8_t nota);

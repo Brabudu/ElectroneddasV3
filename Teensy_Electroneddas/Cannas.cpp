@@ -22,6 +22,7 @@
 
 extern ElFileSystem efs;
 extern Communicator* com;
+extern  Cuntzertu* c;         //Solo per MIDI :( 
 
 //////
     boolean scala[7]= {true,true,false,true,true,true,false};
@@ -439,8 +440,8 @@ void Canna::playCrai(uint8_t crai, uint8_t hexcrai) {
 
   port_count=0;
 
-  usbMIDI.sendNoteOff(crais[craiAct].getPuntu()+4+transposition, velocity, channel);
-  usbMIDI.sendNoteOn(crais[crai].getPuntu()+4+transposition, velocity, channel);
+  usbMIDI.sendNoteOff(crais[craiAct].getPuntu()+4+transposition+c->getPuntu(), velocity, channel);
+  usbMIDI.sendNoteOn(crais[crai].getPuntu()+4+transposition+c->getPuntu(), velocity, channel);
   craiAct = crai;
 }
 
@@ -539,7 +540,9 @@ void Canna::setMIDI(uint8_t channel, uint8_t velocity, uint8_t transposition, ui
   this->transposition=transposition;
   this->mode=mode;
 }
-
+void Canna::setMIDI(uint8_t transposition) {
+  this->transposition=transposition;
+}
 
 /////////
 
@@ -994,6 +997,11 @@ void Cuntzertu::setPuntu(uint8_t puntu) {
   tumbu.playCrai(tumbu.getCraiAct());
   mancs.playCrai(mancs.getCraiAct());
   mancd.playCrai(mancd.getCraiAct());
+
+  tumbu.setMIDI(22+puntu);
+  mancs.setMIDI(22+puntu);
+  mancd.setMIDI(22+puntu);
+
 }
 
 void Cuntzertu::setCuntz(uint8_t cuntz) {

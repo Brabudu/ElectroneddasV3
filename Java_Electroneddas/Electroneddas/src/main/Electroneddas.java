@@ -75,7 +75,7 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 	 * 
 	 */
 	
-	private static final String version="2.3.2";
+	private static final String version="2.3.3";
 	
 	private static final long serialVersionUID = 1L;
 	public static SerialUSB serialPort;
@@ -459,7 +459,7 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 					c=(Cuntzertu)loadData(filename,c);
 					sync();
 
-					String dir=filename.substring(0, filename.lastIndexOf('\\'));
+					String dir=fc.getSelectedFile().getParent();
 					prefs.cuntzDir=dir;			
 				}	
 			}
@@ -478,9 +478,10 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 
 			if (rv == JFileChooser.APPROVE_OPTION) {
 				String filename=fc.getSelectedFile().getAbsolutePath();
+				if (!filename.endsWith(".jso")) filename+=".jso";
 				saveData(filename,c);
 
-				String dir=filename.substring(0, filename.lastIndexOf('\\'));
+				String dir=fc.getSelectedFile().getParent();
 				prefs.cuntzDir=dir;	
 			}	
 		}
@@ -649,7 +650,7 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 		Electroneddas.saveData("preferences.ini", prefs);
 	}
 	public static void loadPrefs() {
-		prefs=(Preferences) Electroneddas.loadData("preferences.ini", prefs);
+		//prefs=(Preferences) Electroneddas.loadData("preferences.ini", prefs);
 
 	}
 

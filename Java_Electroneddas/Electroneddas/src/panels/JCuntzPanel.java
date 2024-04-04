@@ -52,7 +52,7 @@ public class JCuntzPanel extends JPanel implements ActionListener, SerialListene
 	
 		Spia clip=new Spia(Color.red,Color.green,12);
 		 
-		JCKnob vol=new JCKnob(50,0,100,Color.YELLOW,"Vol","Vol�mini",6);
+		JCKnob vol=new JCKnob(50,0,100,Color.YELLOW,"Vol","Volumi",6);
 		
 		//JBQPanel out;
 		
@@ -84,45 +84,45 @@ public class JCuntzPanel extends JPanel implements ActionListener, SerialListene
 			
 			nome.setEditable(false);
 			nome.setFont(new Font("Arial", Font.PLAIN, 24));
-			nome.setPreferredSize(new Dimension(400,30));
+			nome.setPreferredSize(new Dimension(500,30));
 			nome_crai.add(nome);
 			nome_crai.add(clip.getPanel("CLIP"));
 			centro.add(nome_crai);
 			
-			//JPanel jpfini=new JPanel();
-			//jpfini.setLayout(new BoxLayout(jpfini,BoxLayout.PAGE_AXIS));
-			//jpfini.setBorder(BorderFactory.createTitledBorder("Puntu fini"));
-			//jpfini.add(fini);
-			//jpfini.add(freqL);
-			//jpfini.setPreferredSize(new Dimension(200,200));
-			//centro.add(jpfini);
-			/*
-			out=new JBQPanel("Filtru 'e bessida",0,-100,200,c.getBQ());
-			out.freqs.setMinimum(350);
-			out.freqs.setMaximum(425);
-			out.setProprietario(this);
-			centro.add(out);
-			*/
-			filt=new JComboBox(flabs);
-			filt.addActionListener(this);
-			centro.add(filt);
-			
-			sulidu=new JSulPanel();
-			centro.add(sulidu);
-						
-			
-								
+			JPanel medio=new JPanel();//new GridLayout(1,4,20,20));
+			JPanel vol_pan=new JPanel();
+			vol_pan.setBorder(BorderFactory.createTitledBorder("Volumi"));
 			vol.getKnob().addAdjustmentListener(this);
-			vol.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-			
-			add(vol);
+			//vol.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+			vol_pan.add(vol);
+			vol_pan.setPreferredSize(new Dimension(100,120));
+			medio.add(vol_pan);
 			
 			jrev=new JRevPanel(c);
-			centro.add(jrev);
+			jrev.setPreferredSize(new Dimension(300,120));
+			medio.add(jrev);
+			centro.add(medio);
+				
+			JPanel filt_pan=new JPanel();
+			
+			filt_pan.setBorder(BorderFactory.createTitledBorder("Filtru de bessida"));
+			filt=new JComboBox(flabs);
+			filt.addActionListener(this);
+			filt_pan.setPreferredSize(new Dimension(200,120));
+			filt_pan.add(filt);
+			medio.add(filt_pan);
+			
+						
+			sulidu=new JSulPanel();
+			sulidu.setPreferredSize(new Dimension(300,120));
+			medio.add(sulidu);
+						
+			
+			
 			
 			add(centro);
 						
-		    this.setMinimumSize(new Dimension(300,360));
+			//this.setMinimumSize(new Dimension(300,360));
 			
 		}
 

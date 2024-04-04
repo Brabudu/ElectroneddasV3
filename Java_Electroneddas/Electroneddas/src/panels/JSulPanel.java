@@ -24,7 +24,7 @@ public class JSulPanel extends JPanel implements ActionListener {
 		this.setLayout(new GridLayout(4,2));
 		this.setBorder(BorderFactory.createTitledBorder("Sulidu"));
 		
-		add(new JLabel("Sensibilidadi"));
+		add(new JLabel("Sensib."));
 		sens.addItem("A");
 		sens.addItem("M");
 		sens.addItem("B");
@@ -44,7 +44,7 @@ public class JSulPanel extends JPanel implements ActionListener {
 		gate.addItem("Crais");
 		gate.addItem("Sulidu");
 		gate.addItem("Allui e Studa");
-		gate.addItem("Crais & sulidu");
+		gate.addItem("Crais & sul");
 		gate.addActionListener(this);
 		add(gate);
 	}

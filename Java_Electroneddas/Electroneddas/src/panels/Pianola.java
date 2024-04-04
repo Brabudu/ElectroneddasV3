@@ -2,6 +2,7 @@ package panels;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 
 import javax.swing.JPanel;
@@ -47,6 +48,7 @@ public class Pianola extends JPanel{
 	}
 		
 	public void paint(Graphics g)  { 
+		g.setFont(new Font("Arial", Font.BOLD, 10)); 
 		g.setColor(Color.DARK_GRAY);
 		g.fillRect(0, 0, (sp-ss)*W+2*M,H+2*M);
 		

@@ -26,6 +26,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.google.gson.Gson;
@@ -232,21 +233,43 @@ public class JStracPanel extends JPanel implements ActionListener {
 			jb1a.addActionListener(this);
 			jb1a.setActionCommand("Pia"+num);
 			jb1a.setToolTipText("Piga su cuntzertu");
+			jb1a.addMouseListener(new java.awt.event.MouseAdapter() {
+			    public void mouseEntered(java.awt.event.MouseEvent evt) {
+			    	jb1a.setBackground(Color.white);
+			    }
+
+			    public void mouseExited(java.awt.event.MouseEvent evt) {
+			    	jb1a.setBackground(UIManager.getColor("control"));
+			    }
+			});
 			
-		/*	jb1t.addActionListener(this);
-			jb1t.setActionCommand("Pit"+num);
-			jb1ms.addActionListener(this);
-			jb1ms.setActionCommand("Pis"+num);
-			jb1md.addActionListener(this);
-			jb1md.setActionCommand("Pid"+num);*/
+		
 			jb2.addActionListener(this);
 			
 			jb2.setActionCommand("Po "+num);
 			jb2.setToolTipText("Poni su cuntzertu");
+			jb2.addMouseListener(new java.awt.event.MouseAdapter() {
+			    public void mouseEntered(java.awt.event.MouseEvent evt) {
+			    	jb2.setBackground(Color.white);
+			    }
+
+			    public void mouseExited(java.awt.event.MouseEvent evt) {
+			    	jb2.setBackground(UIManager.getColor("control"));
+			    }
+			});
 			
 			jb3.addActionListener(this);
 			jb3.setActionCommand("Del"+num);
 			jb3.setToolTipText("Boga su cuntzertu");
+			jb3.addMouseListener(new java.awt.event.MouseAdapter() {
+			    public void mouseEntered(java.awt.event.MouseEvent evt) {
+			    	jb3.setBackground(Color.white);
+			    }
+
+			    public void mouseExited(java.awt.event.MouseEvent evt) {
+			    	jb3.setBackground(UIManager.getColor("control"));
+			    }
+			});
 			
 			
 			
@@ -473,7 +496,7 @@ public class JStracPanel extends JPanel implements ActionListener {
 					String filename=sfc.getSelectedFile().getAbsolutePath();
 					Electroneddas.s=(Stracasciu)Electroneddas.loadData(filename,Electroneddas.s);
 					refresh(Electroneddas.s);
-					String dir=getDir(filename);
+					String dir=sfc.getSelectedFile().getParent();
 					Electroneddas.prefs.stracDir=dir;	
 				}	
 			}
@@ -493,7 +516,7 @@ public class JStracPanel extends JPanel implements ActionListener {
 				if (!filename.endsWith(".str")) filename+=".str";
 				Electroneddas.saveData(filename,Electroneddas.s);
 				
-				String dir=getDir(filename);
+				String dir=sfc.getSelectedFile().getParent();
 				Electroneddas.prefs.stracDir=dir;	
 			}	
 		}
@@ -502,9 +525,5 @@ public class JStracPanel extends JPanel implements ActionListener {
 
 		}
 	}
-	String getDir(String filename) {
-		int pos=filename.lastIndexOf(0x2F);	//slash
-		if (pos==-1) pos=filename.lastIndexOf(0x5C);	//backslash
-		return filename.substring(0, pos); 
-	}
+	
 }

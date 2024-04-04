@@ -1,0 +1,14 @@
+/**
+ * 
+ */
+/**
+ * 
+ */
+module Electroneddas {
+	requires java.base;
+	requires java.desktop;
+	requires com.google.gson;
+	requires com.formdev.flatlaf;
+	requires com.fazecast.jSerialComm;
+	exports main;
+}
