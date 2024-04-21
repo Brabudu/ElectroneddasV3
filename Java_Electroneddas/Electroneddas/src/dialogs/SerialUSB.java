@@ -61,6 +61,8 @@ public class SerialUSB extends JDialog implements ActionListener {
 	JTextField	jtf=new JTextField(20);
 	
 	final static JDialog loading = new JDialog();
+	
+	static JTextArea jtad=new JTextArea();
 
 	public SerialUSB() {
 		
@@ -101,7 +103,8 @@ public class SerialUSB extends JDialog implements ActionListener {
 		this.setVisible(false);	
 				
 	      JPanel p1 = new JPanel(new BorderLayout());
-	      p1.add(new JLabel("Abetendi is Electroneddas ..."), BorderLayout.CENTER);
+	      p1.add(new JLabel("Abetendi is Electroneddas ..."), BorderLayout.NORTH);
+	      p1.add(jtad, BorderLayout.CENTER);
 	      //loading.setUndecorated(true);
 	      loading.getContentPane().add(p1);
 	      loading.setSize(200, 100);
@@ -167,6 +170,7 @@ public class SerialUSB extends JDialog implements ActionListener {
 		TimerTask task = new TimerTask() {
 	          public void run() {
 	             System.out.println("Connecting ...");
+	             jtad.setText("");
 	             connect();
 	          }
 	      };
@@ -185,6 +189,7 @@ public class SerialUSB extends JDialog implements ActionListener {
 		for (int i=0;i<comPorts.length;i++)
 		{
 			if (comPorts[i].getDescriptivePortName().contains("Teensy")) num=i;
+			else jtad.append("Agatada : "+comPorts[i].getDescriptivePortName());
 		}
 
 		if (num==-1) {

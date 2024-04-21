@@ -440,8 +440,8 @@ void Canna::playCrai(uint8_t crai, uint8_t hexcrai) {
 
   port_count=0;
 
-  usbMIDI.sendNoteOff(crais[craiAct].getPuntu()+4+transposition+c->getPuntu(), velocity, channel);
-  usbMIDI.sendNoteOn(crais[crai].getPuntu()+4+transposition+c->getPuntu(), velocity, channel);
+  usbMIDI.sendNoteOff(crais[craiAct].getPuntu()+transposition, velocity, channel);
+  usbMIDI.sendNoteOn(crais[crai].getPuntu()+transposition, velocity, channel);
   craiAct = crai;
 }
 
@@ -998,9 +998,9 @@ void Cuntzertu::setPuntu(uint8_t puntu) {
   mancs.playCrai(mancs.getCraiAct());
   mancd.playCrai(mancd.getCraiAct());
 
-  tumbu.setMIDI(22+puntu);
-  mancs.setMIDI(22+puntu);
-  mancd.setMIDI(22+puntu);
+  tumbu.setMIDI(24+puntu);
+  mancs.setMIDI(24+puntu);
+  mancd.setMIDI(24+puntu);
 
 }
 

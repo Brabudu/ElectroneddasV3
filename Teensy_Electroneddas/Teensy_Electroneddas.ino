@@ -582,9 +582,9 @@ void initCuntz() {
   
   //c->setVerb(.1,.8,.1);
 
-  c->tumbu.setMIDI(1,127,22+c->getPuntu(),0);
-  c->mancs.setMIDI(2,127,22+c->getPuntu(),0);
-  c->mancd.setMIDI(3,127,22+c->getPuntu(),0);
+  c->tumbu.setMIDI(1,127,24+c->getPuntu(),0);
+  c->mancs.setMIDI(2,127,24+c->getPuntu(),0);
+  c->mancd.setMIDI(3,127,24+c->getPuntu(),0);
 
   c->tumbu.playCrai(0);
   c->mancs.playCrai(0);
