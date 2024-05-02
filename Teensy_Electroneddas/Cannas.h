@@ -46,10 +46,15 @@ class Biquad
     void setQ(float q);
     float getQ();
 
+    void setMulteplicity(uint8_t m);
+    uint8_t getMulteplicity();
+
     void setType(char type);
     char getType();
 
+    void setBQ(AudioFilterBiquad* bq, uint8_t stage, uint8_t multeplicity);
     void setBQ(AudioFilterBiquad* bq, uint8_t stage);
+    
     AudioFilterBiquad* GetBQ();
 
     void sync();
@@ -62,7 +67,9 @@ class Biquad
     char type;
     AudioFilterBiquad* bq;
     uint8_t bqStage;
+    uint8_t multeplicity;
     const double bqAllPass[5] = {1, 0, 0, 0, 0};
+    double bqAllPass2[5] = {.7, 0, 0, 0, 0};
 };
 
 class Crai {
@@ -139,7 +146,8 @@ class Canna {
 
     void setCrais(byte* crais);
     
-    void setBiquads(AudioFilterBiquad* bqStat, AudioFilterBiquad* bqDin);
+    void setBiquads(AudioFilterBiquad* bqStat, AudioFilterBiquad* bqDinCrais,AudioFilterBiquad* bqDinFin);
+    void setBiquads(AudioFilterBiquad* bqStat, AudioFilterBiquad* bqStat2);
 
     Biquad* getBiquad();
 

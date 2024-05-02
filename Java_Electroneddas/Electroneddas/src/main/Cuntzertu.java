@@ -34,12 +34,15 @@ public class Cuntzertu {
 		public int  freq=1000;
 		public float q=1;
 		public char type='N';
+		
+		public int mult=0;
 	
 		public Biquad() {};
 		public Biquad(int f, float q, char t) {
 			freq=f;
 			this.q=q;
 			type=t;
+			mult=0;
 		}
 	}
 	

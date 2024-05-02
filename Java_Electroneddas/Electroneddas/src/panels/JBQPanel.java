@@ -31,6 +31,7 @@ public class JBQPanel extends JPanel implements ChangeListener, ActionListener, 
 	JSlider freqs=new JSlider(200,410,200);
 	JComboBox<String> tipo=new JComboBox<String>();
 	JLabel value=new JLabel("0",JLabel.HORIZONTAL);
+	JComboBox<String> mult=new JComboBox<String>();
 		
 	Biquad bq;
 	int id;
@@ -86,13 +87,29 @@ public class JBQPanel extends JPanel implements ChangeListener, ActionListener, 
 		tipo.setActionCommand("Tipu");
 		tipo.addActionListener(this);
 		
+		mult.addItem("0");
+		mult.addItem("1");
+		mult.addItem("2");
+		mult.addItem("3");
+		
+		mult.setSelectedItem("0");
+		bq.mult=0;
+		mult.setActionCommand("Molt");
+		mult.addActionListener(this);
+		
 		
 		JPanel slid=new JPanel(new GridLayout(0,1));
 		
 		slid.add(value);
 		slid.add(freqs);
 		
-		slid.add(tipo);
+		JPanel bott=new JPanel(new GridLayout(1,0));
+		
+		bott.add(tipo);
+		bott.add(mult);
+		
+		slid.add(bott);
+		
 			
 		add (slid,BorderLayout.CENTER);
 		add (qk,BorderLayout.EAST);
@@ -107,7 +124,7 @@ public class JBQPanel extends JPanel implements ChangeListener, ActionListener, 
 	}
 	
 	public String getCmdString() {
-		return (" "+bq.freq+" "+bq.q+" "+(String)tipo.getSelectedItem());
+		return (" "+bq.freq+" "+bq.q+" "+(String)tipo.getSelectedItem()+" "+mult.getSelectedItem());
 			
 	}
 	@Override
@@ -116,6 +133,7 @@ public class JBQPanel extends JPanel implements ChangeListener, ActionListener, 
 		this.tipo.setEnabled(en);
 		this.qk.setEnabled(en);
 		this.freqs.setEnabled(en);
+		this.mult.setEnabled(en);
 	}
 	
 	@Override
@@ -141,12 +159,16 @@ public class JBQPanel extends JPanel implements ChangeListener, ActionListener, 
 			}
 			if (!Electroneddas.isSyncing()) proprietario.actionPerformed(new ActionEvent(this,id,getCmdString()));
 			if (predef!=null) predef.setSelectedIndex(0);
+		} else if (e.getActionCommand()=="Molt"){
+			bq.mult=mult.getSelectedIndex();
+			this.sync(bq);
 		} else {
 			int s=((JComboBox)e.getSource()).getSelectedIndex();
 			if (s!=0) {
 				bq.freq=bqs[s].freq;
 				bq.q=bqs[s].q;
 				bq.type=bqs[s].type;
+				bq.mult=bqs[s].mult;
 				this.sync(bq);
 			}
 		
@@ -173,7 +195,7 @@ public class JBQPanel extends JPanel implements ChangeListener, ActionListener, 
 				
 		freqs.setValue((int)(Math.log10(bq.freq)*100));
 		tipo.setSelectedItem(""+bq.type);
-		
+		mult.setSelectedItem(""+bq.mult);
 		
 		proprietario.actionPerformed(new ActionEvent(this,id,getCmdString()));
 		

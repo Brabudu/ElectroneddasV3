@@ -48,30 +48,34 @@ uint8_t sulProgSData[6][3]={{15,20,25},{10,15,20},{20,25,30},{25,32,40},{30,40,5
 
 /////// BIQUAD
 
-Biquad::Biquad(): freq(1000), q(1), type('N'), bqStage(0) {}
+Biquad::Biquad(): freq(1000), q(1), type('N'), bqStage(0), multeplicity(0) {}
 
 void Biquad::deserialize(JsonObject jo) {
   this->freq = jo["freq"];
   this->q = jo["q"];
   const char* t = jo["type"];
   if (t) this->type = *(t);
+  this->multeplicity = jo["mult"];
 }
 
 void Biquad::serialize(JsonObject jo) {
   jo["freq"] = freq;
   jo["q"] = q;
   jo["type"] = String(type);
+  jo["mult"] = multeplicity;
 }
 
-void Biquad::parse(String string) {   // (int)freq (float)q (char) type
-  String sParams[3];
-  StringSplit(string, ' ', sParams, 3);
+void Biquad::parse(String string) {   // (int)freq (float)q (char) type [int] molt
+  String sParams[4];
+  StringSplit(string, ' ', sParams, 4);
 
   this->freq = sParams[0].toInt();
   this->q = sParams[1].toFloat();
   this->type = sParams[2][0];
-
+  if (sParams[3]!="") this->multeplicity = sParams[3].toInt();
+  else this->multeplicity=0;
   sync();
+  
 }
 
 void Biquad::setFreq(uint16_t freq) {
@@ -88,6 +92,13 @@ float Biquad::getQ() {
   return q;
 }
 
+void Biquad::setMulteplicity(uint8_t m) {
+  this->multeplicity = m;
+}
+uint8_t Biquad::getMulteplicity() {
+  return multeplicity;
+}
+
 void Biquad::setType(char type) {
   this->type = type;
 }
@@ -95,10 +106,16 @@ char Biquad::getType() {
   return type;
 }
 
-void Biquad::setBQ(AudioFilterBiquad* bq, uint8_t stage) {
+void Biquad::setBQ(AudioFilterBiquad* bq, uint8_t stage,uint8_t mult) {
   this->bq = bq;
   this->bqStage = stage;
+  this->multeplicity=mult;
 }
+
+void Biquad::setBQ(AudioFilterBiquad* bq, uint8_t stage) {
+  setBQ(bq,stage,0);
+}
+
 AudioFilterBiquad* Biquad::GetBQ() {
   return bq;
 }
@@ -107,25 +124,40 @@ void Biquad::sync() {
   sync(this->freq);
 }
 void Biquad::sync(uint16_t freq) {
+/*
+  for (int i=0;i<4;i++)
+  {
+    bq->setCoefficients(i, bqNoPass);
+   
+  }
+*/
+  for (int i=0;i<multeplicity+1;i++)
   switch (type) {
     case 'H':
-      bq->setHighpass(bqStage, freq, q);
+      bq->setHighpass(i, freq, q);
       break;
     case 'B':
-      bq->setBandpass(bqStage, freq, q);
+      bq->setBandpass(i, freq, q);
       break;
     case 'L':
-      bq->setLowpass(bqStage, freq, q);
+      bq->setLowpass(i, freq, q);
       break;
     case 'h':
-      bq->setHighShelf(bqStage, freq,q, .7);
+      bq->setHighShelf(i, freq,q, .7);
       break;
     case 'l':
-      bq->setLowShelf(bqStage, freq,q, .7);
+      bq->setLowShelf(i, freq,q, .7);
       break;
     default:
-      bq->setCoefficients(bqStage, bqAllPass);
+      bq->setCoefficients(i, bqAllPass);
   }
+  
+  for (int i=multeplicity+1;i<4;i++)
+  {
+    bq->setLowpass(i, 20000, .7071);
+   
+  }
+  
 }
 
 /////// CRAI
@@ -393,12 +425,15 @@ void Canna::setMixer(AudioMixer4* mixer) {
   this->mixer = mixer;
 }
 
-void Canna::setBiquads(AudioFilterBiquad* stat, AudioFilterBiquad* din) {
-  bqStat.setBQ(stat, 0);
-  bqDinF.setBQ(din, 1);
+void Canna::setBiquads(AudioFilterBiquad* stat, AudioFilterBiquad* dinCrais) {
+  setBiquads(stat,dinCrais,dinCrais); //Tumbu
+}
 
+void Canna::setBiquads(AudioFilterBiquad* stat, AudioFilterBiquad* dinCrais, AudioFilterBiquad* dinFin) {
+  bqStat.setBQ(stat, 0);
+  bqDinF.setBQ(dinFin,0);
   for (int i = 0; i < ncrais; i++) {
-    crais[i].getBQ()->setBQ(din, 0);
+    crais[i].getBQ()->setBQ(dinCrais, 0);
   }
 }
 

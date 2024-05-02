@@ -113,7 +113,7 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 
 		setSize(1300, 600);
 		setResizable(false);
-
+		
 		Container thePane = getContentPane();
 		thePane.setLayout(new BorderLayout());
 

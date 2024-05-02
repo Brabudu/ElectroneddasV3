@@ -6,58 +6,56 @@
   #include "Cannas.h"
 #endif
 
-// GUItool: begin automatically generated code
 
-AudioAnalyzePeak         peak;
+
+// GUItool: begin automatically generated code
 
 AudioSynthWaveform2       tSynth;
 AudioSynthWaveform2       msSynth;
 AudioSynthWaveform2       mdSynth;
 
-AudioFilterBiquad        bqTumbuStat1;
-AudioFilterBiquad        bqTumbuStat2;
+AudioFilterBiquad        bqTumbuStat1;   //xy=608.11669921875,385.1166687011719
+AudioFilterBiquad        bqMancdStat;    //xy=608.11669921875,482.1166687011719
+AudioFilterBiquad        bqMancdDinCrais;     //xy=610.1166076660156,444.1166687011719
+AudioFilterBiquad        bqMancsDinCrais;     //xy=611.1166381835938,235.11666870117188
 
-AudioFilterBiquad        bqMancsStat;
-AudioFilterBiquad        bqMancsDin;
+AudioFilterBiquad        bqMancdDinFin;     
+AudioFilterBiquad        bqMancsDinFin;     
 
-AudioFilterBiquad        bqMancdStat;
-AudioFilterBiquad        bqMancdDin;
-//AudioFilterLadder        ldMancd; 
-
-AudioMixer4              tMixer;
-AudioMixer4              msMixer;
-AudioMixer4              mdMixer;
-
-AudioAmplifier           ampL;
-AudioAmplifier           ampR;
-
-AudioFilterBiquad        bqOutR;
-AudioFilterBiquad        bqOutL;
-
-AudioMixer4              rMixer;         //xy=775.2000122070312,306.20001220703125
-AudioMixer4              lMixer;         //xy=778.2000122070312,169.1999969482422
-
-AudioOutputUSB           usb1;           //xy=944.2000122070312,328.20001220703125    //
-AudioOutputPT8211        pt8211_1; 
-
-AudioEffectFreeverb      freeverbR;      //xy=1819.1167602539062,472.1166687011719
-AudioEffectFreeverb      freeverbL;      //xy=1820.1167602539062,419.1166687011719
+AudioFilterBiquad        bqMancsStat;    //xy=611.11669921875,280.1166687011719
+AudioFilterBiquad        bqTumbuStat2;   //xy=612.11669921875,345.1166687011719
+AudioMixer4              msMixer;        //xy=801.1165771484375,273.1166687011719
+AudioMixer4              mdMixer;        //xy=801.1165771484375,469.1166687011719
+AudioMixer4              tMixer;         //xy=805.1165771484375,370.1166687011719
+AudioEffectFreeverb      freeverbR;      //xy=995.1168212890625,502.1166687011719
+AudioMixer4              rMixer;         //xy=996.1166687011719,431.1166687011719
+AudioEffectFreeverb      freeverbL;      //xy=998.1168212890625,358.1166687011719
+AudioMixer4              lMixer;         //xy=999.1166687011719,294.1166687011719
+AudioFilterBiquad        bqOutL;         //xy=1162.1165771484375,328.1166687011719
+AudioAmplifier           ampR;           //xy=1164.11669921875,459.1166687011719
+AudioAmplifier           ampL;           //xy=1166.11669921875,267.1166687011719
+AudioFilterBiquad        bqOutR;         //xy=1166.1165771484375,397.1166687011719
+AudioOutputUSB           usb1;           //xy=1334.11669921875,357.1166687011719
+AudioAnalyzePeak         peak;           //xy=1372.11669921875,268.1166687011719
+AudioOutputPT8211        pt8211_1;       //xy=1481.1165771484375,353.1166687011719
 
 AudioConnection          md1_0(mdSynth, bqMancdStat);
-AudioConnection          md2_0(mdSynth, bqMancdDin);
-//AudioConnection          md3_0(mdSynth, ldMancd);
+AudioConnection          md2_0(mdSynth, bqMancdDinCrais);
+AudioConnection          md3_0(bqMancdDinCrais, bqMancdDinFin);
 
 AudioConnection          md1_1(bqMancdStat, 0, mdMixer, BQ1);
-AudioConnection          md2_1(bqMancdDin, 0, mdMixer, BQ0);
+AudioConnection          md2_1(bqMancdDinFin, 0, mdMixer, BQ0);
 //AudioConnection          md3_1(ldMancd, 0, mdMixer, 2);
 
 AudioConnection          md1_2(mdMixer, 0, lMixer, MD);
 AudioConnection          md2_2(mdMixer, 0, rMixer, MD);
 
 AudioConnection          ms1_0(msSynth, bqMancsStat);
-AudioConnection          ms2_0(msSynth, bqMancsDin);
+AudioConnection          ms2_0(msSynth, bqMancsDinCrais);
+AudioConnection          ms3_0(bqMancsDinCrais, bqMancsDinFin);
+
 AudioConnection          ms1_1(bqMancsStat, 0, msMixer, BQ1);
-AudioConnection          ms2_1(bqMancsDin, 0, msMixer, BQ0);
+AudioConnection          ms2_1(bqMancsDinFin, 0, msMixer, BQ0);
 AudioConnection          ms1_2(msMixer, 0, lMixer, MS);
 AudioConnection          ms2_2(msMixer, 0, rMixer, MS);
 

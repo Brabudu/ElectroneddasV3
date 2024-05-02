@@ -610,11 +610,11 @@ void setCannas() {
 
   c->mancs.setMixer(&msMixer);
   c->mancs.setSynth(&msSynth);
-  c->mancs.setBiquads(&bqMancsStat, &bqMancsDin);
+  c->mancs.setBiquads(&bqMancsStat, &bqMancsDinCrais,&bqMancsDinFin);
 
   c->mancd.setMixer(&mdMixer);
   c->mancd.setSynth(&mdSynth);
-  c->mancd.setBiquads(&bqMancdStat, &bqMancdDin);
+  c->mancd.setBiquads(&bqMancdStat, &bqMancdDinCrais,&bqMancdDinFin);
 }
 
 void playNoda() {
