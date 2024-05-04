@@ -4,7 +4,7 @@ public class Stracasciu {
 	private String name;
 	public static final byte SIZE=20;
 	//int actual=0;
-	
+	private boolean modified;
 	
 	
 	private Cuntzertu[] stracasciu=new Cuntzertu[SIZE];
@@ -15,11 +15,12 @@ public class Stracasciu {
 			stracasciu[i]=new Cuntzertu();
 			
 		}
+		modified=false;
 	}
 	
 	public void poniCuntzertu(int n,Cuntzertu c) {
 		stracasciu[n]=Cuntzertu.clone(c);
-		
+		modified=true;
 		
 	}
 	public Cuntzertu pigaCuntzertu(int n) {
@@ -41,6 +42,11 @@ public class Stracasciu {
 	
 	public String getName() {
 		return name;
+	}
+	
+	public boolean isModified() {
+		return modified;
+		
 	}
 	
 }

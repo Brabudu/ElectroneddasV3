@@ -31,6 +31,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.google.gson.Gson;
 
+import dialogs.SerialUSB;
 import main.Cuntzertu;
 import main.Electroneddas;
 import main.Stracasciu;
@@ -41,18 +42,18 @@ public class JStracPanel extends JPanel implements ActionListener {
 	//Stracasciu strac;
 	JStracRow[] jbCuntz=new JStracRow[Stracasciu.SIZE];//JButton[Stracasciu.SIZE];
 	JLabel title;
-	
+
 	JRadioButton totu=new JRadioButton("Cuntzertu",true);
 	JRadioButton mancs=new JRadioButton("Mancosa",false);
 	JRadioButton mancd=new JRadioButton("Mancosedda",false);
 	JRadioButton tumbu=new JRadioButton("Tumbu",false);
-	
+
 	//JCheckBox sul=new JCheckBox("Sulidu",false);
 	//JCheckBox fbess=new JCheckBox("Filtru bess",false);
 	JCheckBox struct=new JCheckBox("Strutura",true);
 	JCheckBox puntuc=new JCheckBox("Puntu",true);
 	JCheckBox accc=new JCheckBox("Acordadura crais",true);
-	
+
 	Color[] accColor= {
 			new Color(0x550000), new Color(0x800000), new Color(0xd40000),
 			new Color(0xff6600), new Color(0xffcc00), new Color(0x88aa00),
@@ -61,8 +62,8 @@ public class JStracPanel extends JPanel implements ActionListener {
 			new Color(0x5555ff), new Color(0x7f2aff), new Color(0xb380ff),
 			new Color(0xe580ff), new Color(0xddafe9), new Color(0xff80b2),
 			new Color(0xffaacc)
-			};
-	
+	};
+
 	String[] cuntzLabel= {"Fio","PO","Med","MeP","Fiu","Spi","SpP","MeF","Sam","Mor","PaM","Fdd","1","2","3","***"};
 	Color[] cuntzColor= {
 			new Color(0xd40000), new Color(0xff6600), new Color(0x88aa00),
@@ -70,29 +71,29 @@ public class JStracPanel extends JPanel implements ActionListener {
 			new Color(0x2ad4ff),new Color(0x5fd3bc),new Color(0xc8beb7),
 			new Color(0xe580ff),new Color(0xffaacc),new Color(0xafdde9),	
 			new Color(0x0), new Color(0x0), new Color(0x0),
-			
+
 			new Color(0x6f7c91)
-			};
-	
+	};
+
 	static JFileChooser sfc;
-	
-		public JStracPanel(Stracasciu s) {
+
+	public JStracPanel(Stracasciu s) {
 		//strac=s;
 		this.setLayout(new BorderLayout());
 		JPanel cuntzs=new JPanel(new GridLayout(10,2));
 		cuntzs.setBackground(Color.yellow);
 		title=new JLabel(s.getName());
 		add(title,BorderLayout.NORTH);
-		
+
 		for (int i=0;i<Stracasciu.SIZE;i++) {
 			jbCuntz[i]=new JStracRow(i,this);
 			cuntzs.add(jbCuntz[i]);
 		}
 		add(cuntzs,BorderLayout.CENTER);
-		
+
 		JPanel pan=new JPanel();
 		pan.setLayout(new BoxLayout(pan,BoxLayout.PAGE_AXIS));
-		
+
 		JPanel puls=new JPanel(new GridLayout(0,1));
 		//puls.setLayout(new BoxLayout(puls,BoxLayout.PAGE_AXIS));
 
@@ -115,8 +116,8 @@ public class JStracPanel extends JPanel implements ActionListener {
 
 			url = ImageIO.read(JStracPanel.class.getResourceAsStream("/img/disk_in.png"));
 			bdo.setIcon(new ImageIcon(url));
-			
-			
+
+
 
 
 		} catch (IOException e) {
@@ -149,46 +150,46 @@ public class JStracPanel extends JPanel implements ActionListener {
 		puls.add(bdi);
 		puls.add(bdo);
 		puls.add(bnew);
-		
+
 		JPanel opt=new JPanel(new GridLayout(8,1));
 		opt.setBorder(BorderFactory.createTitledBorder("Piga"));	
-			
+
 		opt.add(totu);
 		opt.add(tumbu);
 		opt.add(mancs);
 		opt.add(mancd);
-		
+
 		ButtonGroup bt=new ButtonGroup();
 		bt.add(totu);
 		bt.add(tumbu);
 		bt.add(mancs);
 		bt.add(mancd);
-		
-		
+
+
 		opt.add(new JLabel("Sovrascrii"));	
 		//opt.add(sul);
 		//opt.add(fbess);
 		opt.add(struct);
 		opt.add(puntuc);
 		opt.add(accc);
-		
-		
+
+
 		pan.add(opt);
-		
+
 		pan.add(puls);
-		
+
 		if (!Electroneddas.prefs.modeAdvanced) {
 			Electroneddas.enableComponent(opt,false);
-			
+
 		}
-		
+
 		add(pan,BorderLayout.EAST);
 
 		sfc=new JFileChooser();
 		sfc.setAcceptAllFileFilterUsed(false);	    
 		sfc.addChoosableFileFilter(new FileNameExtensionFilter("Stracasciu", "str"));
 		sfc.setCurrentDirectory(new File(Electroneddas.prefs.stracDir));
-		
+
 		refresh(s);
 	}
 	public void refresh(Stracasciu s) {
@@ -208,20 +209,20 @@ public class JStracPanel extends JPanel implements ActionListener {
 		JLabel puntu=new JLabel("",SwingConstants.CENTER);
 		JLabel cuntz=new JLabel("",SwingConstants.CENTER);
 		JButton jb1a=new JButton();
-		
-		
+
+
 		JButton jb2=new JButton();
 		JButton jb3=new JButton();
 		JStracPanel babbu;
 
 		public JStracRow(int num,JStracPanel b) {
 			babbu=b;
-			
+
 			this.setBorder(BorderFactory.createBevelBorder(0));
 			;
 			nome.setPreferredSize(new Dimension(260,16));
 			nome.setForeground(Color.white);
-			
+
 			//nome.setEditable(false);
 			//desc.setEditable(false);
 			//desc.setBorder(BorderFactory.createBevelBorder(0));
@@ -234,62 +235,62 @@ public class JStracPanel extends JPanel implements ActionListener {
 			jb1a.setActionCommand("Pia"+num);
 			jb1a.setToolTipText("Piga su cuntzertu");
 			jb1a.addMouseListener(new java.awt.event.MouseAdapter() {
-			    public void mouseEntered(java.awt.event.MouseEvent evt) {
-			    	jb1a.setBackground(Color.white);
-			    }
+				public void mouseEntered(java.awt.event.MouseEvent evt) {
+					jb1a.setBackground(Color.white);
+				}
 
-			    public void mouseExited(java.awt.event.MouseEvent evt) {
-			    	jb1a.setBackground(UIManager.getColor("control"));
-			    }
+				public void mouseExited(java.awt.event.MouseEvent evt) {
+					jb1a.setBackground(UIManager.getColor("control"));
+				}
 			});
-			
-		
+
+
 			jb2.addActionListener(this);
-			
+
 			jb2.setActionCommand("Po "+num);
 			jb2.setToolTipText("Poni su cuntzertu");
 			jb2.addMouseListener(new java.awt.event.MouseAdapter() {
-			    public void mouseEntered(java.awt.event.MouseEvent evt) {
-			    	jb2.setBackground(Color.white);
-			    }
+				public void mouseEntered(java.awt.event.MouseEvent evt) {
+					jb2.setBackground(Color.white);
+				}
 
-			    public void mouseExited(java.awt.event.MouseEvent evt) {
-			    	jb2.setBackground(UIManager.getColor("control"));
-			    }
+				public void mouseExited(java.awt.event.MouseEvent evt) {
+					jb2.setBackground(UIManager.getColor("control"));
+				}
 			});
-			
+
 			jb3.addActionListener(this);
 			jb3.setActionCommand("Del"+num);
 			jb3.setToolTipText("Boga su cuntzertu");
 			jb3.addMouseListener(new java.awt.event.MouseAdapter() {
-			    public void mouseEntered(java.awt.event.MouseEvent evt) {
-			    	jb3.setBackground(Color.white);
-			    }
+				public void mouseEntered(java.awt.event.MouseEvent evt) {
+					jb3.setBackground(Color.white);
+				}
 
-			    public void mouseExited(java.awt.event.MouseEvent evt) {
-			    	jb3.setBackground(UIManager.getColor("control"));
-			    }
+				public void mouseExited(java.awt.event.MouseEvent evt) {
+					jb3.setBackground(UIManager.getColor("control"));
+				}
 			});
-			
-			
-			
+
+
+
 			BufferedImage url;
 			try {
 				url = ImageIO.read(JStracPanel.class.getResourceAsStream("/img/get.png"));
-			
-			jb1a.setIcon(new ImageIcon(url));
-			url = ImageIO.read(JStracPanel.class.getResourceAsStream("/img/put.png"));
-			jb2.setIcon(new ImageIcon(url));
-			url = ImageIO.read(JStracPanel.class.getResourceAsStream("/img/del.png"));
-			jb3.setIcon(new ImageIcon(url));
+
+				jb1a.setIcon(new ImageIcon(url));
+				url = ImageIO.read(JStracPanel.class.getResourceAsStream("/img/put.png"));
+				jb2.setIcon(new ImageIcon(url));
+				url = ImageIO.read(JStracPanel.class.getResourceAsStream("/img/del.png"));
+				jb3.setIcon(new ImageIcon(url));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 			this.add(new JLabel(""+num));
 			this.add(nome);
-			
+
 			this.add(puntu);
 			this.add(cuntz);
 			this.add(jb1a);
@@ -299,7 +300,7 @@ public class JStracPanel extends JPanel implements ActionListener {
 			this.add(jb2);
 			this.add(jb3);
 			this.add(desc);
-			
+
 			jb2.setPreferredSize(new Dimension(20,22));
 			jb3.setPreferredSize(new Dimension(20,22));
 			jb1a.setPreferredSize(new Dimension(20,22));
@@ -342,38 +343,38 @@ public class JStracPanel extends JPanel implements ActionListener {
 			if (e.getActionCommand().substring(0,2).equals("Pi")) {
 				Cuntzertu t=Electroneddas.s.pigaCuntzertu(i);
 				Cuntzertu temp=Cuntzertu.clone(Electroneddas.c);
-				
+
 				if (totu.isSelected()) {						
 					Electroneddas.c=t;
-								
+
 				} else
-				if (tumbu.isSelected()) {							
-					Electroneddas.c.tumbu=t.tumbu;
-					
-				} else
-				if (mancs.isSelected()) {	
-					Electroneddas.c.mancs=t.mancs;
-					
-				} else
-				if (mancd.isSelected()) {	
-					Electroneddas.c.mancd=t.mancd;
-					
-					
-				}
+					if (tumbu.isSelected()) {							
+						Electroneddas.c.tumbu=t.tumbu;
+
+					} else
+						if (mancs.isSelected()) {	
+							Electroneddas.c.mancs=t.mancs;
+
+						} else
+							if (mancd.isSelected()) {	
+								Electroneddas.c.mancd=t.mancd;
+
+
+							}
 				/*
 				if (!sul.isSelected()) {
 					Electroneddas.c.ssens=temp.ssens;
 					Electroneddas.c.szero=temp.szero;
 					Electroneddas.c.slim=temp.slim;
 					System.err.println(temp.ssens+" "+temp.szero+" "+temp.slim);
-					
+
 				}
 				if (!fbess.isSelected()) {
-					
+
 					Electroneddas.c.bq=temp.getBQ();	
 					System.out.println(temp.getBQ().freq);
 				}
-				*/
+				 */
 				if (!puntuc.isSelected()) {
 					Electroneddas.c.fini=temp.fini;
 					Electroneddas.c.puntu=temp.puntu;	
@@ -383,22 +384,22 @@ public class JStracPanel extends JPanel implements ActionListener {
 					for (int j=0;j<=4;j++) {
 						Electroneddas.c.mancd.getCrai(j).puntu=temp.mancd.getCrai(j).puntu;
 						Electroneddas.c.mancs.getCrai(j).puntu=temp.mancs.getCrai(j).puntu;
-						
+
 					}
 					Electroneddas.c.tumbu.getCrai(0).puntu=temp.tumbu.getCrai(0).puntu;
 				}
 				if (!accc.isSelected()) {
-					
+
 					for (int j=0;j<=4;j++) {
 						Electroneddas.c.mancd.getCrai(j).fini=temp.mancd.getCrai(j).fini;
 						Electroneddas.c.mancs.getCrai(j).fini=temp.mancs.getCrai(j).fini;
-						
+
 					}
 					Electroneddas.c.tumbu.getCrai(0).fini=temp.tumbu.getCrai(0).fini;
 				}
-				
+
 				Electroneddas.sync();
-				
+
 				((JStracRow)((Container)e.getSource()).getParent()).babbu.refresh(Electroneddas.s);
 			}
 			if (e.getActionCommand().substring(0,2).equals("Po")) {
@@ -433,24 +434,27 @@ public class JStracPanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		switch (e.getActionCommand()) {	
 		case "New": {
-			int dialogResult = JOptionPane.showConfirmDialog (null, "Siguru ca bolis sboidai su strac�sciu?","Atentzioni",JOptionPane.OK_CANCEL_OPTION);
-			if(dialogResult == JOptionPane.YES_OPTION){
-				Electroneddas.s=new Stracasciu("Nou");
-				refresh(Electroneddas.s);
+			if (Electroneddas.s.isModified()) {
+				int dialogResult = JOptionPane.showConfirmDialog (null, "Siguru ca bolis sboidai su stracàsciu?","Atentzioni",JOptionPane.OK_CANCEL_OPTION);
+				if (!(dialogResult == JOptionPane.YES_OPTION)) return;
 			}
+			Electroneddas.s=new Stracasciu("Nou");
+			refresh(Electroneddas.s);	
 		}
 		break;
 
 		case "Import": {
 			byte num=scioberaStrac();
 			if (num!=-1) {
-				int dialogResult = JOptionPane.showConfirmDialog (null, "Siguru ca bolis carrigai su stracàsciu de su strumentu?","Atentzioni",JOptionPane.OK_CANCEL_OPTION);
-				if(dialogResult == JOptionPane.YES_OPTION){
-					Electroneddas.s=new Stracasciu("El"+num);
-					Electroneddas.strac_num=(byte) num;
-					Electroneddas.serialPort.printCmd("E m 0");
-					Electroneddas.serialPort.printCmd("E d");
+				if (Electroneddas.s.isModified()) {
+					int dialogResult = JOptionPane.showConfirmDialog (null, "Siguru ca bolis carrigai su stracàsciu de su strumentu?","Atentzioni",JOptionPane.OK_CANCEL_OPTION);
+					if(!(dialogResult == JOptionPane.YES_OPTION)) return;
 				}
+				Electroneddas.s=new Stracasciu("El"+num);
+				Electroneddas.strac_num=(byte) num;
+				SerialUSB.printCmd("E m 0");
+				SerialUSB.printCmd("E d");
+
 			}
 		}	
 		break;
@@ -459,13 +463,13 @@ public class JStracPanel extends JPanel implements ActionListener {
 			if (num!=-1) {
 				int dialogResult = JOptionPane.showConfirmDialog (null, "Siguru ca bolis carrigai su stracàsciu in su strumentu?\nIn custa manera as a cancellai su chi nc'est aintru de su strumentu","Atentzioni",JOptionPane.OK_CANCEL_OPTION,JOptionPane.WARNING_MESSAGE);
 				if(dialogResult == JOptionPane.YES_OPTION){
-					
+
 					for (int i=0;i<Stracasciu.SIZE;i++)
 					{
 						if (!Electroneddas.s.getCuntzertu(i).isVoid()) {
-							Electroneddas.serialPort.printCmd("E n "+(num*20+i)+".JSO");				
+							SerialUSB.printCmd("E n "+(num*20+i)+".JSO");				
 							Gson gson = new Gson();
-							Electroneddas.serialPort.printCmd(gson.toJson(Electroneddas.s.getCuntzertu(i))+"@");	
+							SerialUSB.printCmd(gson.toJson(Electroneddas.s.getCuntzertu(i))+"@");	
 							try {
 								Thread.sleep(200);
 							} catch (InterruptedException e1) {
@@ -473,7 +477,7 @@ public class JStracPanel extends JPanel implements ActionListener {
 								e1.printStackTrace();
 							}
 						} else {
-							Electroneddas.serialPort.printCmd("E x "+(num*20+i)+".JSO");
+							SerialUSB.printCmd("E x "+(num*20+i)+".JSO");
 						}
 					}
 				}
@@ -491,15 +495,17 @@ public class JStracPanel extends JPanel implements ActionListener {
 			rv = sfc.showOpenDialog(this);
 
 			if (rv == JFileChooser.APPROVE_OPTION) {
-				int dialogResult = JOptionPane.showConfirmDialog (null, "Siguru ca bolis carrigai de unu file?","Atentzioni",JOptionPane.OK_CANCEL_OPTION);
-				if(dialogResult == JOptionPane.YES_OPTION){
-					String filename=sfc.getSelectedFile().getAbsolutePath();
-					Electroneddas.s=(Stracasciu)Electroneddas.loadData(filename,Electroneddas.s);
-					refresh(Electroneddas.s);
-					String dir=sfc.getSelectedFile().getParent();
-					Electroneddas.prefs.stracDir=dir;	
-				}	
-			}
+				if (Electroneddas.s.isModified()) {
+					int dialogResult = JOptionPane.showConfirmDialog (null, "Siguru ca bolis carrigai de unu file?","Atentzioni",JOptionPane.OK_CANCEL_OPTION);
+					if(!(dialogResult == JOptionPane.YES_OPTION)) return;
+				}
+				String filename=sfc.getSelectedFile().getAbsolutePath();
+				Electroneddas.s=(Stracasciu)Electroneddas.loadData(filename,Electroneddas.s);
+				refresh(Electroneddas.s);
+				String dir=sfc.getSelectedFile().getParent();
+				Electroneddas.prefs.stracDir=dir;	
+			}	
+
 
 		}
 		break;
@@ -515,7 +521,7 @@ public class JStracPanel extends JPanel implements ActionListener {
 				String filename=sfc.getSelectedFile().getAbsolutePath();
 				if (!filename.endsWith(".str")) filename+=".str";
 				Electroneddas.saveData(filename,Electroneddas.s);
-				
+
 				String dir=sfc.getSelectedFile().getParent();
 				Electroneddas.prefs.stracDir=dir;	
 			}	
@@ -525,5 +531,5 @@ public class JStracPanel extends JPanel implements ActionListener {
 
 		}
 	}
-	
+
 }
