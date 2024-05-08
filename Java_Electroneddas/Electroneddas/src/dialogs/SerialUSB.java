@@ -189,7 +189,10 @@ public class SerialUSB extends JDialog implements ActionListener {
 		for (int i=0;i<comPorts.length;i++)
 		{
 			if (comPorts[i].getDescriptivePortName().contains("Teensy")) num=i;
-			else jtad.append("Agatada : "+comPorts[i].getDescriptivePortName());
+			else {
+				jtad.append("Agatada : "+comPorts[i].getDescriptivePortName());
+				System.err.println(i+" : "+comPorts[i].getDescriptivePortName());
+			}
 		}
 
 		if (num==-1) {
