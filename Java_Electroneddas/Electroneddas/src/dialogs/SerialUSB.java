@@ -184,18 +184,20 @@ public class SerialUSB extends JDialog implements ActionListener {
 	}
 	public static void connect() {
 		int num=-1;
+		int res=-1;
 		SerialPort[] comPorts = SerialPort.getCommPorts();
 
 		for (int i=0;i<comPorts.length;i++)
 		{
 			if (comPorts[i].getDescriptivePortName().contains("Teensy")) num=i;
+			else if (comPorts[i].getDescriptivePortName().contains("USB")) res=i;
 			else {
 				jtad.append("Agatada : "+comPorts[i].getDescriptivePortName());
 				System.err.println(i+" : "+comPorts[i].getDescriptivePortName());
 			}
 		}
 
-		if (num==-1) {
+		if ((num==-1)&&(res==-1)) {
 			System.err.println("No Teensy");
 			connected=false;
 			attempts++;
@@ -203,7 +205,12 @@ public class SerialUSB extends JDialog implements ActionListener {
 			timer();
 			return;
 		}	
-		comPort=comPorts[num];
+		
+		if (num!=-1) comPort=comPorts[num];
+		else {
+			comPort=comPorts[res];
+			System.out.println("Oberta USB generica");
+		}
 		comPort.openPort();
 		connected=true;
 		attempts=0;
