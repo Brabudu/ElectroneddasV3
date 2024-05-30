@@ -350,14 +350,17 @@ public class JStracPanel extends JPanel implements ActionListener {
 				} else
 					if (tumbu.isSelected()) {							
 						Electroneddas.c.tumbu=t.tumbu;
+						Electroneddas.c.volT=t.volT;
 
 					} else
 						if (mancs.isSelected()) {	
 							Electroneddas.c.mancs=t.mancs;
+							Electroneddas.c.volMs=t.volMs;
 
 						} else
 							if (mancd.isSelected()) {	
 								Electroneddas.c.mancd=t.mancd;
+								Electroneddas.c.volMd=t.volMd;
 
 
 							}
