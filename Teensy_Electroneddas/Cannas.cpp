@@ -11,6 +11,7 @@
 #include <GyverOLED.h>
 #include <Entropy.h>
 #include "Communicator.h"
+#include "Recorder.h"
 
 #ifndef functions_h
   #include "functions.h"
@@ -20,9 +21,12 @@
   #include "info.h"
 #endif
 
+
+
 extern ElFileSystem efs;
 extern Communicator* com;
 extern  Cuntzertu* c;         //Solo per MIDI :( 
+extern  Recorder* rec;         //Solo per START/STOP :( 
 
 //////
     boolean scala[7]= {true,true,false,true,true,true,false};
@@ -591,6 +595,7 @@ const float pitagorica[13] = {1,1.0678710938,1.125,1.1851851852,1.265625,1.33333
 
 Cuntzertu::Cuntzertu(): nome("VOID"), descr(""), vol(1), cuntz(0), mod(0), puntu(7), fini(1), volT(1), bilT(0), volMs(1), bilMs(0), volMd(1), bilMd(0) {
     setAcordadura(0);
+    muted=false;
   }
 
 void Cuntzertu::deserialize(Stream* s) {
@@ -1324,6 +1329,8 @@ void Cuntzertu::mute(bool mute) {
   tumbu.mute(mute);
   mancs.mute(mute);
   mancd.mute(mute);
+  if (mute!=muted) rec->poke(mute);
+  muted=mute;
 }
 void Cuntzertu::muteOut(bool mute) { 
   if (mute) {

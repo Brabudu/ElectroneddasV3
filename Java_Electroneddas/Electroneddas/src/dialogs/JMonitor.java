@@ -66,8 +66,7 @@ public class JMonitor extends JDialog implements SerialListener, ActionListener{
 		sulidu.setEnabled(false);
 		jpan.add(sulidu);
 		
-		Electroneddas.serialPort.addListener('S', msDisplay);
-		Electroneddas.serialPort.addListener('D', mdDisplay);
+		setListeners();
 		Electroneddas.serialPort.addListener('s', this);
 		
 		this.getContentPane().add(jpan,BorderLayout.CENTER);
@@ -115,6 +114,11 @@ public class JMonitor extends JDialog implements SerialListener, ActionListener{
 		sync();
 	}
 	
+	public static void setListeners() {
+		Electroneddas.serialPort.addListener('S', msDisplay);
+		Electroneddas.serialPort.addListener('D', mdDisplay);
+		
+	}
 	
 
 }

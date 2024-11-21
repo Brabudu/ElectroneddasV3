@@ -25,12 +25,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.ProgressMonitor;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.google.gson.Gson;
 
+import dialogs.JProgressMonitor;
 import dialogs.SerialUSB;
 import main.Cuntzertu;
 import main.Electroneddas;
@@ -76,6 +78,7 @@ public class JStracPanel extends JPanel implements ActionListener {
 	};
 
 	static JFileChooser sfc;
+	static int lastStrac=0;
 
 	public JStracPanel(Stracasciu s) {
 		//strac=s;
@@ -415,7 +418,7 @@ public class JStracPanel extends JPanel implements ActionListener {
 	}
 
 	private byte scioberaStrac() {
-		String inputValue = JOptionPane.showInputDialog("Sciobera su stracàsciu",0); 
+		String inputValue = JOptionPane.showInputDialog("Sciobera su stracàsciu",lastStrac); 
 		if (inputValue!=null ) {
 			int num=-1;
 			try {
@@ -426,6 +429,7 @@ public class JStracPanel extends JPanel implements ActionListener {
 				JOptionPane.showMessageDialog(null, "Errori", "Poni unu nùmeru intra de 0 e 100", JOptionPane.ERROR_MESSAGE);
 				return (-1);
 			} 
+			lastStrac=num;
 			return (byte) num;
 		}
 		return -1;
@@ -454,8 +458,12 @@ public class JStracPanel extends JPanel implements ActionListener {
 				Electroneddas.strac_num=(byte) num;
 				SerialUSB.printCmd("E m 0");
 				SerialUSB.printCmd("E d");
-
-			}
+				
+				Electroneddas.progressMonitor= new ProgressMonitor(Electroneddas.getFrames()[0],
+			            "Carrighendi su stracàsciu",
+			            "", 0, 20);
+				Electroneddas.progressMonitor.setProgress(0);
+				}
 		}	
 		break;
 		case "Export": {
@@ -463,10 +471,12 @@ public class JStracPanel extends JPanel implements ActionListener {
 			if (num!=-1) {
 				int dialogResult = JOptionPane.showConfirmDialog (null, "Siguru ca bolis carrigai su stracàsciu in su strumentu?\nIn custa manera as a cancellai su chi nc'est aintru de su strumentu","Atentzioni",JOptionPane.OK_CANCEL_OPTION,JOptionPane.WARNING_MESSAGE);
 				if(dialogResult == JOptionPane.YES_OPTION){
-
+					int numeru=0;
+					
 					for (int i=0;i<Stracasciu.SIZE;i++)
-					{
+					{			
 						if (!Electroneddas.s.getCuntzertu(i).isVoid()) {
+							numeru++;
 							SerialUSB.printCmd("E n "+(num*20+i)+".JSO");				
 							Gson gson = new Gson();
 							SerialUSB.printCmd(gson.toJson(Electroneddas.s.getCuntzertu(i))+"@");	
@@ -480,6 +490,8 @@ public class JStracPanel extends JPanel implements ActionListener {
 							SerialUSB.printCmd("E x "+(num*20+i)+".JSO");
 						}
 					}
+					JOptionPane.showMessageDialog(null, "Postus "+numeru+" cuntzertus","Stracàsciu",JOptionPane.INFORMATION_MESSAGE);
+					
 				}
 
 			}

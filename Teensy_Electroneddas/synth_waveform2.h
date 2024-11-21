@@ -41,7 +41,9 @@ extern const int16_t AudioWaveformSine[257];
 #define WAVEFORM_BANDLIMIT_PULSE  12
 
 #define WAVEFORM_TEST  13
-#define WAVEFORM_TEST2  14					 
+#define WAVEFORM_TEST2  14	
+#define WAVEFORM_TEST3  15			 
+
 
 
 class AudioSynthWaveform2 : public AudioStream

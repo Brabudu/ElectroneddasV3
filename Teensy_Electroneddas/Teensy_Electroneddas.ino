@@ -20,6 +20,8 @@ GyverOLED
 #include "Display.h"
 #include "ElFileSystem.h"
 
+#include "Recorder.h"
+
 #ifndef functions_h
   #include "functions.h"
 #endif
@@ -72,9 +74,11 @@ volatile uint8_t lt_pkt[6]; // Buffer ricezione
 volatile uint8_t lt_pr = 0; //
 volatile uint8_t lt_pp = 0; //
 
+
 uint8_t last_error = 0;
 uint8_t last_error_mem = 0;
-///
+
+
 
 volatile long inact_timer = 0; //
 
@@ -133,6 +137,8 @@ Display* d;
 ElFileSystem* efs;
 
 Communicator* com;
+
+Recorder* rec;
 
 void setup() {
 
@@ -206,26 +212,34 @@ void setup() {
   if (digitalRead(PIN_PULS_OK)==false) d->test();
   else d->initMenu();
 
-  
+  rec=new Recorder();
 
 }
 
 void loop() {
-  
-  //USB Serial
-  pollSerial();
-  
-  //BT Serial
-  pollBT();
-  
-  //SPI
-  pollSPI();
 
-  while(usbMIDI.read()){}
+  if (!rec->isPlaying()) {
+  
+    //USB Serial
+    pollSerial();
+    
+    //BT Serial
+    pollBT();
+    
+    //SPI
+    pollSPI();
 
-  if (command.length()>0) {
-    parse(command);
-    command="";
+    while(usbMIDI.read()){}
+
+    if (command.length()>0) {
+      parse(command);
+      command="";
+    }
+  } else {
+    uint8_t s;
+    if ((s=rec->getSample())!=0) {
+      sona(s);
+    }
   }
 }
 
@@ -258,7 +272,9 @@ void pollSPI() {
       lt_pp++;
       uint8_t b = lt_pkt[lt_pp % 6];
     sona(b);
+    if (rec->isRecording()) rec->putSample(b);
   } 
+
 }
 void pollBT() {
  /*
@@ -339,6 +355,8 @@ void sona(byte b) {
         if (canna == 2) {
           c->mancd.playCrai(nota,lo_nibb);
         }
+
+
         if (canna == 3) {           //Sys msg
           if (b==3) {
             last_error=0;   //Controller prontu (0x33)
@@ -554,6 +572,22 @@ void parse(String s) {
         break;
       case '?':
         com->msgInfo(info_E);
+        break;
+      case 'R':
+        switch (sParams[2][0]) {
+          case '0':
+            rec->stop();
+          break;
+          case '1':
+            rec->startRecord(IMMEDIATE);
+          break;
+          case '2':
+            rec->startRecord(GATED);
+          break;
+          case '3':
+            rec->startPlay(0);
+          break;
+        }
         break;
       default:
         com->msgError(String("Unknown command: E ")+sParams[1][0]);

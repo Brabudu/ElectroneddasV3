@@ -362,6 +362,8 @@ class Cuntzertu {
     static float freq;
 
     static float acordadura[];
+
+    bool muted;
    
     IntervalTimer timer;
 

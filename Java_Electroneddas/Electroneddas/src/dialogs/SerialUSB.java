@@ -132,6 +132,9 @@ public class SerialUSB extends JDialog implements ActionListener {
 	public void addListener(char preamble, SerialListener l) {
 		serListeners.put(preamble, l);
 	}
+	public void removeListener(SerialListener l) {
+		serListeners.remove(l);
+		}
 	
 	public void addConnListener(SerialConnListener l) {
 		serConnListeners.push(l);

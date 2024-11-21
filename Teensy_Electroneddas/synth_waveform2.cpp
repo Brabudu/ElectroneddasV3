@@ -128,7 +128,18 @@ case WAVEFORM_TEST:
 			}
 			break;
 		
-
+    case WAVEFORM_TEST3:
+			for (i=0; i < AUDIO_BLOCK_SAMPLES; i++)
+			{
+			  int32_t new_ph = ph + inc ;
+			  int32_t val = band_limit_waveform.generate_pulse (new_ph, pulse_width, i) ;
+			  int32_t val2 = band_limit_waveform.generate_pulse (new_ph, .5, i)>>pulse_fact;
+			  
+			*bp++ = (int16_t) (((val+val2) * magnitude) >> 17) ;
+			 
+			  ph = new_ph ;
+			}
+			break;
 	
 
 	case WAVEFORM_BANDLIMIT_PULSE:

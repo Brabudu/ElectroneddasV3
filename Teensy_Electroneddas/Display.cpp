@@ -51,11 +51,7 @@ extern uint8_t last_error_mem;
 
     int enc_count;
     int enc_puls_count=0;
-
-
-
-
-    
+  
 Encoder myEnc(PIN_ENC1,PIN_ENC2);
 IntervalTimer encoderTimer;
 
@@ -506,19 +502,23 @@ void Display::drawKnob(uint8_t x, uint8_t y, float minv, float maxv, float value
   
 }
 void Display::drawBattery(uint8_t x, uint8_t y) {
-    oled.rect(x, y, x+13,y+6, OLED_STROKE);
-   
-   float charge=getCharge()-3.5;
-  
-    //Serial.println(charge);
-    if (charge>0.7) oled.rect(x+2, y+2, x+11,y+4, OLED_FILL);
-    else
-    if (charge>0) oled.rect(x+2, y+2, x+(15*charge),y+4, OLED_FILL);
+  oled.rect(x, y, x+13,y+6, OLED_STROKE);
+   oled.rect(x+2, y+2, x+toBar(getCharge()),y+4, OLED_FILL);
     
 }
 void Display::refreshBattery() {
   if (page==0) drawBattery(94,54);
 }
+int Display::toBar(float v) {
+  if (v>3.9) return 9;
+  if (v>3.8) return 8;
+  if (v>3.7) return 7;
+  if (v<3.5) return 0;
+  if (v<3.6) return 1;
+  return 2+int((v-3.6)*50);
+}
+
+
 void Display::test() {
   oled.rect(0, 0, 127, 63,OLED_STROKE);
 }

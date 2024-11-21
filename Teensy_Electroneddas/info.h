@@ -26,7 +26,8 @@ const String info_E =
          "B                          //Manda a BT\n"
          "Y                          //Torrat a principiu su stracasciu 0\n"
          "N                          //Noda de test 0\n"
-         "I                          //Set ID\n";
+         "I                          //Set ID\n"
+         "R [p]                      //Record (p=1 start now, p=2 start, p3=play p=0 stop)  D\n";
          
 const String info_B ="n [nome]                     //nomini de su cuncertu (max 32)\n"
        "d [descrizione]              //Descritzioni de su cuncertu (max 64)\n"

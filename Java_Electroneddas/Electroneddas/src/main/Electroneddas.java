@@ -37,6 +37,7 @@ import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
+import javax.swing.ProgressMonitor;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -50,6 +51,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 
 import dialogs.JMonitor;
+import dialogs.JRecorder;
 import dialogs.SerialUSB;
 import main.Cuntzertu.Canna;
 import panels.JBQPanel;
@@ -82,6 +84,7 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 	public static Cuntzertu c=new Cuntzertu();
 	
 	public static JMonitor	monitor;
+	
 
 	public static Stracasciu s=new Stracasciu("Default");
 	public static byte strac_num=0;
@@ -90,7 +93,7 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 
 	static JFileChooser fc;
 
-	static Spartiu spart=new Spartiu(15);
+	static Spartiu spart=new Spartiu(10);
 	static JDialog spartdialog;
 
 	static JCannaPanel mancosa;
@@ -107,12 +110,14 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 	public static JCuntzSetup setup;
 
 	public static Preferences prefs;
+	
+	public static ProgressMonitor progressMonitor; 
 
 	public Electroneddas() {
 		super("Electroneddas "+version);
 
 		setSize(1300, 600);
-		setResizable(false);
+		//setResizable(false);
 		
 		Container thePane = getContentPane();
 		thePane.setLayout(new BorderLayout());
@@ -145,6 +150,12 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 		b3.setActionCommand("Monitor");
 		b3.addActionListener(this);
 		tools.add(b3);
+		
+		
+		JButton b4=new JButton("Record");
+		b4.setActionCommand("Record");
+		b4.addActionListener(this);
+		tools.add(b4);
 
 		thePane.add(tools,BorderLayout.LINE_START);
 
@@ -424,6 +435,10 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 		case "Monitor":
 			monitor.setVisible(!monitor.isVisible());
 			break;
+		case "Record":
+			JRecorder jrec=new JRecorder();
+			
+			break;
 
 		case "Sonada":		
 			if (spartdialog.isVisible()) {
@@ -609,7 +624,7 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 								e.printStackTrace();
 							}
 
-
+							progressMonitor.setProgress(actCuntzertu);
 
 						}
 					}
@@ -623,7 +638,9 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 				}
 				stracasciu.refresh(s);
 				monitor.sync();
+				JOptionPane.showMessageDialog(null, "Pigaus "+actCuntzertu+" cuntzertus","Stracàsciu",JOptionPane.INFORMATION_MESSAGE);
 				actCuntzertu=0;
+				progressMonitor.close();
 			}
 		});
 

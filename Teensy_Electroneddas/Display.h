@@ -44,6 +44,7 @@ class Display {
     const String sulS[3]={"SA","SM","SB"};
 
     void static pollEncoder();
+    int toBar(float volt);
     
   public:
 	  Display();
