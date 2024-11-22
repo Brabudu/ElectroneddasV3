@@ -87,9 +87,9 @@ public class JMonitor extends JDialog implements SerialListener, ActionListener{
 	}
 	@Override
 	public void action(String msg) {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub	
+		sulidu.setValue(Integer.parseInt(msg.substring(1,3).trim()));
 		
-		sulidu.setValue(Integer.parseInt(msg.substring(2,4).trim()));
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -101,6 +101,9 @@ public class JMonitor extends JDialog implements SerialListener, ActionListener{
 	}
 	public int getMdCrais() {
 		return mdDisplay.getCrais();
+	}
+	public int getSulidu() {
+		return sulidu.getValue();
 	}
 	
 	

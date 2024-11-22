@@ -16,6 +16,8 @@ public class Spartiu extends JPanel implements ActionListener  {
 	int manc;
 	int mancs=255;
 	
+	int sul=0;
+	
 	Timer timer;
 	
 	static Color tav[]= {Color.red,Color.orange,Color.green,Color.cyan,Color.magenta};
@@ -60,6 +62,9 @@ public class Spartiu extends JPanel implements ActionListener  {
 			} 
 			n/=2;
 		}
+		
+		g.setColor(Color.yellow);
+		g.fillRect(780-w,125+(sul/2),w,1);
     	
      }
     public void actionPerformed(ActionEvent ev){
@@ -67,6 +72,7 @@ public class Spartiu extends JPanel implements ActionListener  {
         //this.getGraphics().copyArea(0, 0, 200, 200, 2, 0);
           manc=Electroneddas.monitor.getMdCrais();
           mancs=Electroneddas.monitor.getMsCrais();
+          sul=Electroneddas.monitor.getSulidu();
           
           repaint();// this will call at every 1 second
           //System.err.println(mancs);

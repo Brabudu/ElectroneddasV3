@@ -36,6 +36,8 @@ import com.google.gson.GsonBuilder;
 import main.Electroneddas;
 import main.Stracasciu;
 
+// LISTENER!!! //
+
 public class JMapperPanel extends JPanel implements ChangeListener, MouseListener, ActionListener, SerialListener {
 
 	private JSlider[] mapper = new JSlider[100];
@@ -177,7 +179,8 @@ public class JMapperPanel extends JPanel implements ChangeListener, MouseListene
 		add(map, BorderLayout.CENTER);
 		add(fData, BorderLayout.EAST);
 
-		Electroneddas.serialPort.addListener('s', this);
+		
+		//Electroneddas.serialPort.addListener('s', this);
 		Electroneddas.serialPort.addListener('!', this);
 
 		sfc = new JFileChooser();
@@ -281,7 +284,7 @@ public class JMapperPanel extends JPanel implements ChangeListener, MouseListene
 
 			int rv = 0;
 
-			sfc.setDialogTitle("Càrriga sa funtzioni");
+			sfc.setDialogTitle("Cï¿½rriga sa funtzioni");
 			sfc.setDialogType(JFileChooser.OPEN_DIALOG);
 
 			rv = sfc.showOpenDialog(this);
