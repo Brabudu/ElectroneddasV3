@@ -283,3 +283,57 @@ bool ElFileSystem::readPrefs(Cuntzertu* c) {
   //sei();
   
 }
+
+bool ElFileSystem::recToFile(Recorder* r, int num) {
+  if (!isMounted()) {  
+    com->msgError("No SD");
+    return false;
+  }
+  
+  cli();
+  String file=String(num)+".rec";
+  char filename[12];
+  
+  file.toCharArray(filename,12);
+  /*if (sd.exists(filename)) {
+    sd.rename(filename,(String(num)+".old"));
+  }*/
+  FsFile myFile = sd.open(filename, O_WRONLY | O_CREAT | O_TRUNC);
+  if (!myFile) {
+    com->msgError("SD rw Error");
+    return false;
+  }
+  myFile.seek(0);
+  
+  r->serialize(&myFile);
+  myFile.truncate();
+  myFile.close();
+  com->msgOk("ok "+file);
+  sei();
+  return true;
+}
+
+bool ElFileSystem::recFromFile(Recorder* r, int num, bool info) {
+   if (!isMounted()) {  
+    com->msgError("No SD");
+    return false;
+  }
+  char filename[12];
+  String file=String(num)+".rec";
+  file.toCharArray(filename,12);
+  
+  FsFile myFile = sd.open(filename, FILE_READ);
+  if (!myFile) {
+    com->msgError("SD rr Error");
+    return false;
+  }
+  
+  myFile.seek(0);
+  
+  r->deserialize(&myFile, info);   
+  myFile.close();
+  
+  return true;
+  //sei();
+  
+}

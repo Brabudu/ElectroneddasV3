@@ -2,6 +2,7 @@
 
 #include "SdFat.h"
 #include "Cannas.h"
+#include "Recorder.h"
 
 #define SD_CONFIG SdioConfig(FIFO_SDIO)
 
@@ -22,6 +23,8 @@ class ElFileSystem {
     bool newFile(String file);
     bool copy(int numS, int numD);
 
+    bool recToFile(Recorder* r, int num);
+    bool recFromFile(Recorder* r, int num, bool info);
 
     void cuntzToFile(Cuntzertu* c, int num);
     bool cuntzFromFileJson(Cuntzertu* c, int num,bool sync);

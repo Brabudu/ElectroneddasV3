@@ -52,6 +52,7 @@ import com.google.gson.stream.JsonReader;
 
 import dialogs.JMonitor;
 import dialogs.JRecorder;
+import dialogs.JDiskRecorder;
 import dialogs.SerialUSB;
 import main.Cuntzertu.Canna;
 import panels.JBQPanel;
@@ -77,13 +78,14 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 	 * 
 	 */
 	
-	private static final String version="2.3.3";
+	private static final String version="2.4.0";
 	
 	private static final long serialVersionUID = 1L;
 	public static SerialUSB serialPort;
 	public static Cuntzertu c=new Cuntzertu();
 	
 	public static JMonitor	monitor;
+	public static JRecorder	recorder;
 	
 
 	public static Stracasciu s=new Stracasciu("Default");
@@ -151,7 +153,7 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 		b3.addActionListener(this);
 		tools.add(b3);
 		
-		
+		recorder=new JRecorder();
 		JButton b4=new JButton("Record");
 		b4.setActionCommand("Record");
 		b4.addActionListener(this);
@@ -436,7 +438,7 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 			monitor.setVisible(!monitor.isVisible());
 			break;
 		case "Record":
-			JRecorder jrec=new JRecorder();
+			recorder.setVisible(!recorder.isVisible());
 			
 			break;
 

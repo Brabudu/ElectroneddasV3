@@ -33,6 +33,7 @@ class Display {
     int level=0;
 
     bool enabled=true;
+    bool blanked=false;
     
     
     const String notazE[12]  = {"DO  ","DO# ","RE  ","RE# ","MI  ","FA  ","FA# ","SOL ","SOL#","LA  ","SIb ","SI  "};
@@ -57,6 +58,7 @@ class Display {
     
     void setEnabled(bool enabled);
     bool isEnabled();
+    bool isBlanked();
     
     void showLogo(String v);
     void drawMenu();
@@ -72,4 +74,6 @@ class Display {
     void cmdMode(bool mode);
     void clearRect(int x0, int y0, int x1, int y1);
     void refreshBattery();
+
+    void blankPage();
 };

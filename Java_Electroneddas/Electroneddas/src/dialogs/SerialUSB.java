@@ -98,7 +98,7 @@ public class SerialUSB extends JDialog implements ActionListener {
 
 		this.getContentPane().add(jpan);
 		this.setDefaultCloseOperation(HIDE_ON_CLOSE);
-		this.setLocation(1300, 0);
+		this.setLocation(400, 0);
 		setSize(500, 500);
 		this.setVisible(false);	
 				

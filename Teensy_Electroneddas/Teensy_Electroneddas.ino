@@ -38,7 +38,7 @@ GyverOLED
 
 #include "sdios.h"
 
-#define version "2.3.2"
+#define version "2.4.0"
 
 //2.2   12/01/2024  
 
@@ -272,7 +272,7 @@ void pollSPI() {
       lt_pp++;
       uint8_t b = lt_pkt[lt_pp % 6];
     sona(b);
-    if (rec->isRecording()) rec->putSample(b);
+ 
   } 
 
 }
@@ -308,8 +308,26 @@ void pollBT() {
 */
 }
 
-void sona(byte b) {  
+void sona(uint8_t b) {  
 
+      //Sulidu
+      if (b>=128 ) {
+        b&=0x7F;
+        float sul=(float)b;
+      
+        if (sul!=old_sul) {
+          c->setSul(b);   
+          if (rec->isRecording()) rec->putSample(b|0x80); 
+          if (mon_mode&SUL) {
+            com->msgWarning('s'+String(b),true);
+          }
+          old_sul=b;
+        }
+        return;
+      }
+
+      //Crais & msg
+      if (rec->isRecording()) rec->putSample(b);
       uint8_t canna = 0;
       uint8_t nota = 0;
 
@@ -422,34 +440,9 @@ void receiving() {
   if (mySPI.active()) {
     mySPI.pushr(0);
     uint16_t data = mySPI.popr();
-    
-    if (data < 128) {
-        lt_pr++;
-        lt_pkt[lt_pr % 6] = (uint8_t)data;
-          
-      /*
-        if (recording) {
-        nodas[pointer].nota=(uint8_t)d;
-        nodas[pointer].time=(uint16_t)((millis()>>4)-startTime);
-
-        pointer++;
-
-        if (pointer==MAX_NODAS) recording=false;*/
-    }
-   else {
-      float sul=(float)(data&0x7F);
-      
-      if (sul!=old_sul) {
-        old_sul=sul;
-        
-        c->setSul(sul);    
-        if (mon_mode&SUL) {
-          com->msgWarning('s'+String(sul),true);
-        }
-      }
+    lt_pr++;
+    lt_pkt[lt_pr % 6] = (uint8_t)data;    
   }
-
-}
 }
 void parse(String s) {
   s.trim();
@@ -574,20 +567,7 @@ void parse(String s) {
         com->msgInfo(info_E);
         break;
       case 'R':
-        switch (sParams[2][0]) {
-          case '0':
-            rec->stop();
-          break;
-          case '1':
-            rec->startRecord(IMMEDIATE);
-          break;
-          case '2':
-            rec->startRecord(GATED);
-          break;
-          case '3':
-            rec->startPlay(0);
-          break;
-        }
+         rec->parse(s); //Cuntzertu
         break;
       default:
         com->msgError(String("Unknown command: E ")+sParams[1][0]);

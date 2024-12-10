@@ -105,6 +105,14 @@ void Display::left() {
 }
 
 bool Display::go(bool ok,int dir,bool longPress) {
+  if (isBlanked()) {
+    oled.clear();
+    drawMenu();
+    blanked=false;
+    pos=0;
+    level=0;
+    if (dir==0) displayPage();
+  }
   
   switch (level) {
     case BASE:
@@ -414,6 +422,11 @@ void Display::displayPage() {
     break;
     case 1: {
        //drawKnob(16,30,0,20,c->getVol()*10,"vol",false);
+       oled.setCursorXY(10, 50);
+       oled.print("Bal");
+       oled.setCursorXY(10, 32);
+       oled.print("Vol");
+
        drawKnob(46,30,0,20,c->getVolT()*10,"tum",false);
        drawKnob(70,30,0,20,c->getVolMs()*10,"msa",false);
        drawKnob(94,30,0,20,c->getVolMd()*10,"mda",false);
@@ -483,6 +496,17 @@ void Display::displayPage() {
   //sei();
 }
 
+void Display::blankPage() {
+      //oled.rect(0,0,127,9,OLED_CLEAR);
+      oled.clear();
+     oled.setCursorXY(2, 2);
+      oled.textMode(BUF_ADD);
+      oled.print(cuntz_num);
+      oled.setCursorXY(20, 2);
+      oled.print(c->getNome());
+      oled.update();
+      blanked=true;
+}
 
 void Display::drawKnob(uint8_t x, uint8_t y, float minv, float maxv, float value,String label,bool v) {
   oled.rect(x-6,y-6,x+6,y+6,OLED_CLEAR);
@@ -547,6 +571,9 @@ void Display::setEnabled(bool enabled) {
 bool Display::isEnabled() {
   return enabled;
 }
+bool Display::isBlanked() {
+  return blanked;
+}
 
 void Display::pollEncoder() {
 
@@ -582,8 +609,9 @@ void Display::pollEncoder() {
       enc_count=0;
   } 
 
-  if (enc_count>3000) {
-    d->go(false,0,false);
+  if ((enc_count>2000)&&(!d->isBlanked())) {
+    //d->go(false,0,false);
+    d->blankPage();
     enc_count=0;
   }
   enc_count++;

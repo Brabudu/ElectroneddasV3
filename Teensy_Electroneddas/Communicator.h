@@ -19,7 +19,7 @@ class Communicator {
 	void msgError(String msg);
 	void msgOk(String msg);
 	void msgWarning(String msg, bool hiPriority);
-
+  void msgWarning(String msg);
   void setWarningEnabled(bool);
 };
 

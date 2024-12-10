@@ -2,17 +2,21 @@ package panels;
 
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import main.Electroneddas;
 
-public class Spartiu extends JPanel implements ActionListener  {  
+public class Spartiu extends JPanel implements ActionListener, MouseListener {  
 	int manc;
 	int mancs=255;
 	
@@ -20,10 +24,13 @@ public class Spartiu extends JPanel implements ActionListener  {
 	
 	Timer timer;
 	
+	boolean mode=false;
+	
 	static Color tav[]= {Color.red,Color.orange,Color.green,Color.cyan,Color.magenta};
 	
 	public Spartiu(int time) {
 		timer=new Timer(time, this);
+		this.addMouseListener(this);
 	}
 	public void start() {
 		timer.start();
@@ -32,33 +39,43 @@ public class Spartiu extends JPanel implements ActionListener  {
 	public void stop() {
 		timer.stop();
 	}
+	
+	public void paintComponent(Graphics g)  {
+		super.paintComponent(g);
+	}
+	
+	
     public void paint(Graphics g)  { 
-    	
+    	    	
     	int w=2;
     	g.copyArea(0, 0, 800, 200, -w, 0);
+    	//g.fillRect(0,0,780,200);
     	g.setColor(Color.black);
     	g.fillRect(780,10,w,50);
     	g.fillRect(780,70,w,50);
     	
     	int n=8;
-		for (int i=0;i<5;i++)
+    	int arref=0;
+    	if (mode) arref++;
+    	
+		for (int i=0;i<4+arref;i++)
 		{
 			if ((manc&n)==0) {
 				g.setColor(tav[i]);
 			
 				g.fillRect(780-w,10+10*i,w,10);
-		        break;
+		        if (mode) break;
 			} 
 			n/=2;
 		}
 		
 		n=8;
-		for (int i=0;i<5;i++)
+		for (int i=0;i<4+arref;i++)
 		{
 			if ((mancs&n)==0) {
 				g.setColor(tav[i]);
 				g.fillRect(780-w,70+10*i,w,10);
-		        break;
+				if (mode) break;
 			} 
 			n/=2;
 		}
@@ -74,10 +91,35 @@ public class Spartiu extends JPanel implements ActionListener  {
           mancs=Electroneddas.monitor.getMsCrais();
           sul=Electroneddas.monitor.getSulidu();
           
-          repaint();// this will call at every 1 second
+          repaint();
           //System.err.println(mancs);
         }
     }
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		mode=!mode;
+	}
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
  }// fine classe che eredita da Canva{
 
 

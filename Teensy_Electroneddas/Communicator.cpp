@@ -21,6 +21,9 @@ void Communicator::msgOk(String msg){
   stream->print(COK);
   stream->println(msg);
   };
+void Communicator::msgWarning(String msg){
+  msgWarning(msg,true);
+}
 void Communicator::msgWarning(String msg, bool hiPriority){
   if (enabled) {
     stream->print(CWARNING);
