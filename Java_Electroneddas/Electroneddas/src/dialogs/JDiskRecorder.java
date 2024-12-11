@@ -48,8 +48,7 @@ public class JDiskRecorder extends JDialog implements SerialListener, ActionList
 		quit.addActionListener(this);
 		jpan.add(quit);
 		
-		Electroneddas.serialPort.addListener('S', this);
-		Electroneddas.serialPort.addListener('D', this);
+		
 		
 		
 		this.getContentPane().add(jpan,BorderLayout.CENTER);
@@ -82,6 +81,9 @@ public class JDiskRecorder extends JDialog implements SerialListener, ActionList
 			dispose();
 		}
 		
+		Electroneddas.serialPort.addListener('S', this);
+		Electroneddas.serialPort.addListener('D', this);
+		
 	}
 	
 	@Override
@@ -93,6 +95,7 @@ public class JDiskRecorder extends JDialog implements SerialListener, ActionList
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		System.out.println("Closed");
 		JMonitor.setListeners();
 		dispose();
 	}
@@ -101,7 +104,7 @@ public class JDiskRecorder extends JDialog implements SerialListener, ActionList
 	public void action(String msg) {
 		// TODO Auto-generated method stub
 		String line=msg.substring(0, 1)+","+msg.substring(2, 3)+","+(System.currentTimeMillis()-zero)+"\n";
-		//System.out.println(line);
+		
 		try {
 			myWriter.append(line);
 		} catch (IOException e) {

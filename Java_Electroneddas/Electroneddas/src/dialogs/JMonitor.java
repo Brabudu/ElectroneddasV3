@@ -5,7 +5,12 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
@@ -18,16 +23,18 @@ import javax.swing.ScrollPaneConstants;
 
 import main.Electroneddas;
 import panels.JCraiDisplay;
+import panels.JStracPanel;
 import panels.SerialListener;
 
 /* TODO: Gestione spia clip /*
  * 
  */
-public class JMonitor extends JDialog implements SerialListener, ActionListener{
+public class JMonitor extends JPanel implements SerialListener, ActionListener{
 	static JCraiDisplay msDisplay=new JCraiDisplay();
 	static JCraiDisplay mdDisplay=new JCraiDisplay();
 	static JSlider sulidu=new JSlider(JSlider.HORIZONTAL,0,100,0);
 	
+	//static JProgressBar sulidu=new JProgressBar();
 	static JCheckBox cr=new JCheckBox();
 	static JCheckBox su=new JCheckBox();
 	static JCheckBox clip=new JCheckBox();
@@ -37,11 +44,14 @@ public class JMonitor extends JDialog implements SerialListener, ActionListener{
 	
 	
 	public JMonitor() {
-		this.setTitle("Monitor");
-		this.setResizable(false);
+		//this.setTitle("Monitor");
+		//this.setResizable(false);
+		this.setLayout(new BorderLayout());
 		
 		JPanel jpan=new JPanel();
+		jpan.setLayout(new BoxLayout(jpan,BoxLayout.PAGE_AXIS));
 		JPanel jpan2=new JPanel();
+		JPanel jpan3=new JPanel();
 		
 		jpan2.add(new JLabel("Crais"));
 		jpan2.add(cr);
@@ -57,24 +67,45 @@ public class JMonitor extends JDialog implements SerialListener, ActionListener{
 		JPanel cannas=new JPanel();
 		cannas.add(msDisplay);
 		cannas.add(mdDisplay);
-		jpan.add(cannas);
+		jpan3.add(cannas);
+		
+		JButton jbr=new JButton();
+		jbr.setActionCommand("REC");
+		BufferedImage url;
+		try {
+			url = ImageIO.read(JStracPanel.class.getResourceAsStream("/img/lau_disk.png"));
+			jbr.setIcon(new ImageIcon(url));
 
-		//sulidu.setMinorTickSpacing(5);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			jbr.setText("Sarva in su discu");
+			
+
+		} 
+
+		jbr.setToolTipText("Arregistra in su discu");
+		jbr.addActionListener(this);
+		jpan3.add(jbr);
+		
+		jpan.add(jpan3);
+
+		sulidu.setMinorTickSpacing(5);
 		sulidu.setMajorTickSpacing(10);
 		sulidu.setPaintTicks(true);
 		sulidu.setPaintLabels(true);
+		//sulidu.setMaximum(100);
+	
 		sulidu.setEnabled(false);
 		jpan.add(sulidu);
 		
 		setListeners();
+		System.out.println("liste");
 		Electroneddas.serialPort.addListener('s', this);
 		
-		this.getContentPane().add(jpan,BorderLayout.CENTER);
-		this.getContentPane().add(jpan2,BorderLayout.SOUTH);
-		this.setDefaultCloseOperation(HIDE_ON_CLOSE);
-		this.setLocation(1000, 500);
-		setSize(400, 200);
-		this.setVisible(false);
+		this.add(jpan,BorderLayout.CENTER);
+		this.add(jpan2,BorderLayout.SOUTH);
+		
 		this.sync();
 	}
 	public void sync() {
@@ -83,18 +114,25 @@ public class JMonitor extends JDialog implements SerialListener, ActionListener{
 		if (su.isSelected()) m+=4;
 		if (clip.isSelected()) m+=16;
 		
-		Electroneddas.serialPort.printCmd("E m "+m);
+		SerialUSB.printCmd("E m "+m);
 	}
 	@Override
 	public void action(String msg) {
 		// TODO Auto-generated method stub	
-		sulidu.setValue(Integer.parseInt(msg.substring(1,3).trim()));
+		sulidu.setValue(Integer.parseInt(msg.substring(1).trim()));
+		su.setSelected(true);
+		//sulidu.setToolTipText(sulidu.getValue()+"%");
 		
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		sync();
+		if (e.getActionCommand()=="REC") {
+			new JDiskRecorder();
+		} else {
+			sync();
+		}
+		
 	}
 	public int getMsCrais() {
 		return msDisplay.getCrais();

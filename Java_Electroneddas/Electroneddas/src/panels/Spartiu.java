@@ -5,10 +5,12 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -26,11 +28,15 @@ public class Spartiu extends JPanel implements ActionListener, MouseListener {
 	
 	boolean mode=false;
 	
+	BufferedImage image=new BufferedImage(800,200,BufferedImage.TYPE_INT_RGB);
+	
 	static Color tav[]= {Color.red,Color.orange,Color.green,Color.cyan,Color.magenta};
 	
 	public Spartiu(int time) {
 		timer=new Timer(time, this);
 		this.addMouseListener(this);
+		this.setBackground(Color.black);
+		
 	}
 	public void start() {
 		timer.start();
@@ -41,13 +47,17 @@ public class Spartiu extends JPanel implements ActionListener, MouseListener {
 	}
 	
 	public void paintComponent(Graphics g)  {
+		
 		super.paintComponent(g);
+		g.drawImage(image, 0, 0, this); 
 	}
 	
-	
-    public void paint(Graphics g)  { 
-    	    	
+	private void updateSonada() {
+		
+		Graphics g=image.createGraphics();
+		
     	int w=2;
+    	
     	g.copyArea(0, 0, 800, 200, -w, 0);
     	//g.fillRect(0,0,780,200);
     	g.setColor(Color.black);
@@ -80,8 +90,20 @@ public class Spartiu extends JPanel implements ActionListener, MouseListener {
 			n/=2;
 		}
 		
-		g.setColor(Color.yellow);
+		g.setColor(Color.lightGray);
+		g.fillRect(780-w,125,w,54);
+		g.setColor(Color.black);
 		g.fillRect(780-w,125+(sul/2),w,1);
+		
+		
+	}
+	
+	
+	
+    public void paint(Graphics g)  { 
+    	super.paint(g);
+    	
+    
     	
      }
     public void actionPerformed(ActionEvent ev){
@@ -90,6 +112,9 @@ public class Spartiu extends JPanel implements ActionListener, MouseListener {
           manc=Electroneddas.monitor.getMdCrais();
           mancs=Electroneddas.monitor.getMsCrais();
           sul=Electroneddas.monitor.getSulidu();
+     
+          updateSonada();
+          
           
           repaint();
           //System.err.println(mancs);

@@ -147,12 +147,13 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 		b2.addActionListener(this);
 		tools.add(b2);
 
-		monitor=new JMonitor();
+	
+		/*
 		JButton b3=new JButton("Monitor");
 		b3.setActionCommand("Monitor");
 		b3.addActionListener(this);
 		tools.add(b3);
-		
+		*/
 		recorder=new JRecorder();
 		JButton b4=new JButton("Record");
 		b4.setActionCommand("Record");
@@ -324,19 +325,25 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 		//Dialog de su spartiu
 
 		spartdialog=new JDialog(this,"Sonada");
-		spartdialog.getContentPane().add(spart);
+		spartdialog.setResizable(false);
+		monitor=new JMonitor();
+		
+		
+		spartdialog.getContentPane().add(spart,BorderLayout.CENTER);
+		spartdialog.getContentPane().add(monitor,BorderLayout.EAST);
+		
 		spartdialog.addWindowListener(new java.awt.event.WindowAdapter() {
 			@Override
 			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
 
 				Electroneddas.spart.stop();
-				Electroneddas.monitor.stopCraisMonitor();
+				//Electroneddas.monitor.stopCraisMonitor();
 				Electroneddas.spartdialog.setVisible(false);
 
 			}
 		});
 		spartdialog.setLocation(100, 550);
-		spartdialog.setSize(800,180);     
+		spartdialog.setSize(1100,220);     
 		spartdialog.setVisible(false);
 
 		// Listener de sa bessida
@@ -434,9 +441,9 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 			serialPort.setVisible(!serialPort.isVisible());
 			break;
 
-		case "Monitor":
+		/*case "Monitor":
 			monitor.setVisible(!monitor.isVisible());
-			break;
+			break;*/
 		case "Record":
 			recorder.setVisible(!recorder.isVisible());
 			
@@ -445,10 +452,10 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 		case "Sonada":		
 			if (spartdialog.isVisible()) {
 				spart.stop();
-				monitor.stopCraisMonitor();            
+				//monitor.stopCraisMonitor();            
 			} else {
 				spart.start();
-				monitor.startCraisMonitor();			
+				//monitor.startCraisMonitor();			
 			}
 			spartdialog.setVisible(!spartdialog.isVisible());
 			break;

@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -18,6 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
+import javax.swing.SwingConstants;
 
 import main.Electroneddas;
 import panels.JStracPanel;
@@ -26,15 +28,14 @@ import panels.Spia;
 
 public class JRecorder  extends JDialog implements ActionListener, SerialListener{ 
 
-	JRadioButton recram=new JRadioButton(); 
-	JRadioButton recdisc=new JRadioButton(); 
+	
 
 	JProgressBar size=new JProgressBar();
 
 	JButton rec=new JButton("Rec");
 	JButton pl=new JButton("Play");
 	
-	JLabel stato=new JLabel("Stopped");
+	JLabel stato=new JLabel("Stop",SwingConstants.CENTER);
 
 
 	public JRecorder() {
@@ -43,84 +44,48 @@ public class JRecorder  extends JDialog implements ActionListener, SerialListene
 
 		Electroneddas.serialPort.addListener('R', this);
 
-		JPanel pan1=new JPanel();//new GridLayout(0,1))
+		JPanel pan1=new JPanel(new GridLayout(0,1));
 		JPanel pan2=new JPanel();
 		JPanel pan3=new JPanel();
+		pan3.setLayout(new BoxLayout(pan3,BoxLayout.PAGE_AXIS));
 		
 		pan2.add(rec);
 		pan2.add(pl);
 		
-		pan3.add(stato);
-		pan3.add(size);
+		stato.setHorizontalAlignment(JLabel.CENTER);
+		
+		pan1.add(stato);
+		pan1.add(size);
 		
 		size.setVisible(false);
+		size.setValue(0);
+	
 
-		BufferedImage url;
-		JLabel bdisk=new JLabel();
-		JLabel bram=new JLabel();
-
-		ButtonGroup bp=new ButtonGroup();
-		bp.add(recram);
-		bp.add(recdisc);
-		recram.setSelected(true);
-		recram.addActionListener(this);
-		recdisc.addActionListener(this);
+		
 		rec.addActionListener(this);
 		pl.addActionListener(this);
 		rec.setBackground(new Color(100,0,0));
 		pl.setBackground(new Color(0,100,0));
-		try {
-			url = ImageIO.read(JStracPanel.class.getResourceAsStream("/img/lau_disk.png"));
-			bdisk.setIcon(new ImageIcon(url));
-
-			url = ImageIO.read(JStracPanel.class.getResourceAsStream("/img/lau_ram.png"));
-			bram.setIcon(new ImageIcon(url));
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			bdisk.setText("Sarva in su discu");
-			bram.setText("Sarva in is electroneddas");
-
-		} 
-
-		bdisk.setToolTipText("Arregistra in su discu");
-		bram.setToolTipText("Arregistra in is electroneddas");
-
-
 		
-		pan1.add(bdisk);
-		pan1.add(recdisc);
-		pan1.add(bram);
-		pan1.add(recram);
-		size.setValue(50);
+		
 		size.setStringPainted(true);
 
 		this.getContentPane().add(pan1,BorderLayout.NORTH);
 		this.getContentPane().add(pan2,BorderLayout.CENTER);
 		this.getContentPane().add(pan3,BorderLayout.SOUTH);
 		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		this.setLocation(1000, 500);
-		this.pack();
+		this.setLocation(1200, 600);
+		this.setSize(250,100);
 		this.setVisible(false);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
-		if (recdisc.isSelected()) {
-			
-			pl.setEnabled(false);
-		} else {
-			
-			pl.setEnabled(true);
-		}
+		
 		if (arg0.getActionCommand().equals("Rec")) {
-			if (recram.isSelected()) SerialUSB.printCmd("E R 2");
-			else {
-				this.setVisible(false);
-				new JDiskRecorder();
-			}
+			SerialUSB.printCmd("E R 2");
+			
 		}
 		if (arg0.getActionCommand().equals("Play")) {
 			SerialUSB.printCmd("E R 3 1");
@@ -136,16 +101,16 @@ public class JRecorder  extends JDialog implements ActionListener, SerialListene
 		if (state.contains("play")) {
 			pl.setEnabled(false);	
 			rec.setEnabled(false);
-			stato.setText("Playing");
+			stato.setText("Play");
 			stato.setForeground(Color.green);
-			enableRadio(false);
+		
 		}
 		if (state.contains("end")) {
 			pl.setEnabled(true);
-			stato.setText("Stopped");
+			stato.setText("Stop");
 			stato.setForeground(Color.lightGray);
-			enableRadio(true);
-			if (recram.isSelected()) rec.setEnabled(true);
+			
+			rec.setEnabled(true);
 		}
 		if (state.length()<4) {
 			int progress=Integer.parseInt(state.substring(0, 1));		
@@ -158,26 +123,21 @@ public class JRecorder  extends JDialog implements ActionListener, SerialListene
 			stato.setForeground(Color.yellow);
 		}
 		if (state.contains("stop")) {
-			stato.setText("Stopped");
+			stato.setText("Stop");
 			rec.setEnabled(true);	
 			pl.setEnabled(true);	
 			stato.setForeground(Color.lightGray);
 			size.setVisible(false);
-			enableRadio(true);
+			
 		}
 		if (state.contains("rec")) {
-			if (recram.isSelected()) {
-				size.setVisible(true);
-				size.setValue(0);
-			}
-			stato.setText("Recording");
+			size.setVisible(true);
+			size.setValue(0);
+			stato.setText("Rec");
 			stato.setForeground(Color.red);
-			enableRadio(false);
+			
 		}
 	
 	}
-	private void enableRadio(boolean e) {
-		recram.setEnabled(e);
-		recdisc.setEnabled(e);
-	}
+	
 }
