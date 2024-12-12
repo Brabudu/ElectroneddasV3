@@ -13,6 +13,7 @@ import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -26,11 +27,13 @@ public class Spartiu extends JPanel implements ActionListener, MouseListener {
 	
 	Timer timer;
 	
-	boolean mode=false;
+	int mode=0;
 	
 	BufferedImage image=new BufferedImage(800,200,BufferedImage.TYPE_INT_RGB);
 	
 	static Color tav[]= {Color.red,Color.orange,Color.green,Color.cyan,Color.magenta};
+	
+	
 	
 	public Spartiu(int time) {
 		timer=new Timer(time, this);
@@ -58,7 +61,7 @@ public class Spartiu extends JPanel implements ActionListener, MouseListener {
 		
     	int w=2;
     	
-    	g.copyArea(0, 0, 800, 200, -w, 0);
+    	g.copyArea(0, 0, 800, 180, -w, 0);
     	//g.fillRect(0,0,780,200);
     	g.setColor(Color.black);
     	g.fillRect(780,10,w,50);
@@ -66,15 +69,15 @@ public class Spartiu extends JPanel implements ActionListener, MouseListener {
     	
     	int n=8;
     	int arref=0;
-    	if (mode) arref++;
+    	if (mode==0) arref++;
     	
 		for (int i=0;i<4+arref;i++)
 		{
-			if ((manc&n)==0) {
+			if ((((manc&n)==0)&&(mode!=2))||((manc&n)!=0)&&(mode==2)) {
 				g.setColor(tav[i]);
 			
 				g.fillRect(780-w,10+10*i,w,10);
-		        if (mode) break;
+		        if (mode==0) break;
 			} 
 			n/=2;
 		}
@@ -82,10 +85,10 @@ public class Spartiu extends JPanel implements ActionListener, MouseListener {
 		n=8;
 		for (int i=0;i<4+arref;i++)
 		{
-			if ((mancs&n)==0) {
+			if ((((mancs&n)==0)&&(mode!=2))||((mancs&n)!=0)&&(mode==2)) {
 				g.setColor(tav[i]);
 				g.fillRect(780-w,70+10*i,w,10);
-				if (mode) break;
+				if (mode==0) break;
 			} 
 			n/=2;
 		}
@@ -94,8 +97,7 @@ public class Spartiu extends JPanel implements ActionListener, MouseListener {
 		g.fillRect(780-w,65,w,1);
 		g.fillRect(780-w,125,w,54);
 		g.setColor(Color.black);
-		g.fillRect(780-w,125+(sul/2),w,1);
-		
+		g.fillRect(780-w,125+(sul/2),w,1);	
 		
 	}
 	
@@ -124,7 +126,7 @@ public class Spartiu extends JPanel implements ActionListener, MouseListener {
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		mode=!mode;
+		mode=(mode+1)%3;
 	}
 	@Override
 	public void mouseEntered(MouseEvent arg0) {

@@ -38,6 +38,7 @@ public class JRecorder  extends JDialog implements ActionListener, SerialListene
 
 	JButton rec=new JButton("Rec");
 	JButton pl=new JButton("Play");
+	JButton st=new JButton("Stop");
 	
 	JLabel stato=new JLabel("Stop",SwingConstants.CENTER);
 	
@@ -61,6 +62,7 @@ public class JRecorder  extends JDialog implements ActionListener, SerialListene
 		
 		pan2.add(rec);
 		pan2.add(pl);
+		pan2.add(st);
 		
 		stato.setHorizontalAlignment(JLabel.CENTER);
 		
@@ -72,37 +74,30 @@ public class JRecorder  extends JDialog implements ActionListener, SerialListene
 		
 		rec.addActionListener(this);
 		pl.addActionListener(this);
+		st.addActionListener(this);
 		rec.setBackground(new Color(100,0,0));
 		pl.setBackground(new Color(0,100,0));
-		
+		st.setBackground(new Color(100,100,100));
 		
 		size.setStringPainted(true);
-		BufferedImage url;
 		
-		try {
-			url = ImageIO.read(Electroneddas.class.getResourceAsStream("/img/lau_disk.png"));
-			ImageIcon t = new ImageIcon(new ImageIcon(url).getImage()
-					.getScaledInstance(64, 40, Image.SCALE_SMOOTH)); // Set the desired size here
-			JButton save=new JButton(t);
-			save.setToolTipText("Sarva in su discu");
-			save.setActionCommand("Save");
-			save.addActionListener(this);
-			pan3.add(new JPanel().add(save));
-			
-			url = ImageIO.read(Electroneddas.class.getResourceAsStream("/img/lau_ram.png"));
-			 t = new ImageIcon(new ImageIcon(url).getImage()
-					.getScaledInstance(64, 40, Image.SCALE_SMOOTH)); // Set the desired size here
-			JButton load=new JButton(t);
-			load.setToolTipText("Càrriga de su discu");
-			load.setActionCommand("Load");
-			load.addActionListener(this);
-			pan3.add(new JPanel().add(load));
+		
+		
+		JButton save=new JButton("Save");
+		save.setToolTipText("Sarva in su discu");
+		save.setActionCommand("Save");
+		save.addActionListener(this);
+		pan3.add(new JPanel().add(save));
+		
+		
+		JButton load=new JButton("Load");
+		load.setToolTipText("Càrriga de su discu");
+		load.setActionCommand("Load");
+		load.addActionListener(this);
+		pan3.add(new JPanel().add(load));
 			
 			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	
 		
 		pan3.add(num);
 		
@@ -117,7 +112,7 @@ public class JRecorder  extends JDialog implements ActionListener, SerialListene
 		this.getContentPane().add(pan4,BorderLayout.SOUTH);
 		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		this.setLocation(1200, 600);
-		this.setSize(250,220);
+		this.setSize(300,220);
 		this.setVisible(false);
 	}
 
