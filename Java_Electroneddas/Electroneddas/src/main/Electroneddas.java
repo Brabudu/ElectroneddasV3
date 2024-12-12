@@ -455,6 +455,7 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 				//monitor.stopCraisMonitor();            
 			} else {
 				spart.start();
+				monitor.sync();
 				//monitor.startCraisMonitor();			
 			}
 			spartdialog.setVisible(!spartdialog.isVisible());

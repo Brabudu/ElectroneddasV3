@@ -106,6 +106,9 @@ public class JMonitor extends JPanel implements SerialListener, ActionListener{
 		this.add(jpan,BorderLayout.CENTER);
 		this.add(jpan2,BorderLayout.SOUTH);
 		
+		su.setSelected(true);
+		cr.setSelected(true);
+		
 		this.sync();
 	}
 	public void sync() {
@@ -120,7 +123,7 @@ public class JMonitor extends JPanel implements SerialListener, ActionListener{
 	public void action(String msg) {
 		// TODO Auto-generated method stub	
 		sulidu.setValue(Integer.parseInt(msg.substring(1).trim()));
-		su.setSelected(true);
+		
 		//sulidu.setToolTipText(sulidu.getValue()+"%");
 		
 	}

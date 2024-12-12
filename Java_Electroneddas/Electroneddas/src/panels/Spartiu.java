@@ -91,6 +91,7 @@ public class Spartiu extends JPanel implements ActionListener, MouseListener {
 		}
 		
 		g.setColor(Color.lightGray);
+		g.fillRect(780-w,65,w,1);
 		g.fillRect(780-w,125,w,54);
 		g.setColor(Color.black);
 		g.fillRect(780-w,125+(sul/2),w,1);

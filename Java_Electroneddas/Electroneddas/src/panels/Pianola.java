@@ -47,7 +47,8 @@ public class Pianola extends JPanel{
 		puntu=p;
 	}
 		
-	public void paint(Graphics g)  { 
+	public void paintComponent(Graphics g)  { 
+		super.paintComponent(g);
 		g.setFont(new Font("Arial", Font.BOLD, 10)); 
 		g.setColor(Color.DARK_GRAY);
 		g.fillRect(0, 0, (sp-ss)*W+2*M,H+2*M);

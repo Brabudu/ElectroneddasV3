@@ -3,6 +3,7 @@ package dialogs;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -19,6 +20,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 
 import main.Electroneddas;
@@ -36,7 +40,12 @@ public class JRecorder  extends JDialog implements ActionListener, SerialListene
 	JButton pl=new JButton("Play");
 	
 	JLabel stato=new JLabel("Stop",SwingConstants.CENTER);
+	
+	JSpinner num=new JSpinner(new SpinnerNumberModel(0,0,100,1));
+	
+	JTextField name=new JTextField();
 
+	JLabel stato2=new JLabel(" ");
 
 	public JRecorder() {
 		this.setTitle("Registradori");
@@ -47,7 +56,8 @@ public class JRecorder  extends JDialog implements ActionListener, SerialListene
 		JPanel pan1=new JPanel(new GridLayout(0,1));
 		JPanel pan2=new JPanel();
 		JPanel pan3=new JPanel();
-		pan3.setLayout(new BoxLayout(pan3,BoxLayout.PAGE_AXIS));
+		JPanel pan4=new JPanel();
+		pan4.setLayout(new BoxLayout(pan4,BoxLayout.PAGE_AXIS));
 		
 		pan2.add(rec);
 		pan2.add(pl);
@@ -59,8 +69,6 @@ public class JRecorder  extends JDialog implements ActionListener, SerialListene
 		
 		size.setVisible(false);
 		size.setValue(0);
-	
-
 		
 		rec.addActionListener(this);
 		pl.addActionListener(this);
@@ -69,13 +77,47 @@ public class JRecorder  extends JDialog implements ActionListener, SerialListene
 		
 		
 		size.setStringPainted(true);
-
+		BufferedImage url;
+		
+		try {
+			url = ImageIO.read(Electroneddas.class.getResourceAsStream("/img/lau_disk.png"));
+			ImageIcon t = new ImageIcon(new ImageIcon(url).getImage()
+					.getScaledInstance(64, 40, Image.SCALE_SMOOTH)); // Set the desired size here
+			JButton save=new JButton(t);
+			save.setToolTipText("Sarva in su discu");
+			save.setActionCommand("Save");
+			save.addActionListener(this);
+			pan3.add(new JPanel().add(save));
+			
+			url = ImageIO.read(Electroneddas.class.getResourceAsStream("/img/lau_ram.png"));
+			 t = new ImageIcon(new ImageIcon(url).getImage()
+					.getScaledInstance(64, 40, Image.SCALE_SMOOTH)); // Set the desired size here
+			JButton load=new JButton(t);
+			load.setToolTipText("Càrriga de su discu");
+			load.setActionCommand("Load");
+			load.addActionListener(this);
+			pan3.add(new JPanel().add(load));
+			
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		pan3.add(num);
+		
+		pan4.add(pan3);
+		
+		pan4.add(new JPanel().add(name));
+		pan4.add(stato2);
+		
+		
 		this.getContentPane().add(pan1,BorderLayout.NORTH);
 		this.getContentPane().add(pan2,BorderLayout.CENTER);
-		this.getContentPane().add(pan3,BorderLayout.SOUTH);
+		this.getContentPane().add(pan4,BorderLayout.SOUTH);
 		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		this.setLocation(1200, 600);
-		this.setSize(250,100);
+		this.setSize(250,220);
 		this.setVisible(false);
 	}
 
@@ -91,6 +133,26 @@ public class JRecorder  extends JDialog implements ActionListener, SerialListene
 			SerialUSB.printCmd("E R 3 1");
 		}
 		
+		if (arg0.getActionCommand().equals("Load")) {
+			stato2.setText(" ");
+			SerialUSB.printCmd("E R l "+num.getValue());
+			
+		}
+		
+		if (arg0.getActionCommand().equals("Save")) {
+			String nome=name.getText();
+			if (nome.length()>31) nome.subSequence(0, 31);
+			SerialUSB.printCmd("E R n "+nome);
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		SerialUSB.printCmd("E R s "+num.getValue());
+		stato2.setText("OK");
+		
+		}
 			
 	}
 
@@ -137,6 +199,18 @@ public class JRecorder  extends JDialog implements ActionListener, SerialListene
 			stato.setForeground(Color.red);
 			
 		}
+		
+		if (state.contains("err")) {
+			name.setText(" ");
+			stato2.setText("ERROR");
+		}
+		if (state.contains("load")) {
+			name.setText(state.substring(4));
+			stato2.setText("OK");
+		}
+		if (state.contains("save")) {
+			
+		}	
 	
 	}
 	

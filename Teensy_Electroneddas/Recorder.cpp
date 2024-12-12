@@ -166,13 +166,16 @@ void Recorder::parse(String string) {
             efs->recToFile(this, sParams[1].toInt());
           break;
           case 'l':      
-            if (efs->recFromFile(this, sParams[1].toInt(), false)) com->msgInfo(String("Name :")+nome);
+            if (efs->recFromFile(this, sParams[1].toInt(), false)) com->msgWarning(String("Rload")+nome);
+            else com->msgWarning(String("Rerr"));
           break;
           case 'i':      
-            if (efs->recFromFile(this, sParams[1].toInt(), true)) com->msgInfo(String("Name :")+nome);
+            if (efs->recFromFile(this, sParams[1].toInt(), true)) com->msgWarning(String("RSave")+nome);
+            else com->msgWarning(String("Rerr"));
           break;
           case 'n':      
-            setNome(sParams[1]);
+            setNome(string.substring(2,32));
+            
           break;
           default:
            com->msgError(String("Unknown command: E R ")+s[0]);
