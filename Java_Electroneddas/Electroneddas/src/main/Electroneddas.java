@@ -342,7 +342,7 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 
 			}
 		});
-		spartdialog.setLocation(100, 550);
+		spartdialog.setLocation(10, 550);
 		spartdialog.setSize(1100,220);     
 		spartdialog.setVisible(false);
 

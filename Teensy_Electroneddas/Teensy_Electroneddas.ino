@@ -240,6 +240,8 @@ void loop() {
     if ((s=rec->getSample())!=0) {
       sona(s);
     }
+    //USB Serial
+    pollSerial();
   }
 }
 

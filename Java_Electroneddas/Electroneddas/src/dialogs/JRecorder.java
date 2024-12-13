@@ -111,7 +111,7 @@ public class JRecorder  extends JDialog implements ActionListener, SerialListene
 		this.getContentPane().add(pan2,BorderLayout.CENTER);
 		this.getContentPane().add(pan4,BorderLayout.SOUTH);
 		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		this.setLocation(1200, 600);
+		this.setLocation(1200, 550);
 		this.setSize(300,220);
 		this.setVisible(false);
 	}
@@ -131,6 +131,12 @@ public class JRecorder  extends JDialog implements ActionListener, SerialListene
 		if (arg0.getActionCommand().equals("Load")) {
 			stato2.setText(" ");
 			SerialUSB.printCmd("E R l "+num.getValue());
+			
+		}
+		
+		if (arg0.getActionCommand().equals("Stop")) {
+			stato2.setText(" ");
+			SerialUSB.printCmd("E R 0");
 			
 		}
 		
