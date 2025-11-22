@@ -628,7 +628,7 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 							actCuntzertu=nn+1;
 							SerialUSB.printCmd("E r "+n);
 							try {
-								Thread.sleep(100);
+								Thread.sleep(150);
 							} catch (InterruptedException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();

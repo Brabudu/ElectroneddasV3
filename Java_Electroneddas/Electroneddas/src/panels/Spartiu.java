@@ -53,6 +53,7 @@ public class Spartiu extends JPanel implements ActionListener, MouseListener {
 		
 		super.paintComponent(g);
 		g.drawImage(image, 0, 0, this); 
+		g.dispose();
 	}
 	
 	private void updateSonada() {
@@ -98,7 +99,7 @@ public class Spartiu extends JPanel implements ActionListener, MouseListener {
 		g.fillRect(780-w,125,w,54);
 		g.setColor(Color.black);
 		g.fillRect(780-w,125+(sul/2),w,1);	
-		
+
 	}
 	
 	
