@@ -138,6 +138,7 @@ public:
 
   void playCrai(uint8_t crai);
   void playCrai(uint8_t crai, uint8_t hexcrai);
+  void playCrai(uint8_t crai, uint8_t hexcrai, bool oct);
 
   uint8_t getCraiAct();
   uint8_t getHCraiAct();

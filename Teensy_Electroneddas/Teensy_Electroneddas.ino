@@ -330,7 +330,7 @@ void sona(uint8_t b) {
 
   uint8_t hi_nibb = b & 0xf0;
   uint8_t lo_nibb = b & 0x0f;
-
+/*
   if (hi_nibb == 0x70) {  //Comando da controller
     int dir = 0;
     if (lo_nibb == 0) return;
@@ -345,7 +345,7 @@ void sona(uint8_t b) {
     d->displayPage();
     d->update();
 
-  } else {
+  } else {*/
     nota = byteToCrai(b, &canna);
 
     if (mon_mode & CRAIS) {
@@ -367,7 +367,7 @@ void sona(uint8_t b) {
       c->mancs.playCrai(nota, lo_nibb);
     }
     if (canna == 2) {
-      c->mancd.playCrai(nota, lo_nibb);
+      c->mancd.playCrai(nota, lo_nibb, (hi_nibb = 0x70));
     }
 
 
@@ -381,7 +381,7 @@ void sona(uint8_t b) {
         last_error_mem = last_error;
       }
     }
-  }
+  //}
 }
 
 void monitoring() {

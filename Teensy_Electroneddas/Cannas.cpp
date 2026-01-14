@@ -440,12 +440,20 @@ void Canna::setBiquads(AudioFilterBiquad* stat, AudioFilterBiquad* dinCrais, Aud
 }
 
 void Canna::playCrai(uint8_t crai) {
-  Canna::playCrai(crai, 0);
+  Canna::playCrai(crai, 0, false);
 }
 
 void Canna::playCrai(uint8_t crai, uint8_t hexcrai) {
+  Canna::playCrai(crai, hexcrai, false);
+}
+
+void Canna::playCrai(uint8_t crai, uint8_t hexcrai, bool oct) {
 
   bool oberta = obertura(hexcrai);
+
+  float oct_fact = 1;
+
+  if (oct) oct_fact = 2;
 
   lastHCrai = hexcrai;
 
@@ -457,7 +465,8 @@ void Canna::playCrai(uint8_t crai, uint8_t hexcrai) {
   dutyF = dutyAct / dutyDest;
 
   //freq
-  freqDest = Cuntzertu::calcFrequenza(crais[crai].getPuntu()) * crais[crai].getFini();
+  freqDest = Cuntzertu::calcFrequenza(crais[crai].getPuntu()) * crais[crai].getFini() * oct_fact;
+
 
   freqF = freqAct / freqDest;
 
@@ -477,8 +486,8 @@ void Canna::playCrai(uint8_t crai, uint8_t hexcrai) {
 
   port_count = 0;
 
-  usbMIDI.sendNoteOff(crais[craiAct].getPuntu() + transposition, velocity, channel);
-  usbMIDI.sendNoteOn(crais[crai].getPuntu() + transposition, velocity, channel);
+  usbMIDI.sendNoteOff((crais[craiAct].getPuntu() + transposition) * oct_fact, velocity, channel);
+  usbMIDI.sendNoteOn((crais[crai].getPuntu() + transposition) * oct_fact, velocity, channel);
   craiAct = crai;
 }
 
