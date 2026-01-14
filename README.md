@@ -14,7 +14,7 @@ Il terzo modello delle Electroneddas è opensource!
 ## Teensy_Electroneddas:
   Contiene il codice da caricare sul Teensy 4.1 (modalità 396mhz Usb audio+serial+midi)
   
-  La compilazione richiede le librerie ArduinoJson e GiverOled
+  La compilazione richiede le librerie ArduinoJson e GiverOled 
   
 ## Java_Electroneddas:
 

@@ -31,394 +31,391 @@
 #define GATEMODEMAX 5
 
 
-class Biquad
-{
-  public:
-    Biquad();
+class Biquad {
+public:
+  Biquad();
 
-    void deserialize(JsonObject jo);
-    void serialize(JsonObject jo);
-    void parse(String string);
+  void deserialize(JsonObject jo);
+  void serialize(JsonObject jo);
+  void parse(String string);
 
-    void setFreq(uint16_t freq);
-    uint16_t getFreq();
+  void setFreq(uint16_t freq);
+  uint16_t getFreq();
 
-    void setQ(float q);
-    float getQ();
+  void setQ(float q);
+  float getQ();
 
-    void setMulteplicity(uint8_t m);
-    uint8_t getMulteplicity();
+  void setMulteplicity(uint8_t m);
+  uint8_t getMulteplicity();
 
-    void setType(char type);
-    char getType();
+  void setType(char type);
+  char getType();
 
-    void setBQ(AudioFilterBiquad* bq, uint8_t stage, uint8_t multeplicity);
-    void setBQ(AudioFilterBiquad* bq, uint8_t stage);
-    
-    AudioFilterBiquad* GetBQ();
+  void setBQ(AudioFilterBiquad* bq, uint8_t stage, uint8_t multeplicity);
+  void setBQ(AudioFilterBiquad* bq, uint8_t stage);
 
-    void sync();
-    void sync(uint16_t freq);
+  AudioFilterBiquad* GetBQ();
+
+  void sync();
+  void sync(uint16_t freq);
 
 
-  private:
-    uint16_t freq;
-    float q;
-    char type;
-    AudioFilterBiquad* bq;
-    uint8_t bqStage;
-    uint8_t multeplicity;
-    const double bqAllPass[5] = {1, 0, 0, 0, 0};
-    double bqAllPass2[5] = {.7, 0, 0, 0, 0};
+private:
+  uint16_t freq;
+  float q;
+  char type;
+  AudioFilterBiquad* bq;
+  uint8_t bqStage;
+  uint8_t multeplicity;
+  const double bqAllPass[5] = { 1, 0, 0, 0, 0 };
+  double bqAllPass2[5] = { .7, 0, 0, 0, 0 };
 };
 
 class Crai {
-  public:
-    Crai();
+public:
+  Crai();
 
-    void deserialize(JsonObject jo);
-    void serialize(JsonObject jo);
-    void parse(String string);
+  void deserialize(JsonObject jo);
+  void serialize(JsonObject jo);
+  void parse(String string);
 
-    void setVol(float vol);
-    float getVol();
+  void setVol(float vol);
+  float getVol();
 
-    void setVolA(float volA);
-    float getVolA();
+  void setVolA(float volA);
+  float getVolA();
 
-    void setFini(float fini);
-    float getFini();
+  void setFini(float fini);
+  float getFini();
 
-    void setDuty(float duty);
-    float getDuty();
+  void setDuty(float duty);
+  float getDuty();
 
-    void setPuntu(uint8_t puntu);
-    uint8_t getPuntu();
-    Biquad* getBQ();
+  void setPuntu(uint8_t puntu);
+  uint8_t getPuntu();
+  Biquad* getBQ();
 
-  private:
-    float vol;
-    float volA;
-    float fini;
-    float duty;
-    uint8_t puntu;
-  protected:
-    Biquad bq;
-
+private:
+  float vol;
+  float volA;
+  float fini;
+  float duty;
+  uint8_t puntu;
+protected:
+  Biquad bq;
 };
 
 class Canna {
-  public:
-    Canna(uint8_t ncrais);
+public:
+  Canna(uint8_t ncrais);
 
-    void deserialize(JsonObject jo);
-    void serialize(JsonObject jo);
-    void parse(String string);
+  void deserialize(JsonObject jo);
+  void serialize(JsonObject jo);
+  void parse(String string);
 
-    void setVolArm(float volArm);
-    float getVolArm();
+  void setVolArm(float volArm);
+  float getVolArm();
 
-    void setStrb(uint8_t strb);
-    uint8_t getStrb();
+  void setStrb(uint8_t strb);
+  uint8_t getStrb();
 
-    void setSonu(uint8_t sonu);
-    uint8_t getSonu();
+  void setSonu(uint8_t sonu);
+  uint8_t getSonu();
 
-    void setPort(uint8_t port);
-    uint8_t getPort();
+  void setPort(uint8_t port);
+  uint8_t getPort();
 
-    void setBaseFreq(float freq);
+  void setBaseFreq(float freq);
 
-    void setMIDI(uint8_t channel, uint8_t velocity, uint8_t transposition, uint8_t mode);
-    void setMIDI(uint8_t transposition);
+  void setMIDI(uint8_t channel, uint8_t velocity, uint8_t transposition, uint8_t mode);
+  void setMIDI(uint8_t transposition);
 
-    void update(float modulation,float modvol, float modf, float modfilt);
+  void update(float modulation, float modvol, float modf, float modfilt);
 
-    void sync();
+  void sync();
 
-    void mute(bool mute);
-   
-    void playCrai(uint8_t crai);
-    void playCrai(uint8_t crai, uint8_t hexcrai);
-    
-    uint8_t getCraiAct();
-    uint8_t getHCraiAct();
+  void mute(bool mute);
 
-    void setCrais(byte* crais);
-    
-    void setBiquads(AudioFilterBiquad* bqStat, AudioFilterBiquad* bqDinCrais,AudioFilterBiquad* bqDinFin);
-    void setBiquads(AudioFilterBiquad* bqStat, AudioFilterBiquad* bqStat2);
+  void playCrai(uint8_t crai);
+  void playCrai(uint8_t crai, uint8_t hexcrai);
 
-    Biquad* getBiquad();
+  uint8_t getCraiAct();
+  uint8_t getHCraiAct();
 
-    void setSynth(AudioSynthWaveform2* s);
-    void setMixer(AudioMixer4* mixer);
+  void setCrais(byte* crais);
+
+  void setBiquads(AudioFilterBiquad* bqStat, AudioFilterBiquad* bqDinCrais, AudioFilterBiquad* bqDinFin);
+  void setBiquads(AudioFilterBiquad* bqStat, AudioFilterBiquad* bqStat2);
+
+  Biquad* getBiquad();
+
+  void setSynth(AudioSynthWaveform2* s);
+  void setMixer(AudioMixer4* mixer);
 
 
-  protected:
-    float volArm;
-    uint8_t strb;
-    uint8_t sonu;
-    uint8_t port=0;
-    int timbru;
-    float obFactDuty=.8;
-    float obFactVol=1.1;
+protected:
+  float volArm;
+  uint8_t strb;
+  uint8_t sonu;
+  uint8_t port = 0;
+  int timbru;
+  float obFactDuty = .8;
+  float obFactVol = 1.1;
 
-    Biquad  bqStat;
-    Biquad  bqDinF;
-    Crai* crais;
-   
-    float baseFreq;
-    AudioSynthWaveform2* synth;
-    AudioMixer4* mixer;
+  Biquad bqStat;
+  Biquad bqDinF;
+  Crai* crais;
 
-  private:
+  float baseFreq;
+  AudioSynthWaveform2* synth;
+  AudioMixer4* mixer;
+
+private:
   bool obertura(uint8_t crais);
 
   //MIDI
   float waveAmplitude;
-   uint8_t channel=0;
-   uint8_t velocity=127;
-   uint8_t transposition=24;
-   uint8_t mode=0;
-   
-    uint8_t ncrais;
+  uint8_t channel = 0;
+  uint8_t velocity = 127;
+  uint8_t transposition = 24;
+  uint8_t mode = 0;
 
-    uint8_t lastHCrai=0;
+  uint8_t ncrais;
 
-    uint8_t port_count=0;
-    
-    volatile uint8_t craiAct;
+  uint8_t lastHCrai = 0;
 
-    volatile float dutyDest;
-    volatile float dutyAct = .1;
-    volatile float dutyF;
+  uint8_t port_count = 0;
 
-    volatile float freqDest;
-    volatile float freqAct = 220;
-    volatile float freqF;
+  volatile uint8_t craiAct;
 
-    volatile float ffreqDest;
-    volatile float ffreqAct = 1000;
-    volatile float ffreqF;
+  volatile float dutyDest;
+  volatile float dutyAct = .1;
+  volatile float dutyF;
 
-    volatile float volDest;
-    volatile float volAct = 1;
-    volatile float volF;
+  volatile float freqDest;
+  volatile float freqAct = 220;
+  volatile float freqF;
+
+  volatile float ffreqDest;
+  volatile float ffreqAct = 1000;
+  volatile float ffreqF;
+
+  volatile float volDest;
+  volatile float volAct = 1;
+  volatile float volF;
 };
 
 class Cuntzertu {
-  private:
-    
-  public:
-    Cuntzertu();
+private:
 
-    
-    void deserialize(Stream* s);
-    void deserialize(const char* s);
+public:
+  Cuntzertu();
 
-    void deserializeFunction(const char* s,int num);
-    
-    void serialize(Stream* s);
-    void parse(String string);
 
-    void writeJSONPrefs(Stream* s);
-    void readJSONPrefs(Stream* s);
+  void deserialize(Stream* s);
+  void deserialize(const char* s);
 
-    void setPreferredCuntz(uint8_t num);
-    uint8_t getPreferredCuntz();
-    
-    void setNome(String nome);
-    char* getNome();
+  void deserializeFunction(const char* s, int num);
 
-    void setDescr(String descr);
-    char* getDescr();
+  void serialize(Stream* s);
+  void parse(String string);
 
-    void setVol(float vol);
-    void setVolBilT(float volT, float bilT);
-    void setVolBilMs(float volMs, float bilMs);
-    void setVolBilMd(float volMd, float bilMd);
+  void writeJSONPrefs(Stream* s);
+  void readJSONPrefs(Stream* s);
 
-    float getVol();
-    float getVolMs();
-    float getVolMd();
-    float getVolT();
+  void setPreferredCuntz(uint8_t num);
+  uint8_t getPreferredCuntz();
 
-    float getBilT();
-    float getBilMs();
-    float getBilMd();
+  void setNome(String nome);
+  char* getNome();
 
-    void setFini(float fini);
+  void setDescr(String descr);
+  char* getDescr();
 
-    float getFini();
+  void setVol(float vol);
+  void setVolBilT(float volT, float bilT);
+  void setVolBilMs(float volMs, float bilMs);
+  void setVolBilMd(float volMd, float bilMd);
 
-    void setPuntu(uint8_t puntu);
-    void setCuntz(uint8_t cuntz);
-    void setModal(uint8_t mod);
+  float getVol();
+  float getVolMs();
+  float getVolMd();
+  float getVolT();
 
-    uint8_t getPuntu();
-    uint8_t getCuntz();
-    uint8_t getModal();
+  float getBilT();
+  float getBilMs();
+  float getBilMd();
 
-    uint8_t getFilterMode();
-    void setFilterMode(uint8_t mode);
+  void setFini(float fini);
 
-    void setVerb(float vol, float damp, float room);
-    float getVerbVol();
-    float getVerbDamp();
-    float getVerbRoom();
+  float getFini();
 
-    uint8_t getSulSens();  
-    uint8_t getSulZero();
-    uint8_t getSulLimin();
-    
-    uint8_t getSulProgZ();
-    uint8_t getSulProgS();
+  void setPuntu(uint8_t puntu);
+  void setCuntz(uint8_t cuntz);
+  void setModal(uint8_t mod);
 
-    void setSulSens(uint8_t sens);
-    void setSulZero(uint8_t zero);
-    void setSulLimin(uint8_t limin);
-    
-    void setSulProgZ(uint8_t num);
-    void setSulProgS(uint8_t num);
+  uint8_t getPuntu();
+  uint8_t getCuntz();
+  uint8_t getModal();
 
-    void setAcordadura(uint8_t num);
-    ///////////
+  uint8_t getFilterMode();
+  void setFilterMode(uint8_t mode);
 
-    void setBiquads(AudioFilterBiquad* left, AudioFilterBiquad* right);
-    void setOutAmps(AudioAmplifier* lOut, AudioAmplifier* rOut);
-    void setReverbs(AudioEffectFreeverb* lRev, AudioEffectFreeverb* rRev);
-    
-    void setCannaMixers(AudioMixer4* lMix, AudioMixer4* rMix);
-    void beginTimer();
+  void setVerb(float vol, float damp, float room);
+  float getVerbVol();
+  float getVerbDamp();
+  float getVerbRoom();
 
-    void setGateMode(uint8_t mode);
-    uint8_t getGateMode();
+  uint8_t getSulSens();
+  uint8_t getSulZero();
+  uint8_t getSulLimin();
 
-    void timerRoutine();
-    void sync();
+  uint8_t getSulProgZ();
+  uint8_t getSulProgS();
 
-    void syncBT0(Stream*);
-    void syncBT1(Stream*);
-    void syncBT2(Stream*);
-    
-    void setSul(float sul);
-    void mute(bool mute);
-    void muteOut(bool mute);
+  void setSulSens(uint8_t sens);
+  void setSulZero(uint8_t zero);
+  void setSulLimin(uint8_t limin);
 
-    static float getBaseFreq();
-    static float calcFrequenza(uint8_t nota);
-   
-  private:
-    void syncFreq();
-    void send_f(Stream* s, float arg);
-    void deserialize(JsonObject jo);
-    void calcCrais(uint8_t cuntz, uint8_t modal); 
-    byte diatToCroma(byte crai, uint8_t modal);
-    
-   
-  public:
-    Canna tumbu=Canna(1);
-    Canna mancs=Canna(5);
-    Canna mancd=Canna(5);
+  void setSulProgZ(uint8_t num);
+  void setSulProgS(uint8_t num);
 
-   
+  void setAcordadura(uint8_t num);
+  ///////////
 
-  private:
-    char nome[32];
-    char descr[64];
-    float vol;
-    uint8_t cuntz;
-    uint8_t mod;
-    uint8_t num_acordadura = 0;
-    uint8_t puntu;
-    float fini;
+  void setBiquads(AudioFilterBiquad* left, AudioFilterBiquad* right);
+  void setOutAmps(AudioAmplifier* lOut, AudioAmplifier* rOut);
+  void setReverbs(AudioEffectFreeverb* lRev, AudioEffectFreeverb* rRev);
 
-    float volT;
-    float bilT;
-    const uint8_t tumbuMixChan = 2;
+  void setCannaMixers(AudioMixer4* lMix, AudioMixer4* rMix);
+  void beginTimer();
 
-    float volMs;
-    float bilMs;
-    const uint8_t mancsMixChan = 0;
+  void setGateMode(uint8_t mode);
+  uint8_t getGateMode();
 
-    float volMd;
-    float bilMd;
-    const uint8_t mancdMixChan = 1;
+  void timerRoutine();
+  void sync();
 
-    Biquad lBq;
-    Biquad rBq;
+  void syncBT0(Stream*);
+  void syncBT1(Stream*);
+  void syncBT2(Stream*);
 
-    float revVol=0;
-    float revDamp=0.5;
-    float revRoom=0.5;
-    
-    uint8_t filterMode=0;
+  void setSul(float sul);
+  void mute(bool mute);
+  void muteOut(bool mute);
 
-    uint8_t vers=0;
+  static float getBaseFreq();
+  static float calcFrequenza(uint8_t nota);
 
-    uint8_t preferredCuntz=0;
+private:
+  void syncFreq();
+  void send_f(Stream* s, float arg);
+  void deserialize(JsonObject jo);
+  void calcCrais(uint8_t cuntz, uint8_t modal);
+  byte diatToCroma(byte crai, uint8_t modal);
 
-    static float freq;
 
-    static float acordadura[];
+public:
+  Canna tumbu = Canna(1);
+  Canna mancs = Canna(5);
+  Canna mancd = Canna(5);
 
-    bool muted;
-   
-    IntervalTimer timer;
 
-    AudioAmplifier* lOut;
-    AudioAmplifier* rOut;
 
-    AudioMixer4* lMix;
-    AudioMixer4* rMix;
+private:
+  char nome[32];
+  char descr[64];
+  float vol;
+  uint8_t cuntz;
+  uint8_t mod;
+  uint8_t num_acordadura = 0;
+  uint8_t puntu;
+  float fini;
 
-    AudioEffectFreeverb* lRev;
-    AudioEffectFreeverb* rRev;
+  float volT;
+  float bilT;
+  const uint8_t tumbuMixChan = 2;
 
-    //
-    
-    //
-    float avgRnd = 0;
-    uint8_t tmrCount=0;
+  float volMs;
+  float bilMs;
+  const uint8_t mancsMixChan = 0;
 
-    ///////
-    volatile float sulidu=0;
-    volatile bool suling=false;
-    volatile uint8_t  sulcount=0;
-    
-    float avgSulidu=0;
-    
-    float ssens=30;
-    uint8_t slim=35;
-    uint8_t szero=50;
+  float volMd;
+  float bilMd;
+  const uint8_t mancdMixChan = 1;
 
-    uint8_t sulProgZ=0;
-    uint8_t sulProgS=0;
+  Biquad lBq;
+  Biquad rBq;
 
-    
-    float sulf=0;
-    float sulff=1;
-    float sulv=1;
-       
-    float sef=0.7;
-    float sev=0.5;
-    float seff=0.5;
-    
-    float sff=1;
-    float sfv=1;
-    float sfff=1;
+  float revVol = 0;
+  float revDamp = 0.5;
+  float revRoom = 0.5;
 
-    float funtzioni[3][100];
-   
-    bool  sulFuntz=false;
-     
-    uint8_t gateMs=0;
-    uint8_t gateMd=0;
-    uint8_t gateMode=0;
+  uint8_t filterMode = 0;
 
-    const String filtrus[3]={"0 0 N","3900 1 L","6000 10 h"};
+  uint8_t vers = 0;
 
+  uint8_t preferredCuntz = 0;
+
+  static float freq;
+
+  static float acordadura[];
+
+  bool muted;
+
+  IntervalTimer timer;
+
+  AudioAmplifier* lOut;
+  AudioAmplifier* rOut;
+
+  AudioMixer4* lMix;
+  AudioMixer4* rMix;
+
+  AudioEffectFreeverb* lRev;
+  AudioEffectFreeverb* rRev;
+
+  //
+
+  //
+  float avgRnd = 0;
+  uint8_t tmrCount = 0;
+
+  ///////
+  volatile float sulidu = 0;
+  volatile bool suling = false;
+  volatile uint8_t sulcount = 0;
+
+  float avgSulidu = 0;
+
+  float ssens = 30;
+  uint8_t slim = 35;
+  uint8_t szero = 50;
+
+  uint8_t sulProgZ = 0;
+  uint8_t sulProgS = 0;
+
+
+  float sulf = 0;
+  float sulff = 1;
+  float sulv = 1;
+
+  float sef = 0.7;
+  float sev = 0.5;
+  float seff = 0.5;
+
+  float sff = 1;
+  float sfv = 1;
+  float sfff = 1;
+
+  float funtzioni[3][100];
+
+  bool sulFuntz = false;
+
+  uint8_t gateMs = 0;
+  uint8_t gateMd = 0;
+  uint8_t gateMode = 0;
+
+  const String filtrus[3] = { "0 0 N", "3900 1 L", "6000 10 h" };
 };
 
 /////

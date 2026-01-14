@@ -14,45 +14,46 @@
 #include "Recorder.h"
 
 #ifndef functions_h
-  #include "functions.h"
+#include "functions.h"
 #endif
 
 #ifndef info_h
-  #include "info.h"
+#include "info.h"
 #endif
 
 
 
 extern ElFileSystem efs;
 extern Communicator* com;
-extern  Cuntzertu* c;         //Solo per MIDI :( 
-extern  Recorder* rec;         //Solo per START/STOP :( 
+extern Cuntzertu* c;   //Solo per MIDI :(
+extern Recorder* rec;  //Solo per START/STOP :(
 
 //////
-    boolean scala[7]= {true,true,false,true,true,true,false};
-    
-    byte crais_ms_fio[5] ={9,11,12,13,14};
-    byte crais_md_fio[5] ={11,14,15,16,17};
+boolean scala[7] = { true, true, false, true, true, true, false };
 
-    byte crais_ms_po[5] ={11,12,13,14,15};
-    byte crais_md_po[5] ={14,15,16,17,18};
+byte crais_ms_fio[5] = { 9, 11, 12, 13, 14 };
+byte crais_md_fio[5] = { 11, 14, 15, 16, 17 };
 
-    byte crais_md_fiu[5] ={16,18,19,20,21};
-    
-    byte crais_ms_med[5] ={7,8,9,10,11};
-    byte crais_md_med[5] ={11,13,14,15,16};
+byte crais_ms_po[5] = { 11, 12, 13, 14, 15 };
+byte crais_md_po[5] = { 14, 15, 16, 17, 18 };
+
+byte crais_md_fiu[5] = { 16, 18, 19, 20, 21 };
+
+byte crais_ms_med[5] = { 7, 8, 9, 10, 11 };
+byte crais_md_med[5] = { 11, 13, 14, 15, 16 };
 
 
 /////
 //Limin,zero
-uint8_t sulProgZData[6][2]={{5,10},{7,20},{10,30},{13,40},{17,50},{20,60}};
+uint8_t sulProgZData[6][2] = { { 5, 10 }, { 7, 20 }, { 10, 30 }, { 13, 40 }, { 17, 50 }, { 20, 60 } };
 
 //H,M,L
-uint8_t sulProgSData[6][3]={{15,20,25},{10,15,20},{20,25,30},{25,32,40},{30,40,50},{35,47,60}};
+uint8_t sulProgSData[6][3] = { { 15, 20, 25 }, { 10, 15, 20 }, { 20, 25, 30 }, { 25, 32, 40 }, { 30, 40, 50 }, { 35, 47, 60 } };
 
 /////// BIQUAD
 
-Biquad::Biquad(): freq(1000), q(1), type('N'), bqStage(0), multeplicity(0) {}
+Biquad::Biquad()
+  : freq(1000), q(1), type('N'), bqStage(0), multeplicity(0) {}
 
 void Biquad::deserialize(JsonObject jo) {
   this->freq = jo["freq"];
@@ -69,17 +70,16 @@ void Biquad::serialize(JsonObject jo) {
   jo["mult"] = multeplicity;
 }
 
-void Biquad::parse(String string) {   // (int)freq (float)q (char) type [int] molt
+void Biquad::parse(String string) {  // (int)freq (float)q (char) type [int] molt
   String sParams[4];
   StringSplit(string, ' ', sParams, 4);
 
   this->freq = sParams[0].toInt();
   this->q = sParams[1].toFloat();
   this->type = sParams[2][0];
-  if (sParams[3]!="") this->multeplicity = sParams[3].toInt();
-  else this->multeplicity=0;
+  if (sParams[3] != "") this->multeplicity = sParams[3].toInt();
+  else this->multeplicity = 0;
   sync();
-  
 }
 
 void Biquad::setFreq(uint16_t freq) {
@@ -110,14 +110,14 @@ char Biquad::getType() {
   return type;
 }
 
-void Biquad::setBQ(AudioFilterBiquad* bq, uint8_t stage,uint8_t mult) {
+void Biquad::setBQ(AudioFilterBiquad* bq, uint8_t stage, uint8_t mult) {
   this->bq = bq;
   this->bqStage = stage;
-  this->multeplicity=mult;
+  this->multeplicity = mult;
 }
 
 void Biquad::setBQ(AudioFilterBiquad* bq, uint8_t stage) {
-  setBQ(bq,stage,0);
+  setBQ(bq, stage, 0);
 }
 
 AudioFilterBiquad* Biquad::GetBQ() {
@@ -128,47 +128,45 @@ void Biquad::sync() {
   sync(this->freq);
 }
 void Biquad::sync(uint16_t freq) {
-/*
+  /*
   for (int i=0;i<4;i++)
   {
     bq->setCoefficients(i, bqNoPass);
    
   }
 */
-  for (int i=0;i<multeplicity+1;i++)
-  switch (type) {
-    case 'H':
-      bq->setHighpass(i, freq, q);
-      break;
-    case 'B':
-      bq->setBandpass(i, freq, q);
-      break;
-    case 'L':
-      bq->setLowpass(i, freq, q);
-      break;
-    case 'h':
-      bq->setHighShelf(i, freq,q, .7);
-      break;
-    case 'l':
-      bq->setLowShelf(i, freq,q, .7);
-      break;
-    default:
-      bq->setCoefficients(i, bqAllPass);
-  }
-  
-  for (int i=multeplicity+1;i<4;i++)
-  {
+  for (int i = 0; i < multeplicity + 1; i++)
+    switch (type) {
+      case 'H':
+        bq->setHighpass(i, freq, q);
+        break;
+      case 'B':
+        bq->setBandpass(i, freq, q);
+        break;
+      case 'L':
+        bq->setLowpass(i, freq, q);
+        break;
+      case 'h':
+        bq->setHighShelf(i, freq, q, .7);
+        break;
+      case 'l':
+        bq->setLowShelf(i, freq, q, .7);
+        break;
+      default:
+        bq->setCoefficients(i, bqAllPass);
+    }
+
+  for (int i = multeplicity + 1; i < 4; i++) {
     bq->setLowpass(i, 20000, .7071);
-   
   }
-  
 }
 
 /////// CRAI
 
 
-Crai::Crai() : vol(1), volA(1), fini(1), duty(0.4), puntu(10) {
-  }
+Crai::Crai()
+  : vol(1), volA(1), fini(1), duty(0.4), puntu(10) {
+}
 
 void Crai::deserialize(JsonObject jo) {
   this->vol = jo["vol"];
@@ -187,7 +185,7 @@ void Crai::serialize(JsonObject jo) {
   bq.serialize(jo.createNestedObject("bq"));
 }
 
-void Crai::parse(String string) {   
+void Crai::parse(String string) {
   String s;
   String sParams[3];
   StringSplitFirst(&string, ' ', &s);
@@ -214,7 +212,7 @@ void Crai::parse(String string) {
       break;
 
     default:
-      com->msgError(String("Unknown Crai command: ")+s[0]);
+      com->msgError(String("Unknown Crai command: ") + s[0]);
   }
 }
 
@@ -261,26 +259,27 @@ Biquad* Crai::getBQ() {
 // TODO : ObFact!!!!!!!!
 
 
-Canna::Canna(uint8_t nc): volArm(1), strb(1), sonu(1), port(10),timbru(0),ncrais(nc) { 
-      crais = (Crai *)malloc(sizeof(Crai) * nc);  
-    }
+Canna::Canna(uint8_t nc)
+  : volArm(1), strb(1), sonu(1), port(10), timbru(0), ncrais(nc) {
+  crais = (Crai*)malloc(sizeof(Crai) * nc);
+}
 
 void Canna::deserialize(JsonObject jo) {
   this->volArm = jo["volArm"];
   this->strb = jo["strb"];
   this->sonu = jo["sonu"];
   this->port = jo["port"];
-  if (jo.containsKey("obFactDuty")) { //V1.1
+  if (jo.containsKey("obFactDuty")) {  //V1.1
     this->obFactDuty = jo["obFactDuty"];
     this->obFactVol = jo["obFactVol"];
     this->timbru = jo["timbru"];
   }
-  
+
   this->bqStat.deserialize(jo["bqStat"]);
   this->bqDinF.deserialize(jo["bqDinF"]);
-    
-  for (int i = 0; i <ncrais; i++) {
-    this->crais[i].deserialize(jo["crais"][i]);// + String(i)]);
+
+  for (int i = 0; i < ncrais; i++) {
+    this->crais[i].deserialize(jo["crais"][i]);  // + String(i)]);
   }
 }
 void Canna::serialize(JsonObject jo) {
@@ -288,23 +287,23 @@ void Canna::serialize(JsonObject jo) {
   jo["strb"] = strb;
   jo["sonu"] = sonu;
   jo["port"] = port;
-  jo["obFactDuty"]=obFactDuty; 
-  jo["obFactVol"]=obFactVol; 
+  jo["obFactDuty"] = obFactDuty;
+  jo["obFactVol"] = obFactVol;
   jo["timbru"] = timbru;
   bqStat.serialize(jo.createNestedObject("bqStat"));
   bqDinF.serialize(jo.createNestedObject("bqDinF"));
   JsonArray c = jo.createNestedArray("crais");
-  for (int i = 0; i <ncrais; i++) {
+  for (int i = 0; i < ncrais; i++) {
     crais[i].serialize(c.createNestedObject());
   }
 }
 
-void Canna::parse(String string) {  
+void Canna::parse(String string) {
   String s;
   String sParams[4];
-  if (string.length()<1) return;
-   StringSplitFirst(&string, ' ', &s);
-  
+  if (string.length() < 1) return;
+  StringSplitFirst(&string, ' ', &s);
+
   switch (s[0]) {
     case 'F':
       bqStat.parse(string);
@@ -313,7 +312,7 @@ void Canna::parse(String string) {
       bqDinF.parse(string);
       break;
     case 'C':
-      crais[(byte)(s[1]-'0')].parse(string);
+      crais[(byte)(s[1] - '0')].parse(string);
       playCrai(craiAct);
       break;
     case 'v':
@@ -339,18 +338,18 @@ void Canna::parse(String string) {
       StringSplit(string, ' ', sParams, 1);
       this->timbru = sParams[0].toInt();
       break;
-    case 'p':   
-      playCrai(string.toInt());    
+    case 'p':
+      playCrai(string.toInt());
       break;
-    case 'm':   
+    case 'm':
       StringSplit(string, ' ', sParams, 4);
-      setMIDI(sParams[0].toInt(),sParams[1].toInt() ,sParams[2].toInt(),sParams[3].toInt());
+      setMIDI(sParams[0].toInt(), sParams[1].toInt(), sParams[2].toInt(), sParams[3].toInt());
       break;
     case '?':
       com->msgInfo(info_C);
       break;
     default:
-      com->msgError(String("Unknown Canna command: ")+s[0]);
+      com->msgError(String("Unknown Canna command: ") + s[0]);
   }
 }
 
@@ -374,18 +373,18 @@ void Canna::setSonu(uint8_t sonu) {
 
   switch (sonu) {
     case 0:
-      waveAmplitude=.5;
+      waveAmplitude = .5;
       synth->begin(0, Cuntzertu::getBaseFreq(), WAVEFORM_BANDLIMIT_PULSE);
       break;
     case 1:
     case 2:
     case 3:
-      waveAmplitude=.5;
+      waveAmplitude = .5;
       synth->begin(0, Cuntzertu::getBaseFreq(), WAVEFORM_TEST2);
-      synth->pulseFact(3-sonu);
+      synth->pulseFact(3 - sonu);
       break;
     default:
-      waveAmplitude=.6;
+      waveAmplitude = .6;
       synth->arbitraryWaveform(waves[sonu - 4], 650.0);
       synth->begin(0, Cuntzertu::getBaseFreq(), WAVEFORM_ARBITRARY);
   }
@@ -402,19 +401,18 @@ uint8_t Canna::getPort() {
 }
 
 void Canna::sync() {
-  
+
   //// Synth
   setSonu(sonu);
-  
+
   //// BQ
   bqStat.sync();
   bqDinF.sync();
 
-  for (int i = 0; i <ncrais; i++) {
+  for (int i = 0; i < ncrais; i++) {
     crais[i].getBQ()->sync();
   }
-   playCrai(craiAct);
-  
+  playCrai(craiAct);
 }
 ////////
 
@@ -430,57 +428,57 @@ void Canna::setMixer(AudioMixer4* mixer) {
 }
 
 void Canna::setBiquads(AudioFilterBiquad* stat, AudioFilterBiquad* dinCrais) {
-  setBiquads(stat,dinCrais,dinCrais); //Tumbu
+  setBiquads(stat, dinCrais, dinCrais);  //Tumbu
 }
 
 void Canna::setBiquads(AudioFilterBiquad* stat, AudioFilterBiquad* dinCrais, AudioFilterBiquad* dinFin) {
   bqStat.setBQ(stat, 0);
-  bqDinF.setBQ(dinFin,0);
+  bqDinF.setBQ(dinFin, 0);
   for (int i = 0; i < ncrais; i++) {
     crais[i].getBQ()->setBQ(dinCrais, 0);
   }
 }
 
 void Canna::playCrai(uint8_t crai) {
-  Canna::playCrai(crai,0);
+  Canna::playCrai(crai, 0);
 }
 
 void Canna::playCrai(uint8_t crai, uint8_t hexcrai) {
-  
-  bool oberta=obertura(hexcrai);
 
-  lastHCrai=hexcrai;
+  bool oberta = obertura(hexcrai);
+
+  lastHCrai = hexcrai;
 
   //duty
-  dutyDest = crais[crai].getDuty()*pow(2,(float)timbru/20);
-  if (dutyDest>0.5) dutyDest=0.5;
-  
-  if ((oberta)&&(obFactDuty!=0)) dutyDest*=obFactDuty;
-  dutyF = dutyAct / dutyDest;
-  
-  //freq
-  freqDest = Cuntzertu::calcFrequenza(crais[crai].getPuntu())* crais[crai].getFini();  
+  dutyDest = crais[crai].getDuty() * pow(2, (float)timbru / 20);
+  if (dutyDest > 0.5) dutyDest = 0.5;
 
-  freqF =freqAct / freqDest;
-  
+  if ((oberta) && (obFactDuty != 0)) dutyDest *= obFactDuty;
+  dutyF = dutyAct / dutyDest;
+
+  //freq
+  freqDest = Cuntzertu::calcFrequenza(crais[crai].getPuntu()) * crais[crai].getFini();
+
+  freqF = freqAct / freqDest;
+
   //vol
   volDest = crais[crai].getVol();
-  if ((oberta)&&(obFactVol!=0)) volDest*=obFactVol;
+  if ((oberta) && (obFactVol != 0)) volDest *= obFactVol;
 
-  volAct*=0.8;
-  
-  if (volDest==0) volDest=0.001; 
-  
+  volAct *= 0.8;
+
+  if (volDest == 0) volDest = 0.001;
+
   volF = volAct / volDest;
-  
+
   //bq
   ffreqDest = crais[crai].getBQ()->getFreq();
   ffreqF = ffreqAct / ffreqDest;
 
-  port_count=0;
+  port_count = 0;
 
-  usbMIDI.sendNoteOff(crais[craiAct].getPuntu()+transposition, velocity, channel);
-  usbMIDI.sendNoteOn(crais[crai].getPuntu()+transposition, velocity, channel);
+  usbMIDI.sendNoteOff(crais[craiAct].getPuntu() + transposition, velocity, channel);
+  usbMIDI.sendNoteOn(crais[crai].getPuntu() + transposition, velocity, channel);
   craiAct = crai;
 }
 
@@ -492,9 +490,9 @@ uint8_t Canna::getHCraiAct() {
 }
 bool Canna::obertura(uint8_t b) {
   b = ~b & 0xf;
-  if ((b&8)&&(b&4)) return true;
-  if ((b&4)&&(b&2)) return true;
-  if ((b&2)&&(b&1)) return true;
+  if ((b & 8) && (b & 4)) return true;
+  if ((b & 4) && (b & 2)) return true;
+  if ((b & 2) && (b & 1)) return true;
   return false;
 }
 
@@ -514,73 +512,71 @@ float Canna::frequenza(uint8_t nota) {
 */
 
 void Canna::setCrais(byte* crais) {
-    for (int i=0;i<=4;i++)
-      {
-        this->crais[i].setPuntu(crais[i]);
-      }
+  for (int i = 0; i <= 4; i++) {
+    this->crais[i].setPuntu(crais[i]);
+  }
 }
 
-void Canna::update(float mod,float sulv, float sulf, float sulff) {
+void Canna::update(float mod, float sulv, float sulf, float sulff) {
 
 
-  float mfact=(1+mod*((float)strb/1000));
+  float mfact = (1 + mod * ((float)strb / 1000));
 
-  sulf= sulf*(2+(crais[craiAct].getPuntu()-crais[0].getPuntu()))*5; 
+  sulf = sulf * (2 + (crais[craiAct].getPuntu() - crais[0].getPuntu())) * 5;
 
-  if ((port==0)||(port_count%port==0)) {
-  
+  if ((port == 0) || (port_count % port == 0)) {
+
     //duty
-    dutyAct = dutyDest * dutyF/(sulv*sulv);
-  
+    dutyAct = dutyDest * dutyF / (sulv * sulv);
+
     //vol
     volAct = volDest * volF;
-       
+
     //bq
     ffreqAct = ffreqDest * ffreqF;
-      
+
     //freq
     freqAct = freqDest * freqF;
   }
-  synth->pulseWidth(dutyAct*mfact);
-  synth->frequency(freqAct*mfact+sulf);
-  mixer->gain(BQ0, mfact*volAct * crais[craiAct].getVolA()*sulv);
-  mixer->gain(BQ1, mfact*volAct * (4 - crais[craiAct].getVolA())*volArm*sulv);
-  crais[craiAct].getBQ()->sync(ffreqAct*mfact+sulff); 
-  
-  
- 
-  if ((port==0)||(port_count%port==0)) {
-      
-    if (volF>1.01) {
+  synth->pulseWidth(dutyAct * mfact);
+  synth->frequency(freqAct * mfact + sulf);
+  mixer->gain(BQ0, mfact * volAct * crais[craiAct].getVolA() * sulv);
+  mixer->gain(BQ1, mfact * volAct * (4 - crais[craiAct].getVolA()) * volArm * sulv);
+  crais[craiAct].getBQ()->sync(ffreqAct * mfact + sulff);
+
+
+
+  if ((port == 0) || (port_count % port == 0)) {
+
+    if (volF > 1.01) {
       //dutyF = pow(dutyF, 0.4);
       freqF = pow(freqF, 0.4);
       volF = pow(volF, 0.8);
       ffreqF = pow(ffreqF, 0.6);
-    }
-    else {
+    } else {
       //dutyF = sqrt(dutyF);
-      if (freqF<0.99) freqF = sqrt(freqF);
-      else freqF=1;
-      if (volF<0.99) volF = pow(volF, 0.9);
-      else volF=1;
-      if (ffreqF<0.99) ffreqF = pow(ffreqF, 0.7);
-      else ffreqF=1;
+      if (freqF < 0.99) freqF = sqrt(freqF);
+      else freqF = 1;
+      if (volF < 0.99) volF = pow(volF, 0.9);
+      else volF = 1;
+      if (ffreqF < 0.99) ffreqF = pow(ffreqF, 0.7);
+      else ffreqF = 1;
     }
-    if ((dutyF<=0.99)||(dutyF>=1.01)) dutyF = sqrt(dutyF);
-    else dutyF=1;
+    if ((dutyF <= 0.99) || (dutyF >= 1.01)) dutyF = sqrt(dutyF);
+    else dutyF = 1;
     //ffreqF = sqrt(ffreqF);
   }
   port_count++;
 }
 
 void Canna::setMIDI(uint8_t channel, uint8_t velocity, uint8_t transposition, uint8_t mode) {
-  this->channel=channel;
-  this->velocity=velocity;
-  this->transposition=transposition;
-  this->mode=mode;
+  this->channel = channel;
+  this->velocity = velocity;
+  this->transposition = transposition;
+  this->mode = mode;
 }
 void Canna::setMIDI(uint8_t transposition) {
-  this->transposition=transposition;
+  this->transposition = transposition;
 }
 
 /////////
@@ -588,41 +584,42 @@ void Canna::setMIDI(uint8_t transposition) {
 float Cuntzertu::freq;
 float Cuntzertu::acordadura[13];
 
-const float naturale[13] = {1, 1.0666666667 , 1.125, 1.2, 1.25, 1.3333333333, 1.40625, 1.5, 1.6, 1.6666666667, 1.8, 1.875, 2};
-const float temperata[13] = {1, 1.0594630944, 1.1224620483,1.189207115,1.2599210499,1.3348398542,1.4142135624,1.4983070769,1.587401052,1.6817928305,1.7817974363,1.8877486254,2};
-const float pitagorica[13] = {1,1.0678710938,1.125,1.1851851852,1.265625,1.3333333333,1.423828125,1.5,1.6018066406,1.6875,1.7777777778,1.8984375,2};
+const float naturale[13] = { 1, 1.0666666667, 1.125, 1.2, 1.25, 1.3333333333, 1.40625, 1.5, 1.6, 1.6666666667, 1.8, 1.875, 2 };
+const float temperata[13] = { 1, 1.0594630944, 1.1224620483, 1.189207115, 1.2599210499, 1.3348398542, 1.4142135624, 1.4983070769, 1.587401052, 1.6817928305, 1.7817974363, 1.8877486254, 2 };
+const float pitagorica[13] = { 1, 1.0678710938, 1.125, 1.1851851852, 1.265625, 1.3333333333, 1.423828125, 1.5, 1.6018066406, 1.6875, 1.7777777778, 1.8984375, 2 };
 
 
-Cuntzertu::Cuntzertu(): nome("VOID"), descr(""), vol(1), cuntz(0), mod(0), puntu(7), fini(1), volT(1), bilT(0), volMs(1), bilMs(0), volMd(1), bilMd(0) {
-    setAcordadura(0);
-    muted=false;
-  }
+Cuntzertu::Cuntzertu()
+  : nome("VOID"), descr(""), vol(1), cuntz(0), mod(0), puntu(7), fini(1), volT(1), bilT(0), volMs(1), bilMs(0), volMd(1), bilMd(0) {
+  setAcordadura(0);
+  muted = false;
+}
 
 void Cuntzertu::deserialize(Stream* s) {
   StaticJsonDocument<4000> doc;
-  deserializeJson (doc, *s);
+  deserializeJson(doc, *s);
   JsonObject jo = doc.as<JsonObject>();
   deserialize(jo);
 }
 void Cuntzertu::deserialize(const char* s) {
   StaticJsonDocument<4000> doc;
-  deserializeJson (doc, s);
+  deserializeJson(doc, s);
   JsonObject jo = doc.as<JsonObject>();
   deserialize(jo);
 }
 
-void Cuntzertu::deserializeFunction(const char* s,int num) {
+void Cuntzertu::deserializeFunction(const char* s, int num) {
   StaticJsonDocument<2000> doc;
-  deserializeJson (doc, s);
+  deserializeJson(doc, s);
   JsonObject jo = doc.as<JsonObject>();
-  for (int i = 0; i <100; i++) {
-    this->funtzioni[num][i]=jo["function"][i];
+  for (int i = 0; i < 100; i++) {
+    this->funtzioni[num][i] = jo["function"][i];
   }
 }
 
 void Cuntzertu::readJSONPrefs(Stream* s) {
   StaticJsonDocument<1000> doc;
-  deserializeJson (doc, *s);
+  deserializeJson(doc, *s);
   JsonObject jo = doc.as<JsonObject>();
   setVol(jo["vol"]);
   setSulProgZ(jo["sprogZ"]);
@@ -635,27 +632,26 @@ void Cuntzertu::readJSONPrefs(Stream* s) {
   setFilterMode(jo["filterMode"]);
   setGateMode(jo["gateMode"]);
   setPreferredCuntz(jo["preferredCuntz"]);
-  
-  setVerb(jo["revVol"],jo["revDamp"],jo["revRoom"]);
-    
+
+  setVerb(jo["revVol"], jo["revDamp"], jo["revRoom"]);
 }
 void Cuntzertu::writeJSONPrefs(Stream* s) {
   DynamicJsonDocument jo(1500);
   jo["vol"] = vol;
-  
+
   //jo["ssens"]=ssens;
   //jo["slim"]=slim;
   //jo["szero"]=szero;
-  jo["sprogZ"]=sulProgZ;
-  jo["sprogS"]=sulProgS;
-  jo["gateMode"]=gateMode;
-  jo["filterMode"]=filterMode;
+  jo["sprogZ"] = sulProgZ;
+  jo["sprogS"] = sulProgS;
+  jo["gateMode"] = gateMode;
+  jo["filterMode"] = filterMode;
 
   jo["revVol"] = revVol;
   jo["revDamp"] = revDamp;
   jo["revRoom"] = revRoom;
-  jo["preferredCuntz"]=preferredCuntz;
-  
+  jo["preferredCuntz"] = preferredCuntz;
+
   //lBq.serialize(jo.createNestedObject("bq"));   //nd'abastat unu
   serializeJson(jo, *s);
   s->println();
@@ -663,10 +659,10 @@ void Cuntzertu::writeJSONPrefs(Stream* s) {
 }
 
 void Cuntzertu::deserialize(JsonObject jo) {
-  
+
   strncpy(this->nome, jo["nome"], 32);
   strncpy(this->descr, jo["descr"], 64);
- 
+
   this->cuntz = jo["cuntz"];
   this->mod = jo["mod"];
   this->puntu = jo["puntu"];
@@ -678,14 +674,14 @@ void Cuntzertu::deserialize(JsonObject jo) {
   this->volMd = jo["volMd"];
   this->bilMd = jo["bilMd"];
   this->vers = jo["vers"];
-/*
+  /*
   if ((jo.containsKey("slim"))&&(jo["slim"]!=0)) {
     this->ssens = jo["ssens"];
     this->slim = jo["slim"];
     this->szero = jo["szero"];
   }
   */
-/*
+  /*
   if (jo.containsKey("revVol")) {
     this->revVol = jo["revVol"];
     this->revDamp = jo["revDamp"];
@@ -695,10 +691,10 @@ void Cuntzertu::deserialize(JsonObject jo) {
   if (jo.containsKey("num_acordadura")) {
     this->num_acordadura = jo["num_acordadura"];
   }
-  
+
   //this->lBq.deserialize(jo["bq"]);
   //this->rBq.deserialize(jo["bq"]);
-  
+
   this->tumbu.deserialize(jo["tumbu"]);
   this->mancs.deserialize(jo["mancs"]);
   this->mancd.deserialize(jo["mancd"]);
@@ -710,7 +706,7 @@ void Cuntzertu::serialize(Stream* s) {
 
   jo["nome"] = nome;
   jo["descr"] = descr;
-  
+
   jo["cuntz"] = cuntz;
   jo["mod"] = mod;
   jo["puntu"] = puntu;
@@ -722,14 +718,14 @@ void Cuntzertu::serialize(Stream* s) {
   jo["bilMs"] = bilMs;
   jo["volMd"] = volMd;
   jo["bilMd"] = bilMd;
-/*
+  /*
   jo["revVol"] = revVol;
   jo["revDamp"] = revDamp;
   jo["revRoom"] = revRoom;
   */
   jo["vers"] = vers;
 
-/*
+  /*
   jo["slim"]=slim;
   jo["szero"]=szero;
 
@@ -745,30 +741,28 @@ void Cuntzertu::serialize(Stream* s) {
   s->flush();
 }
 void Cuntzertu::syncBT0(Stream* s) {
-  send_f(s,(float)cuntz);
-  send_f(s,gateMode);
-  send_f(s,gateMode);
+  send_f(s, (float)cuntz);
+  send_f(s, gateMode);
+  send_f(s, gateMode);
 }
 
-void Cuntzertu::syncBT1(Stream* s) { 
-  send_f(s,vol);
-  send_f(s,volT);
-  send_f(s,volMs);
-  send_f(s,volMd);
- 
+void Cuntzertu::syncBT1(Stream* s) {
+  send_f(s, vol);
+  send_f(s, volT);
+  send_f(s, volMs);
+  send_f(s, volMd);
 }
 void Cuntzertu::syncBT2(Stream* s) {
-  send_f(s,fini);
-  send_f(s,(float)puntu);
+  send_f(s, fini);
+  send_f(s, (float)puntu);
 }
 
-void Cuntzertu::send_f(Stream* s, float arg)
-{
+void Cuntzertu::send_f(Stream* s, float arg) {
   // get access to the float as a byte-array:
-  byte * data = (byte *) &arg; 
+  byte* data = (byte*)&arg;
 
   // write the data to the serial
-  s->write (data, sizeof (arg));
+  s->write(data, sizeof(arg));
 }
 
 void Cuntzertu::parse(String string) {
@@ -787,90 +781,90 @@ void Cuntzertu::parse(String string) {
       mancd.parse(string);
       break;
     case 'F':
-      if (s[1]!='p') {
+      if (s[1] != 'p') {
         lBq.parse(string);
         rBq.parse(string);
-        filterMode=255;
+        filterMode = 255;
       } else {
         StringSplit(string, ' ', sParams, 1);
         setFilterMode(sParams[0].toInt());
       }
       break;
-    case 'n':   //Nome
+    case 'n':  //Nome
       setNome(string);
       break;
-    case 'u':   //Nome
+    case 'u':  //Nome
       timerRoutine();
       break;
-    case 'd':   //Descrizione
+    case 'd':  //Descrizione
       setDescr(string);
       break;
-    case 'p':   //puntu
+    case 'p':  //puntu
       StringSplit(string, ' ', sParams, 1);
       setPuntu(sParams[0].toInt());
       break;
-    case 'a':   //acordadura
+    case 'a':  //acordadura
       StringSplit(string, ' ', sParams, 1);
-      num_acordadura=sParams[0].toInt();
-      setAcordadura(num_acordadura);   
-      setPuntu(puntu);  
+      num_acordadura = sParams[0].toInt();
+      setAcordadura(num_acordadura);
+      setPuntu(puntu);
       break;
-    case 'f':   //fini
+    case 'f':  //fini
       StringSplit(string, ' ', sParams, 1);
-      setFini(sParams[0].toFloat());    
+      setFini(sParams[0].toFloat());
       break;
-    case 'c':   //cuntz e mod
+    case 'c':  //cuntz e mod
       StringSplit(string, ' ', sParams, 2);
       this->cuntz = sParams[0].toInt();
       this->mod = sParams[1].toInt();
-      calcCrais(this->cuntz,this->mod);
+      calcCrais(this->cuntz, this->mod);
       break;
-    case 'v':   //volumi
+    case 'v':  //volumi
       StringSplit(string, ' ', sParams, 2);
       switch (s[1]) {
-        case 'c':   //cuntz
+        case 'c':  //cuntz
           setVol(sParams[0].toFloat());
           break;
-        case 't':   //cuntz
+        case 't':  //cuntz
           setVolBilT(sParams[0].toFloat(), sParams[1].toFloat());
           break;
-        case 's':   //cuntz
+        case 's':  //cuntz
           setVolBilMs(sParams[0].toFloat(), sParams[1].toFloat());
           break;
-        case 'd':   //cuntz
+        case 'd':  //cuntz
           setVolBilMd(sParams[0].toFloat(), sParams[1].toFloat());
           break;
         default:
-          com->msgError(String("!Unknown command: v")+s[0]);
+          com->msgError(String("!Unknown command: v") + s[0]);
       }
       break;
-    case 's':   //sulidu
+    case 's':  //sulidu
       StringSplit(string, ' ', sParams, 3);
-      slim=sParams[0].toInt();
-      ssens=sParams[1].toInt();
-      szero=sParams[2].toInt();
+      slim = sParams[0].toInt();
+      ssens = sParams[1].toInt();
+      szero = sParams[2].toInt();
       break;
 
-    case 'z':   //sulidu prog
+    case 'z':  //sulidu prog
       StringSplit(string, ' ', sParams, 2);
       setSulProgS(sParams[0].toInt());
       setSulProgZ(sParams[1].toInt());
       break;
 
-    case 'Z':   //sulidu prog
-      if (string.length()<16) {
-        sulFuntz=false;
-      }  else {
-        int num=s[1]-'0';
-        deserializeFunction(string.c_str(),num);
-        sulFuntz=true;
+    case 'Z':  //sulidu prog
+      if (string.length() < 16) {
+        sulFuntz = false;
+      } else {
+        int num = s[1] - '0';
+        deserializeFunction(string.c_str(), num);
+        sulFuntz = true;
       }
-         
+
       break;
-      
-    case 'r':   //reverb
+
+    case 'r':  //reverb
       StringSplit(string, ' ', sParams, 3);
-      setVerb(sParams[0].toFloat(),sParams[1].toFloat(),sParams[2].toFloat());
+      setVerb(sParams[0].toFloat(), sParams[1].toFloat(), sParams[2].toFloat());
       break;
     case 'J':
       com->setWarningEnabled(false);
@@ -890,38 +884,36 @@ void Cuntzertu::parse(String string) {
       break;
     case 'b':
       StringSplit(string, ' ', sParams, 1);
-      if (sParams[0].toInt()==1) syncBT1(&Serial5);
-      if (sParams[0].toInt()==2) syncBT2(&Serial5);
+      if (sParams[0].toInt() == 1) syncBT1(&Serial5);
+      if (sParams[0].toInt() == 2) syncBT2(&Serial5);
       break;
     case '?':
-        com->msgInfo(info_B);
-        break;
+      com->msgInfo(info_B);
+      break;
     default:
-      com->msgError(String("Unknown command: ")+s[0]);
+      com->msgError(String("Unknown command: ") + s[0]);
   }
-  
 }
 
 void Cuntzertu::setAcordadura(uint8_t num) {
-  float *data;
-  
+  const float* data;
+
   switch (num) {
     case 1:
-      data=&temperata[0];
-    break;
+      data = &temperata[0];
+      break;
     case 2:
-      data=&pitagorica[0];
-    break;
-    case 0:  
+      data = &pitagorica[0];
+      break;
+    case 0:
     default:
-      data=&naturale[0];
-    break;
+      data = &naturale[0];
+      break;
   }
 
   //Serial.println(num);
-  for (int i=0;i<13;i++)
-  {
-    acordadura[i]=*(data+i);
+  for (int i = 0; i < 13; i++) {
+    acordadura[i] = *(data + i);
   }
 }
 
@@ -961,22 +953,22 @@ float Cuntzertu::getVolT() {
   return volT;
 }
 
-float Cuntzertu::getBilMs(){
+float Cuntzertu::getBilMs() {
   return bilMs;
 }
-float Cuntzertu::getBilMd(){
+float Cuntzertu::getBilMd() {
   return bilMd;
 }
-float Cuntzertu::getBilT(){
+float Cuntzertu::getBilT() {
   return bilT;
 }
 
 void Cuntzertu::setVolBilT(float volT, float bilT) {
-  if (volT<0) volT=0;
-  if (volT>2) volT=2;
-  if (bilT<-1) bilT=-1;
-  if (bilT>1) bilT=1;
-  
+  if (volT < 0) volT = 0;
+  if (volT > 2) volT = 2;
+  if (bilT < -1) bilT = -1;
+  if (bilT > 1) bilT = 1;
+
   this->volT = volT;
   this->bilT = bilT;
 
@@ -985,11 +977,11 @@ void Cuntzertu::setVolBilT(float volT, float bilT) {
 }
 
 void Cuntzertu::setVolBilMs(float volMs, float bilMs) {
-  if (volMs<0) volMs=0;
-  if (volMs>2) volMs=2;
-  if (bilMs<-1) bilMs=-1;
-  if (bilMs>1) bilMs=1;
-  
+  if (volMs < 0) volMs = 0;
+  if (volMs > 2) volMs = 2;
+  if (bilMs < -1) bilMs = -1;
+  if (bilMs > 1) bilMs = 1;
+
   this->volMs = volMs;
   this->bilMs = bilMs;
 
@@ -998,11 +990,11 @@ void Cuntzertu::setVolBilMs(float volMs, float bilMs) {
 }
 
 void Cuntzertu::setVolBilMd(float volMd, float bilMd) {
-  if (volMd<0) volMd=0;
-  if (volMd>2) volMd=2;
-  if (bilMd<-1) bilMd=-1;
-  if (bilMd>1) bilMd=1;
-  
+  if (volMd < 0) volMd = 0;
+  if (volMd > 2) volMd = 2;
+  if (bilMd < -1) bilMd = -1;
+  if (bilMd > 1) bilMd = 1;
+
   this->volMd = volMd;
   this->bilMd = bilMd;
 
@@ -1011,11 +1003,11 @@ void Cuntzertu::setVolBilMd(float volMd, float bilMd) {
 }
 
 void Cuntzertu::setFini(float fini) {
-  if (fini<0.94) fini=0.94;
-  if (fini>1.06) fini=1.06;
+  if (fini < 0.94) fini = 0.94;
+  if (fini > 1.06) fini = 1.06;
   this->fini = fini;
   syncFreq();
-  
+
   tumbu.playCrai(tumbu.getCraiAct());
   mancs.playCrai(mancs.getCraiAct());
   mancd.playCrai(mancd.getCraiAct());
@@ -1032,26 +1024,25 @@ uint8_t Cuntzertu::getModal() {
   return mod;
 }
 void Cuntzertu::setPuntu(uint8_t puntu) {
-  this->puntu = puntu%MAX_PUNTU;
+  this->puntu = puntu % MAX_PUNTU;
   syncFreq();
   tumbu.playCrai(tumbu.getCraiAct());
   mancs.playCrai(mancs.getCraiAct());
   mancd.playCrai(mancd.getCraiAct());
 
-  tumbu.setMIDI(24+puntu);
-  mancs.setMIDI(24+puntu);
-  mancd.setMIDI(24+puntu);
-
+  tumbu.setMIDI(24 + puntu);
+  mancs.setMIDI(24 + puntu);
+  mancd.setMIDI(24 + puntu);
 }
 
 void Cuntzertu::setCuntz(uint8_t cuntz) {
-   this->cuntz=cuntz%MAX_CUNTZ;
-   calcCrais(getCuntz(),getModal());
+  this->cuntz = cuntz % MAX_CUNTZ;
+  calcCrais(getCuntz(), getModal());
 }
 void Cuntzertu::setModal(uint8_t mod) {
-   if (mod==255) mod=MAX_MOD-1;
-   this->mod=mod%MAX_MOD;
-   calcCrais(getCuntz(),getModal());
+  if (mod == 255) mod = MAX_MOD - 1;
+  this->mod = mod % MAX_MOD;
+  calcCrais(getCuntz(), getModal());
 }
 
 uint8_t Cuntzertu::getPuntu() {
@@ -1078,32 +1069,31 @@ uint8_t Cuntzertu::getSulProgS() {
 }
 
 void Cuntzertu::setSulSens(uint8_t sens) {
-  ssens=sens;
-  //TODO: 
-  sulProgZ=0;
-  sulProgS=0;
+  ssens = sens;
+  //TODO:
+  sulProgZ = 0;
+  sulProgS = 0;
 }
 
 void Cuntzertu::setSulZero(uint8_t zero) {
-  szero=zero;
-  sulProgZ=0;
-  sulProgS=0;
+  szero = zero;
+  sulProgZ = 0;
+  sulProgS = 0;
 }
 void Cuntzertu::setSulLimin(uint8_t limin) {
-  slim=limin;
-  sulProgZ=0;
-  sulProgS=0;
+  slim = limin;
+  sulProgZ = 0;
+  sulProgS = 0;
 }
 
 void Cuntzertu::setSulProgZ(uint8_t num) {
-  sulProgZ=num;
-  slim=sulProgZData[num][0];
-  szero=sulProgZData[num][1];
-
+  sulProgZ = num;
+  slim = sulProgZData[num][0];
+  szero = sulProgZData[num][1];
 }
 void Cuntzertu::setSulProgS(uint8_t num) {
-  sulProgS=num;
-  ssens=sulProgSData[sulProgZ][num];
+  sulProgS = num;
+  ssens = sulProgSData[sulProgZ][num];
   /*Serial.println(slim);
   Serial.println(szero);
   Serial.println(ssens);*/
@@ -1114,33 +1104,33 @@ uint8_t Cuntzertu::getFilterMode() {
 }
 
 void Cuntzertu::setFilterMode(uint8_t fm) {
-  filterMode=fm%3;
+  filterMode = fm % 3;
   lBq.parse(filtrus[filterMode]);
   rBq.parse(filtrus[filterMode]);
 }
 
 void Cuntzertu::setVerb(float vol, float damp, float room) {
-    if (vol<0) vol=0;
-  if (vol>0.3) vol=0.3;
+  if (vol < 0) vol = 0;
+  if (vol > 0.3) vol = 0.3;
 
-  if (damp<0) damp=0;
-  if (damp>1) damp=1;
+  if (damp < 0) damp = 0;
+  if (damp > 1) damp = 1;
 
-  if (room<0) room=0;
-  if (room>0.5) room=0.5;
+  if (room < 0) room = 0;
+  if (room > 0.5) room = 0.5;
 
-  revVol=vol;
-  revDamp=damp;
-  revRoom=room;
-  
+  revVol = vol;
+  revDamp = damp;
+  revRoom = room;
+
   lRev->damping(damp);
   rRev->damping(damp);
 
   lRev->roomsize(room);
   rRev->roomsize(room);
 
-  lMix->gain(REVERB,vol);
-  rMix->gain(REVERB,vol); 
+  lMix->gain(REVERB, vol);
+  rMix->gain(REVERB, vol);
 }
 float Cuntzertu::getVerbVol() {
   return revVol;
@@ -1175,124 +1165,125 @@ void Cuntzertu::setReverbs(AudioEffectFreeverb* lRev, AudioEffectFreeverb* rRev)
 }
 
 void Cuntzertu::beginTimer() {
-  timer.begin([this] { timerRoutine(); }, 700);
+  timer.begin([this] {
+    timerRoutine();
+  },
+              700);
   timer.priority(255);
 }
 
 void Cuntzertu::timerRoutine() {
-  
-  tumbu.update(avgRnd,sulv,sulf,sulff);
-  mancs.update(avgRnd,sulv,sulf,sulff);
-  mancd.update(avgRnd,sulv,sulf,sulff);
+
+  tumbu.update(avgRnd, sulv, sulf, sulff);
+  mancs.update(avgRnd, sulv, sulf, sulff);
+  mancd.update(avgRnd, sulv, sulf, sulff);
 
   //Random
-  if (tmrCount%30==0) {
+  if (tmrCount % 30 == 0) {
     float rnd = Entropy.rnorm(0, 2);
     const float fact = 0.95;
-  
-    if ((rnd * rnd) > 1) avgRnd=avgRnd* fact + (1 - fact) * rnd / 2;
+
+    if ((rnd * rnd) > 1) avgRnd = avgRnd * fact + (1 - fact) * rnd / 2;
   }
 
-  
+
   //Sulidu
-  if (tmrCount%10==0) {  
+  if (tmrCount % 10 == 0) {
 
-    if (mancs.getHCraiAct()==0) gateMs++;
-    else gateMs=0;
+    if (mancs.getHCraiAct() == 0) gateMs++;
+    else gateMs = 0;
 
-    if (mancd.getHCraiAct()==0) gateMd++;
-    else gateMd=0;
+    if (mancd.getHCraiAct() == 0) gateMd++;
+    else gateMd = 0;
 
-    avgSulidu=(avgSulidu*2+sulidu)/3; //Media 3 a 1  
+    avgSulidu = (avgSulidu * 2 + sulidu) / 3;  //Media 3 a 1
 
-    if (((avgSulidu>slim)&&suling)||(avgSulidu>slim+5)) {             
-            if (suling==false) sulcount++;
-            suling=true;
-            if (gateMode!=GATEMODE_ONOFF) {
-                
-                mute(false);
-                
-                float sul=(avgSulidu-szero)/ssens;
-                float asul=abs(sul);
-               
-              if (sulFuntz) {
-                  int avg=(int)avgSulidu;
-                  sulv=funtzioni[0][avg]+1;
-                  sulf=funtzioni[1][avg];
-                  sulff=funtzioni[2][avg]+1;
-              } else {
-                  sulf=(sul*(1-sef)/(sef+1-2*sef*asul))*sff;
-                  sulv=(sul*(1-sev)/(sev+1-2*sev*asul)+1)*sfv;
-                  sulff=(sul*(1-seff)/(seff+1-2*seff*asul)+1)*sfff;
-              }
-              
-            }
+    if (((avgSulidu > slim) && suling) || (avgSulidu > slim + 5)) {
+      if (suling == false) sulcount++;
+      suling = true;
+      if (gateMode != GATEMODE_ONOFF) {
+
+        mute(false);
+
+        float sul = (avgSulidu - szero) / ssens;
+        float asul = abs(sul);
+
+        if (sulFuntz) {
+          int avg = (int)avgSulidu;
+          sulv = funtzioni[0][avg] + 1;
+          sulf = funtzioni[1][avg];
+          sulff = funtzioni[2][avg] + 1;
         } else {
-          suling=false;
-          sulf=0;         
-          sulff=1;
+          sulf = (sul * (1 - sef) / (sef + 1 - 2 * sef * asul)) * sff;
+          sulv = (sul * (1 - sev) / (sev + 1 - 2 * sev * asul) + 1) * sfv;
+          sulff = (sul * (1 - seff) / (seff + 1 - 2 * seff * asul) + 1) * sfff;
         }
-
-        switch (gateMode) {
-          case GATEMODE_CRAIS:
-            if ((gateMs>120)&&(gateMd>120)) {            
-              gateMs=121;
-              gateMd=121;
-              mute(true);
-            }
-            if ((gateMs==0)||(gateMd==0)) {   
-              sulv=1; 
-              mute(false);
-            }
-          break;
-          case GATEMODE_ONOFF:
-            if (sulcount%2) {
-              mute(false);
-              sulv=1;
-            } else {
-              mute(true);
-            }
-          break;
-        case GATEMODE_SUL:
-          if (!suling) mute(true);
-        break;
-        case GATEMODE_CS:
-           if (gateMs>120) {            
-              gateMs=121;
-              mancs.mute(true);
-              tumbu.mute(true);
-            }
-            if (gateMd>120) {            
-              gateMd=121;
-              mancd.mute(true);
-            }
-            if (!suling) mute(true);
-        break;
-        case GATEMODE_NO:
-        default:
-            sulv=1; 
-            mute(false);            
-        break;       
       }
+    } else {
+      suling = false;
+      sulf = 0;
+      sulff = 1;
+    }
+
+    switch (gateMode) {
+      case GATEMODE_CRAIS:
+        if ((gateMs > 120) && (gateMd > 120)) {
+          gateMs = 121;
+          gateMd = 121;
+          mute(true);
+        }
+        if ((gateMs == 0) || (gateMd == 0)) {
+          sulv = 1;
+          mute(false);
+        }
+        break;
+      case GATEMODE_ONOFF:
+        if (sulcount % 2) {
+          mute(false);
+          sulv = 1;
+        } else {
+          mute(true);
+        }
+        break;
+      case GATEMODE_SUL:
+        if (!suling) mute(true);
+        break;
+      case GATEMODE_CS:
+        if (gateMs > 120) {
+          gateMs = 121;
+          mancs.mute(true);
+          tumbu.mute(true);
+        }
+        if (gateMd > 120) {
+          gateMd = 121;
+          mancd.mute(true);
+        }
+        if (!suling) mute(true);
+        break;
+      case GATEMODE_NO:
+      default:
+        sulv = 1;
+        mute(false);
+        break;
+    }
   }
   tmrCount++;
 }
 
-void Cuntzertu::setGateMode(uint8_t mode){
-  gateMode=mode%GATEMODEMAX; 
-  sulcount=0;
-  gateMs=0;
-  gateMd=0;
-
+void Cuntzertu::setGateMode(uint8_t mode) {
+  gateMode = mode % GATEMODEMAX;
+  sulcount = 0;
+  gateMs = 0;
+  gateMd = 0;
 }
 
-uint8_t Cuntzertu::getGateMode(){
+uint8_t Cuntzertu::getGateMode() {
   return gateMode;
 }
 
 void Cuntzertu::sync() {
 
-  muteOut (true);
+  muteOut(true);
   // Volumi
 
   lMix->gain(tumbuMixChan, volT * (1 - bilT) / 2);
@@ -1305,144 +1296,140 @@ void Cuntzertu::sync() {
   rMix->gain(mancdMixChan, volMd * (1 + bilMd) / 2);
 
   // BQ
-  
+
   lBq.sync();
   rBq.sync();
- 
+
   //Acordadura
   setAcordadura(num_acordadura);
   syncFreq();
 
   tumbu.sync();
   mancs.sync();
-  mancd.sync(); 
+  mancd.sync();
 
   muteOut(false);
 }
 
 void Cuntzertu::setSul(float sul) {
-  if (sul>110) sul=0;
-  this->sulidu=sul;
+  if (sul > 110) sul = 0;
+  this->sulidu = sul;
 }
 
-void Cuntzertu::mute(bool mute) {  
+void Cuntzertu::mute(bool mute) {
   tumbu.mute(mute);
   mancs.mute(mute);
   mancd.mute(mute);
-  if (mute!=muted) rec->poke(mute);
-  muted=mute;
+  if (mute != muted) rec->poke(mute);
+  muted = mute;
 }
-void Cuntzertu::muteOut(bool mute) { 
+void Cuntzertu::muteOut(bool mute) {
   if (mute) {
     this->lOut->gain(0);
     this->rOut->gain(0);
   } else {
     setVol(getVol());
   }
-
 }
 
 void Cuntzertu::syncFreq() {
-  freq = 55.0f*this->getFini();
-  freq=calcFrequenza(puntu + 3);
+  freq = 55.0f * this->getFini();
+  freq = calcFrequenza(puntu + 3);
 }
 float Cuntzertu::calcFrequenza(uint8_t nota) {
-   float f=freq;
-   while (nota>=244) { //Tumbu neg
-    nota+=12;
-    f=f/2;
-   }
+  float f = freq;
+  while (nota >= 244) {  //Tumbu neg
+    nota += 12;
+    f = f / 2;
+  }
 
-   return f*(pow(2,nota/12))*acordadura[nota%12];  
-
+  return f * (pow(2, nota / 12)) * acordadura[nota % 12];
 }
 float Cuntzertu::getBaseFreq() {
   return freq;
 }
 
 void Cuntzertu::setPreferredCuntz(uint8_t num) {
-  this->preferredCuntz=num;
+  this->preferredCuntz = num;
 }
 uint8_t Cuntzertu::getPreferredCuntz() {
   return this->preferredCuntz;
 }
 
-void Cuntzertu::calcCrais(uint8_t cuntz, uint8_t modal) { 
-      
-      byte mancosa[5] ={0,1,2,3,4};
-      byte mancosedda[5] ={0,1,2,3,4};
-      
-      switch (cuntz) {
-      case 0://Fiorassiu
-        memcpy(&mancosa, &crais_ms_fio,5);
-        memcpy(&mancosedda, &crais_md_fio,5);
-        break;
-      case 1://punt'e organu
-        memcpy(&mancosa, &crais_ms_po,5);
-        memcpy(&mancosedda, &crais_md_po,5);
-        break;
-      case 2://mediana
-        memcpy(&mancosa, &crais_ms_med,5);
-        memcpy(&mancosedda, &crais_md_med,5);
-        break;
-      case 3://mediana a pipia
-        memcpy(&mancosa, &crais_ms_med,5);
-        memcpy(&mancosedda, &crais_md_fio,5);
-        break;
-      case 4://Fiuda
-        memcpy(&mancosa, &crais_ms_med,5);
-        memcpy(&mancosedda, &crais_ms_fio,5);
-        break;
-      case 5://Spinellu
-        memcpy(&mancosa, &crais_md_po,5);
-        memcpy(&mancosedda, &crais_md_med,5);
-        break;
-      case 6://Spinellu a pipia
-        memcpy(&mancosa, &crais_md_po,5);
-        memcpy(&mancosedda, &crais_md_fio,5);
-        break;
-      case 7://mediana farsa
-        memcpy(&mancosa, &crais_ms_po,5);
-        memcpy(&mancosedda, &crais_md_med,5);
-        break;
-      case 8://samponnia
-        memcpy(&mancosa, &crais_ms_po,5);
-        memcpy(&mancosedda, &crais_md_fio,5);
-        break;
-      case 9://moriscu
-        memcpy(&mancosa, &crais_md_med,5);
-        memcpy(&mancosedda, &crais_ms_po,5);
-        break;
-      case 10://para
-        memcpy(&mancosa, &crais_md_po,5);
-        memcpy(&mancosedda, &crais_md_po,5);
-        break;
-      case 11://fiuddedda
-        memcpy(&mancosa, &crais_md_po,5);
-        memcpy(&mancosedda, &crais_md_fiu,5);
-        break;
-      default:
-        break;
-      }
+void Cuntzertu::calcCrais(uint8_t cuntz, uint8_t modal) {
 
-      for (int i=0;i<=4;i++)
-      {
-        mancosa[i]=diatToCroma(mancosa[i],modal);
-        mancosedda[i]=diatToCroma(mancosedda[i],modal);
-      }
+  byte mancosa[5] = { 0, 1, 2, 3, 4 };
+  byte mancosedda[5] = { 0, 1, 2, 3, 4 };
 
-      mancs.setCrais(mancosa);
-      mancd.setCrais(mancosedda);
+  switch (cuntz) {
+    case 0:  //Fiorassiu
+      memcpy(&mancosa, &crais_ms_fio, 5);
+      memcpy(&mancosedda, &crais_md_fio, 5);
+      break;
+    case 1:  //punt'e organu
+      memcpy(&mancosa, &crais_ms_po, 5);
+      memcpy(&mancosedda, &crais_md_po, 5);
+      break;
+    case 2:  //mediana
+      memcpy(&mancosa, &crais_ms_med, 5);
+      memcpy(&mancosedda, &crais_md_med, 5);
+      break;
+    case 3:  //mediana a pipia
+      memcpy(&mancosa, &crais_ms_med, 5);
+      memcpy(&mancosedda, &crais_md_fio, 5);
+      break;
+    case 4:  //Fiuda
+      memcpy(&mancosa, &crais_ms_med, 5);
+      memcpy(&mancosedda, &crais_ms_fio, 5);
+      break;
+    case 5:  //Spinellu
+      memcpy(&mancosa, &crais_md_po, 5);
+      memcpy(&mancosedda, &crais_md_med, 5);
+      break;
+    case 6:  //Spinellu a pipia
+      memcpy(&mancosa, &crais_md_po, 5);
+      memcpy(&mancosedda, &crais_md_fio, 5);
+      break;
+    case 7:  //mediana farsa
+      memcpy(&mancosa, &crais_ms_po, 5);
+      memcpy(&mancosedda, &crais_md_med, 5);
+      break;
+    case 8:  //samponnia
+      memcpy(&mancosa, &crais_ms_po, 5);
+      memcpy(&mancosedda, &crais_md_fio, 5);
+      break;
+    case 9:  //moriscu
+      memcpy(&mancosa, &crais_md_med, 5);
+      memcpy(&mancosedda, &crais_ms_po, 5);
+      break;
+    case 10:  //para
+      memcpy(&mancosa, &crais_md_po, 5);
+      memcpy(&mancosedda, &crais_md_po, 5);
+      break;
+    case 11:  //fiuddedda
+      memcpy(&mancosa, &crais_md_po, 5);
+      memcpy(&mancosedda, &crais_md_fiu, 5);
+      break;
+    default:
+      break;
+  }
+
+  for (int i = 0; i <= 4; i++) {
+    mancosa[i] = diatToCroma(mancosa[i], modal);
+    mancosedda[i] = diatToCroma(mancosedda[i], modal);
+  }
+
+  mancs.setCrais(mancosa);
+  mancd.setCrais(mancosedda);
 }
 
 byte Cuntzertu::diatToCroma(byte diat, uint8_t modal) {
-      byte out=0;
-            
-      for (int i=0;i<diat;i++)
-      {
-        if (scala[(i+modal)%7]) out+=2;
-        else out+=1;
-      }
-      
-      return out;
-    }
+  byte out = 0;
+
+  for (int i = 0; i < diat; i++) {
+    if (scala[(i + modal) % 7]) out += 2;
+    else out += 1;
+  }
+
+  return out;
+}
