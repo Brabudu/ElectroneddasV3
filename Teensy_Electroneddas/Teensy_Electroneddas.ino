@@ -40,6 +40,10 @@ GyverOLED
 
 #define version "2.4.0"
 
+extern "C" uint32_t set_arm_clock(uint32_t frequency);
+
+
+
 //2.2   12/01/2024
 
 /*16/4/21
@@ -213,6 +217,8 @@ void setup() {
   else d->initMenu();
 
   rec = new Recorder();
+
+  set_arm_clock(600000000);
 }
 
 void loop() {
@@ -363,14 +369,28 @@ void sona(uint8_t b) {
       com->msgWarning(msg, true);
     }
 
+#ifdef oct
     if (canna == 1) {
+<<<<<<< Updated upstream
       c->mancs.playCrai(nota, lo_nibb);
     }
     if (canna == 2) {
       c->mancd.playCrai(nota, lo_nibb);
+=======
+      c->mancs.playCrai(nota, lo_nibb, (hi_nibb & 0x40));
     }
-
-
+    if (canna == 2) {
+      c->mancd.playCrai(nota, lo_nibb, (hi_nibb & 0x40));
+>>>>>>> Stashed changes
+    }
+#else
+    if (canna == 1) {
+      c->mancs.playCrai(nota, lo_nibb, false);
+    }
+    if (canna == 2) {
+      c->mancd.playCrai(nota, lo_nibb, false);
+    }
+#endif
     if (canna == 3) {  //Sys msg
       if (b == 3) {
         last_error = 0;  //Controller prontu (0x33)
