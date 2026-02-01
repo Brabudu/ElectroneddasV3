@@ -27,7 +27,8 @@ const String info_E =
   "Y                          //Torrat a principiu su stracasciu 0\n"
   "N                          //Noda de test 0\n"
   "I                          //Set ID\n"
-  "R [p] {n}                  //Record (p=1 start now -p=2 start -p3=play {rate} -p=0 stop -s,l=save/load {nfile})\n";
+  "R [p] {n}                  //Record (p=1 start now -p=2 start -p3=play {rate} -p=0 stop -s,l=save/load {nfile})\n"
+  "L [mode]                   //Latentza bàscia (0=off 1=on) \n";
 
 const String info_B = "n [nome]                     //nomini de su cuncertu (max 32)\n"
                       "d [descrizione]              //Descritzioni de su cuncertu (max 64)\n"

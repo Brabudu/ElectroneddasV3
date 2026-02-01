@@ -218,7 +218,7 @@ void setup() {
 
   rec = new Recorder();
 
-  set_arm_clock(600000000);
+  
 }
 
 void loop() {
@@ -371,17 +371,10 @@ void sona(uint8_t b) {
 
 #ifdef oct
     if (canna == 1) {
-<<<<<<< Updated upstream
-      c->mancs.playCrai(nota, lo_nibb);
-    }
-    if (canna == 2) {
-      c->mancd.playCrai(nota, lo_nibb);
-=======
       c->mancs.playCrai(nota, lo_nibb, (hi_nibb & 0x40));
     }
     if (canna == 2) {
       c->mancd.playCrai(nota, lo_nibb, (hi_nibb & 0x40));
->>>>>>> Stashed changes
     }
 #else
     if (canna == 1) {
@@ -523,12 +516,10 @@ void parse(String s) {
       case 'l':
         efs->cuntzFromFileJson(c, sParams[2].toInt(), true);
         break;
-      /*case 'L':
-        ldMancd.frequency(sParams[2].toInt());
-        ldMancd.resonance(sParams[3].toFloat());
-        mdMixer.gain(2,sParams[4].toFloat());  //TEST
+      case 'L':
+        if (sParams[2].toInt()==1) set_arm_clock(600000000);
+        else set_arm_clock(396000000);
         break;
-        */
       case 'f':
         //efs->cuntzFromFileFunction(c,sParams[2].toInt(),false);
         efs->cuntzFromFile(c, sParams[2], false, ' ');
