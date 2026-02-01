@@ -38,7 +38,9 @@ GyverOLED
 
 #include "sdios.h"
 
-#define version "2.4.0"
+#define version "2.4.1"
+
+//241: ottava, low power
 
 extern "C" uint32_t set_arm_clock(uint32_t frequency);
 
