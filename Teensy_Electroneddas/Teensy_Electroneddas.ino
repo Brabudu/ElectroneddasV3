@@ -6,7 +6,7 @@ ArduinoJSON
 
 GyverOLED
   https://github.com/GyverLibs/GyverOLED
-
+  // Change Wire to Wire2!!
 
 */
 

@@ -20,9 +20,7 @@
 class Display {
 private:
   GyverOLED<SSH1106_128x64> oled;
-
-
-
+  
   int pos = 0;
   uint8_t page = 0;
 
