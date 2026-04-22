@@ -78,7 +78,7 @@ public class Electroneddas extends JFrame implements ActionListener, SerialListe
 	 * 
 	 */
 	
-	private static final String version="2.4.0";
+	private static final String version="2.4.1";
 	
 	private static final long serialVersionUID = 1L;
 	public static SerialUSB serialPort;
