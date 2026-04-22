@@ -481,7 +481,7 @@ public class JStracPanel extends JPanel implements ActionListener {
 							Gson gson = new Gson();
 							SerialUSB.printCmd(gson.toJson(Electroneddas.s.getCuntzertu(i))+"@");	
 							try {
-								Thread.sleep(200);
+								Thread.sleep(300);
 							} catch (InterruptedException e1) {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
