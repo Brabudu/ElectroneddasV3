@@ -7,32 +7,31 @@
 #define SD_CONFIG SdioConfig(FIFO_SDIO)
 
 class ElFileSystem {
-  private:
-    SdFs sd;
-    bool sd_ok=false;
-  public:
-    ElFileSystem();
-    
-    bool isMounted();
-    
-    bool execute(int num);
-    void deleteFile(String file);
-    void torra(int num);
+private:
+  SdFs sd;
+  bool sd_ok = false;
+public:
+  ElFileSystem();
 
-    void listaFiles(bool readable);
-    bool newFile(String file);
-    bool copy(int numS, int numD);
+  bool isMounted();
 
-    bool recToFile(Recorder* r, int num);
-    bool recFromFile(Recorder* r, int num, bool info);
+  bool execute(int num);
+  void deleteFile(String file);
+  void torra(int num);
 
-    void cuntzToFile(Cuntzertu* c, int num);
-    bool cuntzFromFileJson(Cuntzertu* c, int num,bool sync);
-    bool cuntzFromFileFunction(Cuntzertu* c, int num,bool sync);
-    
-    bool cuntzFromFile(Cuntzertu* c, String file,bool sync,char preamble);
+  void listaFiles(bool readable);
+  bool newFile(String file);
+  bool copy(int numS, int numD);
 
-    void savePrefs(Cuntzertu* c);
-    bool readPrefs(Cuntzertu* c);
+  bool recToFile(Recorder* r, int num);
+  bool recFromFile(Recorder* r, int num, bool info);
+
+  void cuntzToFile(Cuntzertu* c, int num);
+  bool cuntzFromFileJson(Cuntzertu* c, int num, bool sync);
+  bool cuntzFromFileFunction(Cuntzertu* c, int num, bool sync);
+
+  bool cuntzFromFile(Cuntzertu* c, String file, bool sync, char preamble);
+
+  void savePrefs(Cuntzertu* c);
+  bool readPrefs(Cuntzertu* c);
 };
-    

@@ -4,10 +4,10 @@
 #include "SdFat.h"
 
 struct record {
-  public:
-    uint8_t nota;
-    uint8_t reserved;
-    unsigned long time;
+public:
+  uint8_t nota;
+  uint8_t reserved;
+  unsigned long time;
 };
 
 #define IDLE 0
@@ -22,42 +22,42 @@ struct record {
 #define MAXSIZE 15000
 
 class Recorder {
-  private:
-    
-    record registrazione[MAXSIZE];
-    char nome[32];
-    uint8_t cuntz;
+private:
 
-    uint8_t stato;
-    uint16_t sample;
-    uint16_t size;
-    long startTime;
-    float rate;
+  record registrazione[MAXSIZE];
+  char nome[32];
+  uint8_t cuntz;
 
-  public:
-    Recorder();
-    bool isIdle();
-    bool isRecording();
-    bool isPlaying();
-    bool isReady();
-    void parse(String s);
+  uint8_t stato;
+  uint16_t sample;
+  uint16_t size;
+  long startTime;
+  float rate;
 
-    void setNome(String nome);
-    char* getNome();
+public:
+  Recorder();
+  bool isIdle();
+  bool isRecording();
+  bool isPlaying();
+  bool isReady();
+  void parse(String s);
 
-    
+  void setNome(String nome);
+  char* getNome();
 
-    void poke(bool stato);
 
-    void startRecord(uint8_t mode);
-    void startPlay(uint8_t mode);
-    void stop();
 
-    void serialize(Stream* s);
-    void deserialize(Stream* s, bool info);
+  void poke(bool stato);
 
-    uint8_t getSample();
-    bool putSample(uint8_t);
+  void startRecord(uint8_t mode);
+  void startPlay(uint8_t mode);
+  void stop();
 
-    void setRate(float rate);
+  void serialize(Stream* s);
+  void deserialize(Stream* s, bool info);
+
+  uint8_t getSample();
+  bool putSample(uint8_t);
+
+  void setRate(float rate);
 };
