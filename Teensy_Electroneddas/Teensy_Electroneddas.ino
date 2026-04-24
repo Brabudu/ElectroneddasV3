@@ -6,7 +6,7 @@ ArduinoJSON
 
 GyverOLED
   https://github.com/GyverLibs/GyverOLED
-  // Change Wire to Wire2!!
+
 
 */
 
@@ -16,6 +16,7 @@ GyverOLED
 #include <EEPROM.h>
 #include <SerialFlash.h>
 
+
 #include "Cannas.h"
 #include "Display.h"
 #include "ElFileSystem.h"
@@ -23,11 +24,11 @@ GyverOLED
 #include "Recorder.h"
 
 #ifndef functions_h
-#include "functions.h"
+  #include "functions.h"
 #endif
 
 #ifndef info_h
-#include "info.h"
+  #include "info.h"
 #endif
 
 #include "Communicator.h"
@@ -38,15 +39,9 @@ GyverOLED
 
 #include "sdios.h"
 
-#define version "2.4.1"
+#define version "2.5.0"
 
-//241: ottava, low power
-
-extern "C" uint32_t set_arm_clock(uint32_t frequency);
-
-
-
-//2.2   12/01/2024
+//2.2   12/01/2024  
 
 /*16/4/21
   */
@@ -63,22 +58,29 @@ const char json[] = "{\"nome\":\"PO\",\"descr\":\"Sol\",\"vol\":0.5,\"cuntz\":1,
 
 #include "schema.h"
 
+extern "C" uint32_t set_arm_clock(uint32_t frequency);
 
+#define HI_SPEED  600000000
+#define LOW_SPEED  150000000
 
 ////// HARDWARE //////////////////////
 
-#define CS_CON 2    //SPI CS
-#define OFF_CON 38  //Todo
+#define CS_CON  2     //SPI CS
+#define OFF_CON  38   //Todo
 
-#define V_CONTR 10  //SPI Vcc
+#define V_CONTR  10   //SPI Vcc
+
+#define BLUETOOTH Serial7
+
+#define MIDI_IN_CHAN 0
 
 
-SPISlave_T4<&SPI1, SPI_8_BITS> mySPI;
+SPISlave_T4 <&SPI1, SPI_8_BITS> mySPI; 
 ;
 ////
-volatile uint8_t lt_pkt[6];  // Buffer ricezione
-volatile uint8_t lt_pr = 0;  //
-volatile uint8_t lt_pp = 0;  //
+volatile uint8_t lt_pkt[6]; // Buffer ricezione
+volatile uint8_t lt_pr = 0; //
+volatile uint8_t lt_pp = 0; //
 
 
 uint8_t last_error = 0;
@@ -86,32 +88,33 @@ uint8_t last_error_mem = 0;
 
 
 
-volatile long inact_timer = 0;  //
+volatile long inact_timer = 0; //
 
 
 ////
-float old_sul = 0;
-int sul_count = 0;
+float old_sul=0;
+int sul_count=0;
 
 //byte oldcrai[2];
 
 ////// gestione console //////
-char ser_buffer[2000];
+char ser_buffer[3000];
 int ser_b_index = 0;
 
-String command = "";
+String command="";
 
 //////
 //Battery
-#define BATT A8  //Todo
-float charge = 4.2;
+  #define BATT  A8   //Todo
+    float charge=4.2;
 ////// gestione Bluetooth //////
-char cstring1[64];
-byte addbuffer[64];
+#define MAX_BT_BUFF 128
+char cstring1[MAX_BT_BUFF];  //!!!!!!!!!!!!!!!!!!!!!!!!
+//byte addbuffer[64];
 int cindex1 = 0;
 bool cpronto1 = false;
 
-bool bt_controller = true;
+bool bt_controller = false;
 bool bt_control = false;
 
 const bool BT_CRLF = true;
@@ -119,24 +122,41 @@ const bool BT_CRLF = true;
 
 //Gestione monitor
 #define CRAIS 1
-#define ESA 2
-#define SUL 4
-#define BT 8
-#define CLIP 16
+#define ESA   2
+#define SUL   4
+#define BT    8
+#define CLIP  16
 
-int mon_mode = 0;
+int mon_mode=0;
 
-byte act_file = 0;  // Caricamento cuntzertu
+//byte act_file=0; // Caricamento cuntzertu
 
 // Timer monitor (clip)
 IntervalTimer monitorTimer;
 
-uint8_t cuntz_num = 0;
+uint8_t cuntz_num=0;
 #define MAX_CUNTZ_NUM 200
 
-//
+// Pedaliera
+#define STRAC 0
+#define CROMA 1
+#define CONTROL 2
+#define TUMBU_F  3
+#define TUMBU_T 4
+#define SCRIPT 5
 
-Cuntzertu* c;
+uint8_t ped_mode=0;
+uint8_t ped_last=0;
+uint8_t ped_strac=0;
+///EEPROM
+
+#define EEPROM_ID 0
+#define EEPROM_HW 1
+
+#define HW_BT 0xaa
+
+
+Cuntzertu* c; 
 
 Display* d;
 
@@ -156,95 +176,102 @@ void setup() {
   digitalWrite(OFF_CON, HIGH);
 
   pinMode(V_CONTR, OUTPUT);
-
-
+  
+  
   pinMode(LED_BUILTIN, OUTPUT);
-
+  
   // SPI slave
-  pinMode(CS_CON, OUTPUT);  //CS
+  pinMode(CS_CON, OUTPUT); //CS
   digitalWrite(CS_CON, LOW);
 
   AudioMemory(20);
   Entropy.Initialize();
 
-  Serial.begin(115200);  //USB
+  Serial.begin(115200);   //USB
+  
+  set_arm_clock(LOW_SPEED);
 
-
-  com = new Communicator(&Serial);
+  com=new Communicator(&Serial);
 
   //Bluetooth
-  //Serial5.begin(115200);    //BTooth
-  //Serial5.begin(9600);
-  //Serial5.addMemoryForRead(addbuffer,64);  // Per comunicare con la app
+  BLUETOOTH.begin(9600);    //BTooth
+
+  if (EEPROM.read(EEPROM_HW) == HW_BT) {
+    bt_control=true;
+  }
+  
+  //BLUETOOTH.addMemoryForRead(addbuffer,64);  // Per comunicare con la app
 
   digitalWrite(V_CONTR, HIGH);
   delay(100);
-  digitalWrite(CS_CON, HIGH);
-
+  digitalWrite(CS_CON,HIGH);
+  
   delay(100);
-
-  lMixer.gain(3, 0.3);
-  rMixer.gain(3, 0.3);
+ 
+  lMixer.gain(3,0.3);
+  rMixer.gain(3,0.3);
 
   //mdMixer.gain(2,0.7);  //TEST
   //ldMancd.frequency(500);
   //ldMancd.resonance(1);
-
+   
   mySPI.onReceive(receiving);
   mySPI.begin();
 
-  c = new Cuntzertu();
+  c=new Cuntzertu();
 
-  d = new Display();
+  d=new Display(bt_control);
 
-  efs = new ElFileSystem();
-
+  efs=new ElFileSystem();
+  
   if (!efs->isMounted()) {
-    com->msgError("SD Error");
-    d->showLogo("SD ERR");
-  } else {
-    d->showLogo(version);
-  }
+        com->msgError("SD Error");
+        d->showLogo("SD ERR");
+    } else {
+        d->showLogo(version);
+    }
   initCuntz();
-
+ 
   monitorTimer.begin(monitoring, 200000);
   monitorTimer.priority(255);
-
+  
   digitalWrite(V_CONTR, HIGH);
 
   delay(500);
-  digitalWrite(CS_CON, LOW);
-
-  if (digitalRead(PIN_PULS_OK) == false) d->test();
+  digitalWrite(CS_CON,LOW);
+  
+  if (digitalRead(PIN_PULS_OK)==false) d->test();
   else d->initMenu();
 
-  rec = new Recorder();
+  rec=new Recorder();
 
-  
+   usbMIDI.setHandleProgramChange(myProgramChange);
+
 }
 
 void loop() {
 
   if (!rec->isPlaying()) {
-
+  
     //USB Serial
     pollSerial();
-
+    
     //BT Serial
     pollBT();
-
+    
     //SPI
     pollSPI();
 
-    while (usbMIDI.read()) {}
+    pollMIDI();
+    
 
-    if (command.length() > 0) {
+    if (command.length()>0) {
       parse(command);
-      command = "";
+      command="";
     }
   } else {
     uint8_t s;
-    if ((s = rec->getSample()) != 0) {
+    if ((s=rec->getSample())!=0) {
       sona(s);
     }
     //USB Serial
@@ -253,54 +280,56 @@ void loop() {
 }
 
 void pollSerial() {
-  while (Serial.available() > 0) {
+   while (Serial.available() > 0) 
+  {
     inact_timer = 0;
-
-    char byteBuffer = Serial.read();
+    
+    char byteBuffer = Serial.read();  
     ser_buffer[ser_b_index++] = byteBuffer;
 
-    if (ser_b_index >= 2000) {
+    if (ser_b_index>=3000) {
       com->msgError("Serial buffer full");
-      ser_b_index = 0;
+      ser_b_index=0;
     }
-
-    if (byteBuffer == 10) {
-      ser_buffer[--ser_b_index] = 0;
+    
+    if (byteBuffer == 10)
+    {
+      ser_buffer[--ser_b_index] = 0;        
       parse(ser_buffer);  //Generali
+      
       ser_b_index = 0;
     }
   }
 }
 
 void pollSPI() {
-  if (lt_pr != lt_pp) {
-    inact_timer = 0;
-
-    lt_pp++;
-    uint8_t b = lt_pkt[lt_pp % 6];
+    if (lt_pr != lt_pp) {
+      inact_timer = 0;
+      
+      lt_pp++;
+      uint8_t b = lt_pkt[lt_pp % 6];
     sona(b);
-  }
+ 
+  } 
+
 }
 void pollBT() {
-  /*
-  if (!bt_control) {
+ 
+  if (bt_control) {
   //Bluetooth
-    while ((Serial5.available() > 0) && (!cpronto1))
+    while ((BLUETOOTH.available() > 0) && (!cpronto1))
     {
-      char byteBuffer = Serial5.read();
-      Serial.print("BTD> ");
-      Serial.print(byteBuffer);
-      if (!((cindex1==0)&&((byteBuffer==' ')||(byteBuffer==0)))) { //trim
-        
+      char byteBuffer = BLUETOOTH.read();
+    
+      if (!((cindex1==0)&&((byteBuffer==' ')||(byteBuffer==0)))) { //trim   
          
         cstring1[cindex1++] = byteBuffer;
-        if (byteBuffer == 10)
+        if ((byteBuffer == 10)||(cindex1>=MAX_BT_BUFF))
         {
           cstring1[--cindex1] = 0;
   
-          if ((mon_mode&BT)||bt_controller) {
-            Serial.print("BT> ");
-            Serial.println(cstring1);
+          if ((mon_mode&BT)||bt_controller) {     
+            com->msgInfo("BT> ",cstring1);
           }
           
           if (!bt_controller)  parse(cstring1);  //Generali
@@ -310,120 +339,118 @@ void pollBT() {
         }
       }
     }
-*/
+  }
 }
+void pollMIDI() {
+  while(usbMIDI.read()){}
+}
+void sona(uint8_t b) {  
 
-void sona(uint8_t b) {
-
-  //Sulidu
-  if (b >= 128) {
-    b &= 0x7F;
-    float sul = (float)b;
-
-    if (sul != old_sul) {
-      c->setSul(b);
-      if (rec->isRecording()) rec->putSample(b | 0x80);
-      if (mon_mode & SUL) {
-        com->msgWarning('s' + String(b), true);
+      //Sulidu
+      if (b>=128 ) {
+        b&=0x7F;
+        float sul=(float)b;
+      
+        if (sul!=old_sul) {
+          c->setSul(b);   
+          if (rec->isRecording()) rec->putSample(b|0x80); 
+          if (mon_mode&SUL) {
+            com->msgWarning('s'+String(b),true);
+          }
+          old_sul=b;
+        }
+        return;
       }
-      old_sul = b;
-    }
-    return;
-  }
 
-  //Crais & msg
-  if (rec->isRecording()) rec->putSample(b);
-  uint8_t canna = 0;
-  uint8_t nota = 0;
+      //Crais & msg
+      if (rec->isRecording()) rec->putSample(b);
+      uint8_t canna = 0;
+      uint8_t nota = 0;
 
-  uint8_t hi_nibb = b & 0xf0;
-  uint8_t lo_nibb = b & 0x0f;
+      uint8_t hi_nibb=b&0xf0;
+      uint8_t lo_nibb=b&0x0f;
 
-  if (hi_nibb == 0x70) {  //Comando da controller
-    int dir = 0;
-    if (lo_nibb == 0) return;
-    if (b & 0x1) dir = 1;
-    if (b & 0x8) dir = -1;
+      if (hi_nibb==0x70) { //Comando da controller
+        int dir=0;
+        if (lo_nibb==0) return;
+        if (b&0x1) dir=1;
+        if (b&0x8) dir=-1;
 
-    if (!efs->isMounted()) return;
-    do {
-      cuntz_num = (cuntz_num + dir + MAX_CUNTZ_NUM) % MAX_CUNTZ_NUM;
-    } while (!efs->cuntzFromFileJson(c, cuntz_num, true));
-    c->setPreferredCuntz(cuntz_num);
-    d->displayPage();
-    d->update();
-
-  } else {
-    nota = byteToCrai(b, &canna);
-
-    if (mon_mode & CRAIS) {
-      String can;
-
-      if (canna == 1) can = "S";
-      else can = "D";
-
-      String msg = can + ":";
-      char myHex[2] = "";
-
-      if (mon_mode & ESA) ltoa(lo_nibb, myHex, 16);
-      else ltoa(nota, myHex, 16);
-      msg += String(myHex);
-      com->msgWarning(msg, true);
-    }
-
-#ifdef oct
-    if (canna == 1) {
-      c->mancs.playCrai(nota, lo_nibb, (hi_nibb & 0x40));
-    }
-    if (canna == 2) {
-      c->mancd.playCrai(nota, lo_nibb, (hi_nibb & 0x40));
-    }
-#else
-    if (canna == 1) {
-      c->mancs.playCrai(nota, lo_nibb, false);
-    }
-    if (canna == 2) {
-      c->mancd.playCrai(nota, lo_nibb, false);
-    }
-#endif
-    if (canna == 3) {  //Sys msg
-      if (b == 3) {
-        last_error = 0;  //Controller prontu (0x33)
-        last_error_mem = 0;
-        com->msgOk("Controller prontu");
+        if (!efs->isMounted()) return;
+        do {
+          cuntz_num=(cuntz_num+dir+MAX_CUNTZ_NUM)%MAX_CUNTZ_NUM;
+        } while (!efs->cuntzFromFileJson(c,cuntz_num,true));
+        c->setPreferredCuntz(cuntz_num);
+        d->displayPage();
+        d->update();
+      
       } else {
-        last_error = 1 + (b >> 1);
-        last_error_mem = last_error;
+        nota = byteToCrai(b, &canna);
+               
+        if (mon_mode&CRAIS)  {
+          String can;
+         
+          if (canna==1) can="S"; 
+          else can="D";
+          
+            String msg=can+":";
+            char myHex[2] = "";
+   
+            if (mon_mode&ESA) ltoa(lo_nibb,myHex,16);
+            else ltoa(nota,myHex,16);
+            msg+=String(myHex);
+            com->msgWarning(msg,true);
+              
+        }
+       
+        if (canna == 1) {
+          c->mancs.playCrai(nota,lo_nibb);
+        }
+        if (canna == 2) {
+          c->mancd.playCrai(nota,lo_nibb);
+        }
+
+
+        if (canna == 3) {           //Sys msg
+          if (b==3) {
+            last_error=0;   //Controller prontu (0x33)
+            last_error_mem=0;
+            com->msgOk("Controller prontu");
+          }
+          else {
+            last_error=1+(b>>1);
+            last_error_mem=last_error;
+          }
+        }
       }
-    }
-  }
 }
 
 void monitoring() {
-  if ((mon_mode & CLIP) && peak.available()) {
-    uint8_t lPeak = peak.read() * 100.0;
-    if (lPeak > 99) com->msgWarning("CLIP", false);
+  if ((mon_mode&CLIP)&&peak.available()) {    
+    uint8_t lPeak=peak.read() * 100.0;
+    if (lPeak>99) com->msgWarning("CLIP",false);
   }
-
-  if (last_error != 0) {
-    String msg = "Controller err " + String(last_error);
+  
+  if (last_error!=0) {
+    String msg="Controller err "+String(last_error);
     com->msgError(msg);
-    last_error = 0;
+    last_error=0;
   }
 
   //Batteria
-  int v = analogRead(BATT);
-  float volt = v / 155.152;      //(v=x/1024*3,3*2);
-  charge = (charge + volt) / 2;  //max=0,7
+  int v=analogRead(BATT);
+  float volt=v/155.152; //(v=x/1024*3,3*2);
+  charge=(charge+volt)/2; //max=0,7
 
   d->refreshBattery();
-
+  
   inact_timer++;
 
-  if (inact_timer > 2000) {
+  if (inact_timer>2000) {
     //digitalWrite(OFF_CON,LOW);
     //delay(5000);
   }
+  
 }
 float getCharge() {
   return charge;
@@ -433,7 +460,7 @@ uint8_t byteToCrai(uint8_t b, uint8_t* msg) {
   *msg = ((b >> 4) & 0x3) ^ 3;
   if ((b & 0x80) == 0x80) *msg = 0;
 
-  b = ~b & 0xf;  // & ~(c.cannas[*msg - 1].mask & 0xf);
+  b = ~b & 0xf;// & ~(c.cannas[*msg - 1].mask & 0xf);
 
   if (b & 8) return (4);
   if (b & 4) return (3);
@@ -450,23 +477,25 @@ void receiving() {
     mySPI.pushr(0);
     uint16_t data = mySPI.popr();
     lt_pr++;
-    lt_pkt[lt_pr % 6] = (uint8_t)data;
+    lt_pkt[lt_pr % 6] = (uint8_t)data;    
   }
 }
 void parse(String s) {
   s.trim();
-  if (s.length() == 0) return;
-  if (s[0] != 'E') {
-    c->parse(s);  //Cuntzertu
-  } else {
+  if (s.length()==0) return;
+  if (s[0]!='E') {
+    c->parse(s); //Cuntzertu
+  }
+  else {
     String sParams[5];
     StringSplit(s, ' ', sParams, 5);
     switch (sParams[1][0]) {
       case 'i':
-        com->msgInfo(String("Id :") + EEPROM.read(0));
-        com->msgInfo(String("Version :") + version);
-        com->msgInfo(String("Audio memory: ") + AudioMemoryUsageMax());
-        com->msgInfo(String("Audio CPU max: ") + AudioProcessorUsageMax());
+        com->msgInfo(String("Id :")+EEPROM.read(0));
+        com->msgInfo(String("Hw :")+EEPROM.read(1));
+        com->msgInfo(String("Version :")+version);
+        com->msgInfo(String("Audio memory: ")+AudioMemoryUsageMax());    
+        com->msgInfo(String("Audio CPU max: ")+AudioProcessorUsageMax());
         break;
         /* Noise Test
       case 't':
@@ -479,20 +508,24 @@ void parse(String s) {
         break;
         */
       case 'I':
-        EEPROM.write(0, sParams[2].toInt() & 0xff);
-        break;
+        EEPROM.write(EEPROM_ID,sParams[2].toInt()&0xff);
+        EEPROM.write(EEPROM_HW,sParams[3].toInt()&0xff);
+      break;
       case 'm':
-        mon_mode = sParams[2].toInt();
+        mon_mode=sParams[2].toInt();
         break;
       case 'B':
-        //if (BT_CRLF)  Serial5.println(sParams[2]);
-        //else Serial5.print(sParams[2]);
+        BLUETOOTH.println(sParams[2]);
+        BLUETOOTH.flush();
         break;
       case 'b':
-        bt_control = sParams[2].toInt();
+        bt_controller=sParams[2].toInt();
         break;
       case 'd':
         efs->listaFiles(false);
+        break;
+      case 'S':
+        set_arm_clock(sParams[2].toInt()*1000000);
         break;
       case 'D':
         efs->listaFiles(true);
@@ -513,21 +546,23 @@ void parse(String s) {
         c->setGateMode(sParams[2].toInt());
         break;
       case 's':
-        efs->cuntzToFile(c, sParams[2].toInt());
+        efs->cuntzToFile(c,sParams[2].toInt());
         break;
       case 'l':
-        efs->cuntzFromFileJson(c, sParams[2].toInt(), true);
+        efs->cuntzFromFileJson(c,sParams[2].toInt(),true);
         break;
-      case 'L':
-        if (sParams[2].toInt()==1) set_arm_clock(600000000);
-        else set_arm_clock(396000000);
+      /*case 'L':
+        ldMancd.frequency(sParams[2].toInt());
+        ldMancd.resonance(sParams[3].toFloat());
+        mdMixer.gain(2,sParams[4].toFloat());  //TEST
         break;
+        */
       case 'f':
         //efs->cuntzFromFileFunction(c,sParams[2].toInt(),false);
-        efs->cuntzFromFile(c, sParams[2], false, ' ');
+        efs->cuntzFromFile(c,sParams[2],false,'F');
         break;
       case 'r':
-        efs->cuntzFromFileJson(c, sParams[2].toInt(), false);
+        efs->cuntzFromFileJson(c,sParams[2].toInt(),false);
         break;
       case 'h':
         resetController();
@@ -547,25 +582,25 @@ void parse(String s) {
         d->update();
         break;
       case 'w':
-        if (sParams[2].toInt() == 0) {
-          d->setEnabled(false);
+        if (sParams[2].toInt()==0) {
+          d->setEnabled(false);        
         } else {
-          d->setEnabled(true);
+          d->setEnabled(true);        
         }
         break;
-      case 'v':  //reverb
-        {
-          float d = sParams[2].toInt() / 10;
-          float r = sParams[3].toInt() / 10;
-          freeverbR.roomsize(r);
-          freeverbR.damping(d);
-          freeverbL.roomsize(r);
-          freeverbL.damping(d);
-        }
-        break;
-      case 'Y':  //restore
+      case 'v':   //reverb 
+       {
+        float d=sParams[2].toInt()/10;
+        float r=sParams[3].toInt()/10;
+        freeverbR.roomsize(r);
+        freeverbR.damping(d);
+        freeverbL.roomsize(r);
+        freeverbL.damping(d);
+       }
+      break;
+      case 'Y': //restore
         restore();
-        break;
+      break;
       case 'N':
         playNoda();
         break;
@@ -573,10 +608,95 @@ void parse(String s) {
         com->msgInfo(info_E);
         break;
       case 'R':
-        rec->parse(s);  //Cuntzertu
+         rec->parse(s); //Cuntzertu
+        break;
+      case 'P':   //Pedaliera 
+      {
+          uint8_t ped=sParams[2].toInt();
+          switch (ped_mode) {
+            case STRAC: {
+              if (ped!=7) efs->cuntzFromFileJson(c,sParams[2].toInt()+ped_strac,true);   
+               d->displayPage();
+               d->update();            
+            }
+            break;
+            case CROMA: {
+              if (ped!=7) {
+                c->setPuntu(c->getPuntu()-ped_last+ped);
+                d->displayPage();
+                d->update();
+              }
+            }
+            break;
+            case CONTROL: {
+              if (ped!=7) {
+                switch (ped) {
+                  case 0: {
+                  if (!efs->isMounted()) break;
+                  do {
+                    cuntz_num=(cuntz_num+1+MAX_CUNTZ_NUM)%MAX_CUNTZ_NUM;
+                    } while (!efs->cuntzFromFileJson(c,cuntz_num,true));
+                  }
+                  break;
+                  case 1: {
+                  if (!efs->isMounted()) break;
+                  do {
+                    cuntz_num=(cuntz_num-1+MAX_CUNTZ_NUM)%MAX_CUNTZ_NUM;
+                    } while (!efs->cuntzFromFileJson(c,cuntz_num,true));
+                  }
+                  break;
+                  case 2:
+                    c->setPuntu(c->getPuntu()+1);
+                  break;
+                  case 3:
+                    c->setPuntu(c->getPuntu()-1);
+                  break;
+                  case 4:
+                    c->setModal(c->getModal()+1);
+                  break;
+                  case 5:
+                    c->setModal(c->getModal()-1);
+                  break;
+                  case 6:
+                    efs->cuntzFromFileJson(c,cuntz_num,true);                 
+                    break;               
+                }     
+              }          
+                d->displayPage();
+                d->update();
+              
+            }
+            break;
+           
+            case TUMBU_F: {
+              if (ped!=7) c->parse("T C0 p "+String(c->diatToCroma(ped,c->getModal()))+"\n");
+            }
+            break;
+            case TUMBU_T: {
+              if (ped==7) c->parse("T C0 p 0\n");
+              else c->parse("T C0 p "+String(c->diatToCroma(ped+1,c->getModal()))+"\n");
+            }
+            break;
+      }
+       if (ped!=7) ped_last=ped;
+      
+      }
+      break;
+      case 'M':   //Modu pedaliera
+         ped_mode=sParams[2].toInt();
+         switch (ped_mode) {
+          case CROMA:
+            ped_last=3;
+          break;
+          case STRAC:
+            ped_strac=cuntz_num;
+          default:
+            ped_last=0;
+         }
+         
         break;
       default:
-        com->msgError(String("Unknown command: E ") + sParams[1][0]);
+        com->msgError(String("Unknown command: E ")+sParams[1][0]);
         break;
     }
   }
@@ -584,39 +704,38 @@ void parse(String s) {
 }
 
 void initCuntz() {
-
+  
   setCannas();
   efs->readPrefs(c);
-
+  
   if (digitalRead(PIN_PULS_CANC)) {
-    if (!efs->cuntzFromFileJson(c, c->getPreferredCuntz(), true)) {
-      c->deserialize(json);
-      c->sync();
-      ;
+    if (!efs->cuntzFromFileJson(c,c->getPreferredCuntz(),true)) {
+       c->deserialize(json);
+       c->sync();;
     } else {
-      cuntz_num = c->getPreferredCuntz();
+      cuntz_num=c->getPreferredCuntz();
     }
   } else {
     c->deserialize(json);
     c->sync();
   }
-
+  
   //c->setVerb(.1,.8,.1);
 
-  c->tumbu.setMIDI(1, 127, 24 + c->getPuntu(), 0);
-  c->mancs.setMIDI(2, 127, 24 + c->getPuntu(), 0);
-  c->mancd.setMIDI(3, 127, 24 + c->getPuntu(), 0);
+  c->tumbu.setMIDI(1,127,24+c->getPuntu(),0);
+  c->mancs.setMIDI(2,127,24+c->getPuntu(),0);
+  c->mancd.setMIDI(3,127,24+c->getPuntu(),0);
 
   c->tumbu.playCrai(0);
   c->mancs.playCrai(0);
   c->mancd.playCrai(0);
 
   c->beginTimer();
-
+  
   playNoda();
-
+  
   efs->execute(0);
-
+  
   c->mute(true);
 }
 void setCannas() {
@@ -631,15 +750,15 @@ void setCannas() {
 
   c->mancs.setMixer(&msMixer);
   c->mancs.setSynth(&msSynth);
-  c->mancs.setBiquads(&bqMancsStat, &bqMancsDinCrais, &bqMancsDinFin);
+  c->mancs.setBiquads(&bqMancsStat, &bqMancsDinCrais,&bqMancsDinFin);
 
   c->mancd.setMixer(&mdMixer);
   c->mancd.setSynth(&mdSynth);
-  c->mancd.setBiquads(&bqMancdStat, &bqMancdDinCrais, &bqMancdDinFin);
+  c->mancd.setBiquads(&bqMancdStat, &bqMancdDinCrais,&bqMancdDinFin);
 }
 
 void playNoda() {
-  int t = c->getGateMode();
+  int t=c->getGateMode();
   c->setGateMode(0);
   c->mute(false);
   delay(500);
@@ -658,17 +777,25 @@ void playNoda() {
 }
 
 void restore() {
-  for (int i = 0; i < 16; i++) {
-    efs->copy(220 + i, i);
-  }
-  com->msgOk("Restored");
+    for (int i=0;i<16;i++) {
+      efs->copy(220+i,i);
+    }
+    com->msgOk("Restored");
 }
 
 void resetController() {
+  
+  delay(100);
+  digitalWrite(CS_CON,HIGH);
+  delay(100);
+  digitalWrite(CS_CON,LOW);
+  delay(100);
+}
+void myProgramChange(byte channel, byte program) {
+  com->msgInfo("MIDI> ",String(program));
+  
+  efs->cuntzFromFileJson(c,program,true);
+  d->displayPage();
+  d->update();
 
-  delay(100);
-  digitalWrite(CS_CON, HIGH);
-  delay(100);
-  digitalWrite(CS_CON, LOW);
-  delay(100);
 }

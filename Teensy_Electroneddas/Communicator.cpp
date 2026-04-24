@@ -13,6 +13,10 @@ void Communicator::setWarningEnabled(bool enabled) {
 void Communicator::msgInfo(String msg) {
   stream->println(msg);
 };
+void Communicator::msgInfo(String pre, String msg) {
+  stream->print(pre);
+  stream->println(msg);
+};
 void Communicator::msgError(String msg) {
   stream->print(CERROR);
   stream->println(msg);

@@ -139,7 +139,7 @@ public:
   void playCrai(uint8_t crai);
   void playCrai(uint8_t crai, uint8_t hexcrai);
   void playCrai(uint8_t crai, uint8_t hexcrai, bool oct);
-  
+
   uint8_t getCraiAct();
   uint8_t getHCraiAct();
 
@@ -313,6 +313,8 @@ private:
   void send_f(Stream* s, float arg);
   void deserialize(JsonObject jo);
   void calcCrais(uint8_t cuntz, uint8_t modal);
+
+public:
   byte diatToCroma(byte crai, uint8_t modal);
 
 
@@ -320,8 +322,6 @@ public:
   Canna tumbu = Canna(1);
   Canna mancs = Canna(5);
   Canna mancd = Canna(5);
-
-
 
 private:
   char nome[32];

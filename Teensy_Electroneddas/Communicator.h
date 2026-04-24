@@ -16,6 +16,7 @@ public:
   Communicator(Stream* stream);
 
   void msgInfo(String msg);
+  void msgInfo(String preamble, String msg);
   void msgError(String msg);
   void msgOk(String msg);
   void msgWarning(String msg, bool hiPriority);
