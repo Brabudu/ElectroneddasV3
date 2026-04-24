@@ -492,6 +492,7 @@ void parse(String s) {
     switch (sParams[1][0]) {
       case 'i':
         com->msgInfo(String("Id :")+EEPROM.read(0));
+        com->msgInfo(String("Hw :")+EEPROM.read(1));
         com->msgInfo(String("Version :")+version);
         com->msgInfo(String("Audio memory: ")+AudioMemoryUsageMax());    
         com->msgInfo(String("Audio CPU max: ")+AudioProcessorUsageMax());

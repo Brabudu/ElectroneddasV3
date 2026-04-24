@@ -38,7 +38,7 @@ const uint8_t menu[5][10][5] PROGMEM = {
     { 90, 49, 109, 63, 1 },
     { 0, 0, 0, 0, 0 } },
   { // page 3
-    { 0, 0, 101, 13, 1 },
+    { 22, 0, 61, 13, 1 },
     { 0, 0, 0, 0, 0 },
     { 0, 0, 0, 0, 0 },
     { 0, 0, 0, 0, 0 },
@@ -64,7 +64,6 @@ const uint8_t menu[5][10][5] PROGMEM = {
 
 
 #define POS_MENU 10
-#define PAGES 3
 #define MAX_CUNTZ_NUM 200
 
 
@@ -77,6 +76,9 @@ extern Display* d;
 extern Cuntzertu* c;
 
 extern uint8_t cuntz_num;
+
+extern uint8_t ped_mode;
+#define PEDMODEMAX 5
 
 extern void resetController();
 extern float getCharge();
@@ -92,10 +94,16 @@ long enc_old_pos;
 int enc_count;
 int enc_puls_count = 0;
 
+//Paginas
+uint8_t max_pages = 3;
+
 Encoder myEnc(PIN_ENC1, PIN_ENC2);
 IntervalTimer encoderTimer;
 
-Display::Display() {
+Display::Display(bool bt) {
+
+  if (bt) max_pages = 4;
+  else max_pages = 3;
   //Init encoder
 
   pinMode(PIN_ENC1, INPUT_PULLUP);
@@ -172,8 +180,8 @@ bool Display::go(bool ok, int dir, bool longPress) {
       }
       if (dir != 0) {
         page += dir;
-        if (page < 0) page = PAGES;
-        page %= PAGES;
+        if (page < 0) page = max_pages;
+        page %= max_pages;
 
         oled.rect(0, 0, 112, 63, OLED_CLEAR);
         displayPage();
@@ -329,20 +337,20 @@ bool Display::go(bool ok, int dir, bool longPress) {
                   break;
                 case 4:  //filtru
                   c->setFilterMode((byte)(c->getFilterMode() + dir) % 3);
-                  displayPage();
+                  //displayPage();
                   break;
                 case 5:  //gate
                   c->setGateMode((byte)(c->getGateMode() + dir) % GATEMODEMAX);
-                  displayPage();
+                  //displayPage();
                   break;
                 case 6:  //zero
                   c->setSulProgZ((byte)(c->getSulProgZ() + dir) % 6);
                   c->setSulProgS(c->getSulProgS());
-                  displayPage();
+                  //displayPage();
                   break;
                 case 7:  //sensibilidadi
                   c->setSulProgS((byte)(c->getSulProgS() + dir) % 3);
-                  displayPage();
+                  //displayPage();
                   break;
                 case 8:
 
@@ -350,6 +358,19 @@ bool Display::go(bool ok, int dir, bool longPress) {
               }
               displayPage();
               oled.update();
+            }
+            break;
+          case 3:
+            {
+              switch (pos) {
+                case 0:
+                  ped_mode = (ped_mode + dir);
+                  if (ped_mode < 0) ped_mode = PEDMODEMAX;
+                  if (ped_mode > PEDMODEMAX) ped_mode = 0;
+                  displayPage();
+                  oled.update();
+                  break;
+              }
             }
             break;
           case 4:
@@ -416,6 +437,10 @@ void Display::cursMenu(uint8_t pos, uint8_t p, bool on, bool in) {
   } else clearRect(menu[p][pos][0], menu[p][pos][1], menu[p][pos][2], menu[p][pos][3]);
 }
 void Display::displayPage() {
+  if (isBlanked()) {
+    blankPage();
+    return;
+  }
   //cli();
   //oled.clear();
   switch (page) {
@@ -512,6 +537,15 @@ void Display::displayPage() {
         oled.print("Mem");
       }
       break;
+    case 3:
+      {
+        oled.setCursorXY(2, 2);
+        oled.print("Ped:");
+        oled.setCursorXY(26, 2);
+        oled.print(ped[ped_mode]);
+        oled.roundRect(24, 0, 59, 10, OLED_STROKE);
+      }
+      break;
     case 4:
       {
         oled.setCursorXY(2, 2);
@@ -564,7 +598,7 @@ void Display::drawBattery(uint8_t x, uint8_t y) {
   oled.rect(x + 2, y + 2, x + toBar(getCharge()), y + 4, OLED_FILL);
 }
 void Display::refreshBattery() {
-  if (page == 0) drawBattery(94, 54);
+  if ((page == 0) && !isBlanked()) drawBattery(94, 54);
 }
 int Display::toBar(float v) {
   if (v > 3.9) return 9;
@@ -586,6 +620,7 @@ void Display::clearRect(int x0, int y0, int x1, int y1) {
   oled.fastLineV(x1, y0, y1, 0);
 }
 void Display::update() {
+  if (isBlanked()) return;
   oled.update();
 }
 

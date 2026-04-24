@@ -20,7 +20,9 @@
 class Display {
 private:
   GyverOLED<SSH1106_128x64> oled;
-  
+
+
+
   int pos = 0;
   uint8_t page = 0;
 
@@ -42,11 +44,13 @@ private:
   const String sulP[6] = { "P0", "P1", "P2", "P3", "P4", "P5" };
   const String sulS[3] = { "SA", "SM", "SB" };
 
+  const String ped[6] = { "Strac", "Croma", "Cntrl", "TumbF", "TumbT", "Scrpt" };
+
   void static pollEncoder();
   int toBar(float volt);
 
 public:
-  Display();
+  Display(bool bt);
   void left();
   void right();
   bool go(bool ok, int dir, bool longPress);
